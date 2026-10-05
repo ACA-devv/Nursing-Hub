@@ -78,6 +78,8 @@ body{overflow-x:hidden}button,input{font:inherit}button{border:0}.app{width:100%
 .hopper-step-num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#202428;color:#39d5e8;font-size:.78rem;font-weight:700;flex:none}
 .hopper-note{color:#929aa1;font-size:.82rem;line-height:1.45}
 @media(min-width:620px){.resource-toolbar{grid-template-columns:1.4fr 1fr}.resource-filters{grid-template-columns:1fr 1fr 1fr}.resource-detail-grid{grid-template-columns:1fr 1fr}}
+
+.optional-label{font-size:.75rem;color:#929AA1;font-weight:500}.hopper-processing-card{margin-top:12px;background:#202428}.processing-list{display:grid;gap:9px}.processing-item{padding:11px 12px;border:1px solid #2b3035;border-radius:12px;background:#171A1D}.processing-item strong{display:block;margin-bottom:4px}.match-pill{display:inline-block;margin:3px 4px 0 0;padding:4px 7px;border-radius:999px;background:#202428;color:#F2F4F5;font-size:.72rem}.review-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.review-check{display:flex;gap:10px;align-items:flex-start;padding:10px 0}.review-check input{margin-top:3px}.resource-excerpt{font-size:.82rem;color:#929AA1;line-height:1.5;margin-top:5px}
 </style>
 </head>
 <body>
@@ -118,6 +120,7 @@ async function init(){
   const objectiveData=await decodeObjectiveData();
   const cards=document.querySelectorAll('.card'),page=document.getElementById('detailPage'),content=document.getElementById('pageContent'),back=document.getElementById('backButton'),searchButton=document.getElementById('searchButton'),searchInput=document.getElementById('searchInput'),searchCancel=document.getElementById('searchCancel'),results=document.getElementById('searchResults'),dimmer=document.getElementById('searchDimmer'),toast=document.getElementById('toast');
 let nav=[],toastTimer;
+ensureAdmin().then(ok=>{if(ok)loadResourceChunks();});
 const icons={calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2.5"></rect><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17M8 13h2M14 13h2M8 17h2M14 17h2"></path></svg>',objectives:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3.5" width="16" height="17" rx="2.5"></rect><path d="M8 8h8M8 12h8M8 16h4M5.8 8.1l.9.9 1.5-1.7"></path></svg>',diagnostics:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3.5v6.2L4.5 18a2 2 0 0 0 1.8 2.8h11.4a2 2 0 0 0 1.8-2.8L15 9.7V3.5M8 3.5h8M7 15h10"></path></svg>',medications:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="17" height="10" rx="5"></rect><path d="M12 7v10"></path></svg>',quiz:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.2 4.2A7.5 7.5 0 0 1 19.5 10c1.3 5.1-2.9 9.8-8.1 9.8-4.6 0-8.4-3.7-8.4-8.4 0-3.2 1.8-6 4.5-7.5"></path><path d="M8.8 9a3.1 3.1 0 0 1 3.1-2.4c1.7 0 3 .9 3 2.4 0 1.8-1.5 2.3-2.5 3.1-.7.5-1 1-.9 1.8M11.6 17h.01"></path></svg>',materials:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4.5 5.5A2.5 2.5 0 0 1 7 3h11.5v17H7a2.5 2.5 0 0 0-2.5 2.5zM4.5 5.5v15M8 7h7M8 10.5h7M8 14h5"></path></svg>'};
 
 const calendarEvents=[
@@ -319,19 +322,29 @@ return `<div class="page-header"><div class="page-kicker">Nurse Hub</div><h2 cla
 <div class="settings-status"><span class="status-dot" style="background:${signedIn?'#7ee7c5':'#6F777D'}"></span><span>${signedIn?'Admin authenticated':'Admin sign-in required'}</span></div>
 <button class="settings-action" data-admin-resource>${signedIn?'OPEN RESOURCE HOPPER':'SIGN IN TO RESOURCE HOPPER'}</button>
 ${signedIn?'<button class="admin-secondary" data-admin-signout style="margin-top:9px">SIGN OUT</button>':''}</div>
-<div class="settings-card"><h3>Hopper pipeline</h3>
-<div class="hopper-step"><span class="hopper-step-num">1</span><div><strong>Upload</strong><div class="hopper-note">Keep the original resource in private storage.</div></div></div>
-<div class="hopper-step"><span class="hopper-step-num">2</span><div><strong>Organize</strong><div class="hopper-note">Assign course, topic, type, and description.</div></div></div>
-<div class="hopper-step"><span class="hopper-step-num">3</span><div><strong>Link</strong><div class="hopper-note">Attach resources to objectives and topics.</div></div></div>
-<div class="hopper-step"><span class="hopper-step-num">4</span><div><strong>Distribute</strong><div class="hopper-note">Linked resources appear inside the relevant Nurse Hub screens.</div></div></div>
-<div class="hopper-step"><span class="hopper-step-num">5</span><div><strong>AI — later</strong><div class="hopper-note">Content processing, NORA, Study, and Quiz Me are intentionally not enabled in this patch.</div></div></div>
-</div>
 <div class="settings-card"><h3>Security</h3><p>Admin access is enforced by Supabase authentication plus database and Storage policies. Your resource files remain private.</p></div>
 </div>`;
 }
 function openSettings(){
 closeSearch();nav=[{type:'settings'}];setPage(renderSettings());
 }
+async function ensureAdmin(){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){currentAdmin=null;return false;}
+  const {data,error}=await supabaseClient.from('admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+  if(error||!data){currentAdmin=null;await supabaseClient.auth.signOut();return false;}
+  currentAdmin=session.user;return true;
+}
+
+async function openAdminArea(){
+  closeSearch();
+  const ok=await ensureAdmin();
+  if(!ok){ nav=[{type:"settings"},{type:"admin-login"}]; setPage(renderAdminLogin()); return; }
+  nav=[{type:"settings"},{type:"resource-hopper"}];
+  setPage(renderResourceHopper());
+  loadResources();
+}
+
 function renderAdminLogin(){
 return `<div class="page-header"><div class="page-kicker">Private Admin</div><h2 class="page-title">Admin Sign In</h2><p class="page-subtitle">Sign in with your dedicated Nurse Hub admin account.</p></div>
 <div class="settings-panel"><div class="settings-card"><form class="admin-login-form" id="adminLoginForm">
@@ -346,11 +359,12 @@ return `<div class="page-header"><div class="page-kicker">Admin · Private</div>
 <form class="hopper-form" id="resourceForm">
 <div class="admin-field"><label for="resourceFile">Resource file</label><input id="resourceFile" type="file" required><div class="file-name" id="resourceFileName">No file selected</div></div>
 <div class="admin-field"><label for="resourceTitle">Title</label><input id="resourceTitle" type="text" placeholder="e.g. Class 12 STI & Contraception Notes" required></div>
-<div class="admin-field"><label for="resourceCourse">Course</label><input id="resourceCourse" type="text" placeholder="e.g. NUR 2129"></div>
-<div class="admin-field"><label for="resourceTopic">Topic</label><input id="resourceTopic" type="text" placeholder="e.g. STI / Contraception"></div>
+<div class="admin-field"><label for="resourceCourse">Course <span class="optional-label">(optional)</span></label><input id="resourceCourse" type="text" placeholder="Leave blank to auto-detect"></div>
+<div class="admin-field"><label for="resourceTopic">Topic <span class="optional-label">(optional)</span></label><input id="resourceTopic" type="text" placeholder="Leave blank to auto-detect"></div>
 <div class="admin-field"><label for="resourceType">Content type</label><select id="resourceType"><option value="lecture-notes">Lecture Notes</option><option value="study-guide">Study Guide</option><option value="pdf">PDF</option><option value="slides">Slides</option><option value="worksheet">Worksheet</option><option value="other">Other</option></select></div>
-<div class="admin-field"><label for="resourceDescription">Description</label><textarea id="resourceDescription" placeholder="Optional notes about this resource"></textarea></div>
-<button class="admin-primary" type="submit">ADD TO HOPPER</button>
+<div class="admin-field"><label for="resourceDescription">Description <span class="optional-label">(optional)</span></label><textarea id="resourceDescription" placeholder="Leave blank to let Nurse Hub build a description from the resource."></textarea></div>
+<div class="settings-card hopper-processing-card"><h3>Automatic processing</h3><p>Nurse Hub will extract searchable text, split the resource into sections, detect likely topics, and suggest matching course objectives. You review the suggested connections before they are published.</p></div>
+<button class="admin-primary" type="submit">PROCESS & ADD TO HOPPER</button>
 <div id="resourceMessage" class="admin-message"></div>
 </form></div>
 <div class="settings-card"><h3>Resource Library</h3><p>Every uploaded resource stays available here and can be opened from Nurse Hub.</p>
@@ -358,6 +372,11 @@ return `<div class="page-header"><div class="page-kicker">Admin · Private</div>
 <div id="resourceList" class="resource-library"><div class="admin-message">Loading resources…</div></div>
 </div></div>`;
 }
+async function loadResourceChunks(){
+  const {data,error}=await supabaseClient.from('resource_chunks').select('resource_id,chunk_index,heading,content');
+  window.nurseHubChunks=error?[]:(data||[]);
+}
+
 async function loadResources(){
 const box=document.getElementById('resourceList');if(!box)return;
 const {data,error}=await supabaseClient.from('resources').select('id,title,file_name,file_path,course,topic,content_type,status,description,created_at').order('created_at',{ascending:false});
@@ -365,6 +384,7 @@ if(error){box.innerHTML=`<div class="admin-message error">${esc(error.message)}<
 window.nurseHubResources=data||[];
 populateResourceFilters();
 renderResourceLibrary();
+ await loadResourceChunks();
 }
 function populateResourceFilters(){
 const rs=window.nurseHubResources||[];
@@ -433,6 +453,11 @@ const t=nav.find(x=>x.type==='topic');const s=objectiveData[t.i];nav.push({type:
 const o=s.objectives[j];setPage(renderObjective(o,s));
 const box=document.querySelector('.objective-resource-slot');if(box)box.innerHTML=await renderObjectiveResources(s,o);
 }
+async function loadResourceChunks(){
+  const {data,error}=await supabaseClient.from('resource_chunks').select('resource_id,chunk_index,heading,content');
+  window.nurseHubChunks=error?[]:(data||[]);
+}
+
 async function loadResources(){
 const box=document.getElementById('resourceList');if(!box)return;
 const {data,error}=await supabaseClient.from('resources').select('id,title,file_name,course,topic,content_type,status,created_at').order('created_at',{ascending:false});
@@ -475,42 +500,124 @@ toastMsg('Admin signed in');nav=[{type:'settings'},{type:'resource-hopper'}];set
 async function handleAdminSignout(){
 await supabaseClient.auth.signOut();currentAdmin=null;toastMsg('Signed out');openSettings();
 }
+async function extractResourceText(file){
+  const name=file.name.toLowerCase();
+  if(name.endsWith('.txt')||name.endsWith('.md')||name.endsWith('.csv')) return await file.text();
+  if(name.endsWith('.docx')){
+    const mammoth=await import('https://cdn.jsdelivr.net/npm/mammoth@1.8.0/+esm');
+    const buf=await file.arrayBuffer();
+    const out=await mammoth.extractRawText({arrayBuffer:buf});
+    return out.value||'';
+  }
+  if(name.endsWith('.pdf')){
+    const pdfjs=await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/+esm');
+    pdfjs.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/build/pdf.worker.mjs';
+    const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
+    const pages=[];
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i); const tc=await page.getTextContent();
+      pages.push(tc.items.map(x=>x.str||'').join(' '));
+    }
+    return pages.join('\n\n');
+  }
+  throw new Error('This first Hopper processor supports DOCX, PDF, TXT, MD, and CSV files.');
+}
+function cleanWords(text){return String(text||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2&&!['the','and','for','with','from','that','this','are','was','were','into','their','they','have','has','will','can','may','not','than','then','when','what','which','your','you','patient','patients','nursing','nurse'].includes(w));}
+function splitResourceText(text){
+  const paras=String(text||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
+  const chunks=[]; let cur=[];
+  paras.forEach(p=>{cur.push(p); if(cur.length>=4){chunks.push(cur.join('\n\n'));cur=[];}});
+  if(cur.length)chunks.push(cur.join('\n\n'));
+  if(!chunks.length&&text.trim())chunks.push(text.trim());
+  return chunks.slice(0,250);
+}
+function scoreMatch(text, objective, topicTitle){
+  const words=new Set(cleanWords(text));
+  const target=cleanWords([topicTitle,objective.text,...objective.subitems,objective.courseObjectives].join(' '));
+  const uniq=[...new Set(target)]; let score=0;
+  uniq.forEach(w=>{if(words.has(w))score++;});
+  const titleWords=cleanWords(topicTitle); const titleHits=titleWords.filter(w=>words.has(w)).length;
+  return {score:score+titleHits*2,titleHits,ratio:uniq.length?score/Math.min(uniq.length,30):0};
+}
+function analyzeResource(text){
+  const chunks=splitResourceText(text); const suggestions=[];
+  objectiveData.forEach((topic,si)=>topic.objectives.forEach((o,oi)=>{
+    let best={score:0,chunk:0}; chunks.forEach((c,ci)=>{const sc=scoreMatch(c,o,topic.title);if(sc.score>best.score)best={...sc,chunk:ci};});
+    const overall=scoreMatch(text,o,topic.title);
+    if(best.score>=2 || overall.score>=3){suggestions.push({si,oi,key:objectiveKey(topic,o),topic:topic.title,objective:o.number,text:o.text,score:Math.max(best.score,overall.score),chunk:best.chunk});}
+  }));
+  suggestions.sort((a,b)=>b.score-a.score);
+  const topicScores=objectiveData.map((t,si)=>{const sc=scoreMatch(text,{text:'',subitems:[],courseObjectives:''},t.title);return {si,title:t.title,score:sc.titleHits};}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,8);
+  return {chunks,suggestions:suggestions.slice(0,40),topics:topicScores};
+}
+async function saveResourceProcessing(resourceId,text,analysis){
+  const {error:ce}=await supabaseClient.from('resource_content').insert({resource_id:resourceId,extracted_text:text,processing_status:'ready',processed_at:new Date().toISOString()});
+  if(ce)throw ce;
+  const rows=analysis.chunks.map((content,i)=>({resource_id:resourceId,chunk_index:i,heading:(content.split('\n')[0]||'').slice(0,160),content}));
+  if(rows.length){const {error}=await supabaseClient.from('resource_chunks').insert(rows);if(error)throw error;}
+}
+async function setResourceStatus(id,status,description){await supabaseClient.from('resources').update({status,description}).eq('id',id);}
 async function handleResourceUpload(e){
-e.preventDefault();const file=document.getElementById('resourceFile').files[0],msg=document.getElementById('resourceMessage');
-if(!file){msg.className='admin-message error';msg.textContent='Choose a file first.';return}
-if(!currentAdmin){msg.className='admin-message error';msg.textContent='Admin session expired. Sign in again.';return}
-msg.className='admin-message';msg.textContent='Uploading…';
-const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`${currentAdmin.id}/${Date.now()}_${safeName}`;
-const {error:uploadError}=await supabaseClient.storage.from('nurse-resources').upload(path,file,{upsert:false});
-if(uploadError){msg.className='admin-message error';msg.textContent=uploadError.message;return}
-const row={uploaded_by:currentAdmin.id,title:document.getElementById('resourceTitle').value.trim(),file_name:file.name,file_path:path,course:document.getElementById('resourceCourse').value.trim()||null,topic:document.getElementById('resourceTopic').value.trim()||null,content_type:document.getElementById('resourceType').value,description:document.getElementById('resourceDescription').value.trim()||null,status:'pending',resource_url:null,source_type:'uploaded'};
-const {error:dbError}=await supabaseClient.from('resources').insert(row);
-if(dbError){
-await supabaseClient.storage.from('nurse-resources').remove([path]);
-msg.className='admin-message error';msg.textContent=dbError.message;return;
+ e.preventDefault();
+ const file=document.getElementById('resourceFile').files[0],msg=document.getElementById('resourceMessage');
+ if(!file){msg.className='admin-message error';msg.textContent='Choose a file first.';return}
+ if(!currentAdmin){msg.className='admin-message error';msg.textContent='Admin session expired. Sign in again.';return}
+ msg.className='admin-message';msg.textContent='Uploading and reading resource…';
+ let text='';
+ try{text=await extractResourceText(file);}catch(err){msg.className='admin-message error';msg.textContent=err.message||'Could not read this file.';return}
+ if(!text.trim()){msg.className='admin-message error';msg.textContent='No readable text was found in this file.';return}
+ const analysis=analyzeResource(text);
+ const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_'); const path=`${currentAdmin.id}/${Date.now()}_${safeName}`;
+ const {error:uploadError}=await supabaseClient.storage.from('nurse-resources').upload(path,file,{upsert:false});
+ if(uploadError){msg.className='admin-message error';msg.textContent=uploadError.message;return}
+ const course=document.getElementById('resourceCourse').value.trim()||'NUR 2129';
+ const topic=document.getElementById('resourceTopic').value.trim()||((analysis.topics[0]||{}).title||null);
+ const autoDesc=document.getElementById('resourceDescription').value.trim()||`Processed resource with ${analysis.chunks.length} searchable sections. Suggested topic/objective connections are ready for review.`;
+ const row={uploaded_by:currentAdmin.id,title:document.getElementById('resourceTitle').value.trim()||file.name.replace(/\.[^.]+$/,''),file_name:file.name,file_path:path,course,topic,content_type:document.getElementById('resourceType').value,description:autoDesc,status:'processing',resource_url:null,source_type:'uploaded'};
+ const {data:inserted,error:dbError}=await supabaseClient.from('resources').insert(row).select('id').single();
+ if(dbError){await supabaseClient.storage.from('nurse-resources').remove([path]);msg.className='admin-message error';msg.textContent=dbError.message;return}
+ try{
+   await saveResourceProcessing(inserted.id,text,analysis);
+   await setResourceStatus(inserted.id,'ready',autoDesc);
+   window.pendingResourceReview={resourceId:inserted.id,analysis,text,title:row.title};
+   e.target.reset(); document.getElementById('resourceFileName').textContent='No file selected';
+   msg.className='admin-message success';msg.textContent='Resource processed. Review the suggested connections below.';
+   showResourceReview(inserted.id,analysis,row.title);
+   loadResources();
+ }catch(err){await setResourceStatus(inserted.id,'error',err.message||'Processing failed.');msg.className='admin-message error';msg.textContent='File uploaded, but processing failed: '+(err.message||'Unknown error');}
 }
-msg.className='admin-message success';msg.textContent='Resource uploaded and saved as pending.';
-e.target.reset();document.getElementById('resourceFileName').textContent='No file selected';loadResources();
+function showResourceReview(resourceId,analysis,title){
+ nav.push({type:'resource-review',id:resourceId});
+ const top=analysis.topics.length?analysis.topics.map(t=>`<span class="match-pill">${esc(t.title)}</span>`).join(''):'<span class="resource-excerpt">No strong topic match found.</span>';
+ const links=analysis.suggestions.map((x,i)=>`<label class="review-check"><input type="checkbox" data-review-link="${i}" checked><span><strong>${esc(x.topic)} · Objective ${esc(x.objective)}</strong><span class="resource-excerpt">${esc(x.text)}</span></span></label>`).join('');
+ window.pendingReviewSuggestions=analysis.suggestions;
+ setPage(`<div class="page-header"><div class="page-kicker">Hopper · Review</div><h2 class="page-title">${esc(title)}</h2><p class="page-subtitle">Nurse Hub extracted ${analysis.chunks.length} searchable sections and found suggested connections.</p></div><div class="settings-panel"><div class="settings-card"><h3>Detected topics</h3><div>${top}</div></div><div class="settings-card"><h3>Suggested objective links</h3><p class="source-note">These are automatic keyword/structure matches, not AI judgments. Review them before publishing.</p><div class="processing-list">${links||'<div class="admin-message">No objective matches were strong enough to suggest.</div>'}</div><div class="review-actions"><button class="admin-primary" data-review-publish="${resourceId}">PUBLISH SELECTED LINKS</button><button class="admin-secondary" data-review-skip="${resourceId}">SKIP LINKS</button></div><div id="reviewMessage" class="admin-message"></div></div></div>`);
 }
+async function publishReviewLinks(resourceId){
+ const suggestions=window.pendingReviewSuggestions||[]; const selected=[...document.querySelectorAll('[data-review-link]:checked')].map(x=>Number(x.dataset.reviewLink)).map(i=>suggestions[i]).filter(Boolean);
+ if(selected.length){const rows=selected.map(x=>({resource_id:resourceId,objective_key:x.key,course:'NUR 2129',topic:x.topic,objective_number:String(x.objective)}));const {error}=await supabaseClient.from('resource_objective_links').upsert(rows,{onConflict:'resource_id,objective_key'});if(error){const m=document.getElementById('reviewMessage');if(m){m.className='admin-message error';m.textContent=error.message;}return;}}
+ toastMsg(`${selected.length} objective link${selected.length===1?'':'s'} published`);nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();
+}
+
 function openPlaceholder(id,source){closeSearch();if(id==='settings'){setTimeout(openSettings,80);return}if(id==='calendar'){if(source)source.classList.add('active');setTimeout(()=>openCalendar(),120);return}if(source)source.classList.add('active');setTimeout(()=>{setPage(`<div class="detail-content"><div class="detail-icon">${icons[id]||icons.objectives}</div><h2 class="detail-title">${esc(sections[id].title)}</h2><p class="coming-soon">Coming Soon</p></div>`)},120)}
 function goBack(){if(nav.length>1){nav.pop();const last=nav[nav.length-1];if(last.type==='medications')setPage(renderMedicationList());else if(last.type==='root')setPage(renderTopics());else if(last.type==='topic')setPage(renderTopic(objectiveData[last.i],last.i));else if(last.type==='objective'){const t=nav.find(x=>x.type==='topic');setPage(renderObjective(objectiveData[t.i].objectives[last.j],objectiveData[t.i]))}else if(last.type==='diagnostics')setPage(diagnosticHome(last.tab));else if(last.type==='settings')setPage(renderSettings());else if(last.type==='admin-login')setPage(renderAdminLogin());else if(last.type==='resource-hopper')setPage(renderResourceHopper());else if(last.type==='resource-detail')showResourceDetail(last.id);else if(last.type==='resource-linker')renderResourceLinker(last.id);}else closePage()}
 function toastMsg(msg){clearTimeout(toastTimer);toast.textContent=msg;toast.classList.add('show');toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-document.addEventListener('click',e=>{if(e.target.closest('#settingsButton')){openSettings();return}if(e.target.closest('[data-admin-resource]')){openAdminArea();return}if(e.target.closest('[data-admin-signout]')){handleAdminSignout();return}if(e.target.closest('[data-settings-back]')){openSettings();return}const card=e.target.closest('.card');if(card){if(card.dataset.id==='objectives')openObjectives();else if(card.dataset.id==='calendar')openCalendar();else if(card.dataset.id==='diagnostics')openDiagnostics();else if(card.dataset.id==='medications')openMedications();else openPlaceholder(card.dataset.id,card);return}const resourceOpen=e.target.closest('[data-resource-open]');if(resourceOpen){openResourceFile(resourceOpen.dataset.resourceOpen);return}const resourceDetail=e.target.closest('[data-resource-detail]');if(resourceDetail){showResourceDetail(resourceDetail.dataset.resourceDetail);return}const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjectiveWithResources(Number(obj.dataset.objective));return}const act=e.target.closest('[data-action]');if(act){const names={study:'Study mode',quiz:'Objective-specific Quiz Me',nora:'Ask NORA'};toastMsg(names[act.dataset.action]+' is coming next.');return}});
+document.addEventListener('click',e=>{if(e.target.closest('#settingsButton')){openSettings();return}if(e.target.closest('[data-admin-resource]')){openAdminArea();return}if(e.target.closest('[data-admin-signout]')){handleAdminSignout();return}if(e.target.closest('[data-settings-back]')){openSettings();return}const card=e.target.closest('.card');if(card){if(card.dataset.id==='objectives')openObjectives();else if(card.dataset.id==='calendar')openCalendar();else if(card.dataset.id==='diagnostics')openDiagnostics();else if(card.dataset.id==='medications')openMedications();else openPlaceholder(card.dataset.id,card);return}const resourceOpen=e.target.closest('[data-resource-open]');if(resourceOpen){openResourceFile(resourceOpen.dataset.resourceOpen);return}const resourceDetail=e.target.closest('[data-resource-detail]');if(resourceDetail){showResourceDetail(resourceDetail.dataset.resourceDetail);return}const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const pub=e.target.closest('[data-review-publish]');if(pub){publishReviewLinks(pub.dataset.reviewPublish);return}const skip=e.target.closest('[data-review-skip]');if(skip){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjectiveWithResources(Number(obj.dataset.objective));return}const act=e.target.closest('[data-action]');if(act){const names={study:'Study mode',quiz:'Objective-specific Quiz Me',nora:'Ask NORA'};toastMsg(names[act.dataset.action]+' is coming next.');return}});
 back.addEventListener('click',goBack);
 document.addEventListener('input',e=>{if(e.target.id==='resourceSearch')renderResourceLibrary();});
 document.addEventListener('change',e=>{if(['resourceCourseFilter','resourceTopicFilter','resourceTypeFilter'].includes(e.target.id))renderResourceLibrary();});
 document.addEventListener('submit',e=>{if(e.target.id==='resourceLinkForm')handleResourceLink(e);});
 document.addEventListener('click',e=>{const f=e.target.closest('[data-calfilter]');if(f&&nav.length&&nav[nav.length-1].type==='calendar'){const filter=f.dataset.calfilter;nav[nav.length-1].filter=filter;setPage(renderCalendar(filter));}});
 function closeSearch(){document.body.classList.remove('searching');searchInput.value='';results.innerHTML='';searchInput.blur()}
-function searchData(){const q=searchInput.value.trim().toLowerCase();if(!q){results.innerHTML='';return}const all=[];
+function searchData(){const q=searchInput.value.trim().toLowerCase();if(!q){results.innerHTML='';return}const all=[]; const resourceHits=[]; (window.nurseHubChunks||[]).forEach(c=>{if((c.content||'').toLowerCase().includes(q))resourceHits.push({type:'resource-chunk',resourceId:c.resource_id,label:c.heading||'Resource section',detail:(c.content||'').slice(0,140)});});
  objectiveData.forEach((topic,si)=>{if((topic.title+' '+topic.references.join(' ')).toLowerCase().includes(q))all.push({type:'topic',si,label:topic.title,detail:`${topic.objectives.length} objectives`});topic.objectives.forEach((o,oi)=>{const hay=(topic.title+' '+o.text+' '+o.subitems.join(' ')+' '+o.courseObjectives).toLowerCase();if(hay.includes(q))all.push({type:'objective',si,oi,label:`Objective ${o.number} · ${topic.title}`,detail:o.text})})});
  Object.values(labData).flat().forEach(l=>{const low=(l.low.label+' '+l.low.info+' '+l.low.risks.join(' ')+' '+l.low.causes.join(' ')+' '+l.low.meds.join(' ')+' '+l.low.care.join(' ')).toLowerCase();const high=(l.high.label+' '+l.high.info+' '+l.high.risks.join(' ')+' '+l.high.causes.join(' ')+' '+l.high.meds.join(' ')+' '+l.high.care.join(' ')).toLowerCase();const base=(l.name+' '+l.abbr+' '+l.range+' '+l.why).toLowerCase();if(base.includes(q))all.push({type:'lab',id:l.id,label:`${l.name}${l.abbr?' ('+l.abbr+')':''}`,detail:l.range});if(low.includes(q))all.push({type:'lab-section',id:l.id,section:'low',label:`${l.low.label} · ${l.name}`,detail:`${l.name} → ${l.low.label}`});if(high.includes(q))all.push({type:'lab-section',id:l.id,section:'high',label:`${l.high.label} · ${l.name}`,detail:`${l.name} → ${l.high.label}`});});
  Object.values(testData).flat().forEach(t=>{if((t.name+' '+t.why+' '+t.prep+' '+t.nursing.join(' ')+' '+t.cautions.join(' ')).toLowerCase().includes(q))all.push({type:'test',id:t.id,label:t.name,detail:t.why})});
  medicationIndex.forEach(m=>{const hay=[m.name,m.brand,m.className,m.indications,m.action,...m.common,...m.adverse,m.contra,...m.precautions,...m.nursing,...m.teaching,...(m.keywords||[])].join(' ').toLowerCase();if(hay.includes(q))all.push({type:'medication',id:m.id,label:m.name,detail:`${m.className}${m.brand?' · '+m.brand:''}`})});
  const cardsFound=Object.entries(sections).filter(([id,x])=>(id+' '+x.title+' '+x.description).toLowerCase().includes(q)).map(([id,x])=>({type:'dashboard',id,label:x.title,detail:x.description}));
- const resultsAll=[...cardsFound,...all].slice(0,40);if(!resultsAll.length){results.innerHTML='<div class="no-results">No results found</div>';return}results.innerHTML=resultsAll.map((r,n)=>`<button class="result" data-search-index="${n}"><span class="result-icon">${r.type==='dashboard'?(icons[r.id]||icons.objectives):r.type==='medication'?icons.medications:r.type==='lab'||r.type==='lab-section'||r.type==='test'?icons.diagnostics:topicIcon()}</span><span class="result-text"><strong>${esc(r.label)}</strong><span>${esc(r.detail)}</span></span></button>`).join('');results.querySelectorAll('.result').forEach((el,i)=>el.addEventListener('click',()=>{const r=resultsAll[i];if(r.type==='dashboard'){closeSearch();if(r.id==='diagnostics')openDiagnostics();else if(r.id==='medications')openMedications();else openPlaceholder(r.id);}else if(r.type==='medication'){closeSearch();openMedications();setTimeout(()=>openMedication(r.id),20)}else if(r.type==='lab'){closeSearch();openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData).find(k=>findLab(r.id,k));if(g){nav.push({type:'lab',id:r.id,group:g});setPage(renderLabDetail(findLab(r.id,g)));}},20)}else if(r.type==='lab-section'){closeSearch();openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData).find(k=>findLab(r.id,k));if(g){nav.push({type:'lab',id:r.id,group:g});setPage(renderLabDetail(findLab(r.id,g)));setTimeout(()=>document.getElementById(r.id+'-'+r.section)?.scrollIntoView({behavior:'smooth',block:'start'}),30);}},20)}else if(r.type==='test'){closeSearch();openDiagnostics('tests');setTimeout(()=>{const g=Object.keys(testData).find(k=>findTest(r.id,k));if(g){nav.push({type:'test',id:r.id,group:g});setPage(renderTestDetail(findTest(r.id,g)));}},20)}else if(r.type==='topic'){closeSearch();openObjectives();setTimeout(()=>openTopic(r.si),20)}else{closeSearch();openObjectives();setTimeout(()=>{openTopic(r.si);setTimeout(()=>openObjective(r.oi),20)},20)}}))}
+ const resultsAll=[...cardsFound,...all,...resourceHits].slice(0,40);if(!resultsAll.length){results.innerHTML='<div class="no-results">No results found</div>';return}results.innerHTML=resultsAll.map((r,n)=>`<button class="result" data-search-index="${n}"><span class="result-icon">${r.type==='dashboard'?(icons[r.id]||icons.objectives):r.type==='medication'?icons.medications:r.type==='lab'||r.type==='lab-section'||r.type==='test'?icons.diagnostics:topicIcon()}</span><span class="result-text"><strong>${esc(r.label)}</strong><span>${esc(r.detail)}</span></span></button>`).join('');results.querySelectorAll('.result').forEach((el,i)=>el.addEventListener('click',()=>{const r=resultsAll[i];if(r.type==='resource-chunk'){closeSearch();openSettings();setTimeout(()=>{toastMsg('Open Resource Hopper to view this resource section.');},120);return}else if(r.type==='dashboard'){closeSearch();if(r.id==='diagnostics')openDiagnostics();else if(r.id==='medications')openMedications();else openPlaceholder(r.id);}else if(r.type==='medication'){closeSearch();openMedications();setTimeout(()=>openMedication(r.id),20)}else if(r.type==='lab'){closeSearch();openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData).find(k=>findLab(r.id,k));if(g){nav.push({type:'lab',id:r.id,group:g});setPage(renderLabDetail(findLab(r.id,g)));}},20)}else if(r.type==='lab-section'){closeSearch();openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData).find(k=>findLab(r.id,k));if(g){nav.push({type:'lab',id:r.id,group:g});setPage(renderLabDetail(findLab(r.id,g)));setTimeout(()=>document.getElementById(r.id+'-'+r.section)?.scrollIntoView({behavior:'smooth',block:'start'}),30);}},20)}else if(r.type==='test'){closeSearch();openDiagnostics('tests');setTimeout(()=>{const g=Object.keys(testData).find(k=>findTest(r.id,k));if(g){nav.push({type:'test',id:r.id,group:g});setPage(renderTestDetail(findTest(r.id,g)));}},20)}else if(r.type==='topic'){closeSearch();openObjectives();setTimeout(()=>openTopic(r.si),20)}else{closeSearch();openObjectives();setTimeout(()=>{openTopic(r.si);setTimeout(()=>openObjective(r.oi),20)},20)}}))}
 searchButton.addEventListener('click',e=>{if(!document.body.classList.contains('searching')){document.body.classList.add('searching');searchInput.focus({preventScroll:true});searchData()}});searchInput.addEventListener('input',searchData);searchCancel.addEventListener('click',e=>{e.stopPropagation();closeSearch()});dimmer.addEventListener('click',closeSearch);document.addEventListener('submit',e=>{if(e.target.id==='adminLoginForm'){handleAdminLogin(e);return}if(e.target.id==='resourceForm'){handleResourceUpload(e);return}});document.addEventListener('change',e=>{if(e.target.id==='resourceFile'){const f=e.target.files[0];const el=document.getElementById('resourceFileName');if(el)el.textContent=f?f.name:'No file selected'}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(page.classList.contains('open'))goBack();else if(document.body.classList.contains('searching'))closeSearch()}});
 // Native-feeling edge swipe back on touch devices
