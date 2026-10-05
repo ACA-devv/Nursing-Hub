@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0B0D0F">
 <title>Nurse Hub</title>
-<!-- Hopper objective-notes patch: objective pages display extracted matching sections; library OPEN remains original file. -->
 <style>
 :root{--bg:#0B0D0F;--card:#171A1D;--surface:#202428;--text:#F2F4F5;--muted:#929AA1;--cyan:#39D5E8;--border:rgba(255,255,255,.07)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -81,8 +80,6 @@ body{overflow-x:hidden}button,input{font:inherit}button{border:0}.app{width:100%
 @media(min-width:620px){.resource-toolbar{grid-template-columns:1.4fr 1fr}.resource-filters{grid-template-columns:1fr 1fr 1fr}.resource-detail-grid{grid-template-columns:1fr 1fr}}
 
 .optional-label{font-size:.75rem;color:#929AA1;font-weight:500}.hopper-processing-card{margin-top:12px;background:#202428}.processing-list{display:grid;gap:9px}.processing-item{padding:11px 12px;border:1px solid #2b3035;border-radius:12px;background:#171A1D}.processing-item strong{display:block;margin-bottom:4px}.match-pill{display:inline-block;margin:3px 4px 0 0;padding:4px 7px;border-radius:999px;background:#202428;color:#F2F4F5;font-size:.72rem}.review-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.review-check{display:flex;gap:10px;align-items:flex-start;padding:10px 0}.review-check input{margin-top:3px}.resource-excerpt{font-size:.82rem;color:#929AA1;line-height:1.5;margin-top:5px}
-
-.objective-note-source{display:flex;flex-direction:column;gap:5px}.objective-note-source small{color:var(--muted,#929AA1);line-height:1.45}.objective-notes{display:flex;flex-direction:column;gap:12px}.objective-note{padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.025)}.objective-note-kicker{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:#39D5E8;margin-bottom:8px}.objective-note-text{font-size:.92rem;line-height:1.6;color:#F2F4F5}.objective-note-text p{margin:0 0 10px}.objective-note-text p:last-child{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -446,36 +443,15 @@ return rs.filter(r=>ids.has(String(r.id)));
 const norm=x=>String(x||'').trim().toLowerCase();
 return rs.filter(r=>(!r.course||norm(r.course)==='nur 2129')&&r.topic&&norm(r.topic)===norm(section.title));
 }
-function getChunksForObjective(section,objective,resourceId){
-  const chunks=(window.nurseHubChunks||[]).filter(c=>String(c.resource_id)===String(resourceId));
-  if(!chunks.length)return [];
-  const scored=chunks.map(c=>({chunk:c,match:scoreMatch(c.content,objective,section.title)}));
-  const strong=scored.filter(x=>x.match.score>=2);
-  if(strong.length)return strong.sort((a,b)=>b.match.score-a.match.score).slice(0,12).map(x=>x.chunk);
-  const fallback=scored.sort((a,b)=>b.match.score-a.match.score).slice(0,3).filter(x=>x.match.score>0).map(x=>x.chunk);
-  return fallback;
-}
 async function renderObjectiveResources(section,objective){
-  const rs=await getResourcesForObjective(section,objective);
-  if(!rs.length)return '';
-  const cards=rs.map(r=>{
-    const count=getChunksForObjective(section,objective,r.id).length;
-    return `<div class="objective-resource-card"><span><strong>${esc(r.title)}</strong><small>${count?`${count} related note section${count===1?'':'s'}`:'No specific extracted section matched'} · ${esc(r.content_type||'Resource')}</small></span>${count?`<button class="admin-secondary resource-mini" data-resource-notes="${r.id}" data-objective-topic="${esc(section.title)}" data-objective-number="${esc(objective.number)}">VIEW NOTES</button>`:`<button class="admin-secondary resource-mini" data-resource-open="${r.id}">OPEN SOURCE</button>`}</div>`;
-  }).join('');
-  return `<div class="meta-box objective-resource-box"><span class="meta-label">Study Resources</span>${cards}</div>`;
+const rs=await getResourcesForObjective(section,objective);
+if(!rs.length)return '';
+return `<div class="meta-box objective-resource-box"><span class="meta-label">Study Resources</span>${rs.map(r=>`<div class="objective-resource-card"><span><strong>${esc(r.title)}</strong><small>${esc(r.file_name)} · ${esc(r.content_type||'Resource')}</small></span><button class="admin-secondary resource-mini" data-resource-open="${r.id}">OPEN</button></div>`).join('')}</div>`;
 }
-async function showObjectiveResourceNotes(section,objective,resourceId){
-  const r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(resourceId));
-  if(!r){
-    const {data}=await supabaseClient.from('resources').select('id,title,file_name,content_type,course,topic').eq('id',resourceId).maybeSingle();
-    if(!data)return;
-    window.nurseHubResources=[...(window.nurseHubResources||[]),data];
-  }
-  const resource=(window.nurseHubResources||[]).find(x=>String(x.id)===String(resourceId));
-  const chunks=getChunksForObjective(section,objective,resourceId);
-  nav.push({type:'resource-notes',resourceId:Number(resourceId),section:section.title,objective:objective.number});
-  const noteBody=chunks.length?chunks.map((c,i)=>`<article class="objective-note"><div class="objective-note-kicker">${esc(c.heading||`Related section ${i+1}`)}</div><div class="objective-note-text">${esc(c.content).replace(/\n\n/g,'</p><p>').replace(/^/,'<p>').replace(/$/,'</p>')}</div></article>`).join(''):'<div class="admin-message">No specific extracted section was strong enough to display for this objective. The original source remains available in Resource Library.</div>';
-  setPage(`<div class="page-header"><div class="page-kicker">${esc(section.title)} · Objective ${esc(objective.number)}</div><h2 class="page-title">Objective-Specific Notes</h2><p class="page-subtitle">${esc(resource.title)} · ${esc(resource.file_name)}</p></div><div class="settings-panel"><div class="settings-card"><div class="objective-note-source"><span class="meta-label">Source</span><strong>${esc(resource.title)}</strong><small>Only extracted sections matched to this objective are shown here.</small></div></div><div class="settings-card"><h3>Related Notes</h3><div class="objective-notes">${noteBody}</div></div></div>`);
+async function openObjectiveWithResources(j){
+const t=nav.find(x=>x.type==='topic');const s=objectiveData[t.i];nav.push({type:'objective',j});
+const o=s.objectives[j];setPage(renderObjective(o,s));
+const box=document.querySelector('.objective-resource-slot');if(box)box.innerHTML=await renderObjectiveResources(s,o);
 }
 async function loadResourceChunks(){
   const {data,error}=await supabaseClient.from('resource_chunks').select('resource_id,chunk_index,heading,content');
@@ -624,21 +600,11 @@ async function publishReviewLinks(resourceId){
 }
 
 function openPlaceholder(id,source){closeSearch();if(id==='settings'){setTimeout(openSettings,80);return}if(id==='calendar'){if(source)source.classList.add('active');setTimeout(()=>openCalendar(),120);return}if(source)source.classList.add('active');setTimeout(()=>{setPage(`<div class="detail-content"><div class="detail-icon">${icons[id]||icons.objectives}</div><h2 class="detail-title">${esc(sections[id].title)}</h2><p class="coming-soon">Coming Soon</p></div>`)},120)}
-function goBack(){if(nav.length>1){nav.pop();const last=nav[nav.length-1];if(last.type==='medications')setPage(renderMedicationList());else if(last.type==='root')setPage(renderTopics());else if(last.type==='topic')setPage(renderTopic(objectiveData[last.i],last.i));else if(last.type==='objective'){const t=nav.find(x=>x.type==='topic');setPage(renderObjective(objectiveData[t.i].objectives[last.j],objectiveData[t.i]))}else if(last.type==='diagnostics')setPage(diagnosticHome(last.tab));else if(last.type==='settings')setPage(renderSettings());else if(last.type==='admin-login')setPage(renderAdminLogin());else if(last.type==='resource-hopper')setPage(renderResourceHopper());else if(last.type==='resource-detail')showResourceDetail(last.id);else if(last.type==='resource-linker')renderResourceLinker(last.id);else if(last.type==='resource-notes'){
-  const t=nav.find(x=>x.type==='topic'), s=t?objectiveData[t.i]:objectiveData.find(x=>x.title===last.section);
-  if(s){const o=s.objectives.find(x=>String(x.number)===String(last.objective));if(o){setPage(renderObjective(o,s));renderObjectiveResources(s,o).then(v=>{const box=document.querySelector('.objective-resource-slot');if(box)box.innerHTML=v;});}}
-}else closePage()}}
+function goBack(){if(nav.length>1){nav.pop();const last=nav[nav.length-1];if(last.type==='medications')setPage(renderMedicationList());else if(last.type==='root')setPage(renderTopics());else if(last.type==='topic')setPage(renderTopic(objectiveData[last.i],last.i));else if(last.type==='objective'){const t=nav.find(x=>x.type==='topic');setPage(renderObjective(objectiveData[t.i].objectives[last.j],objectiveData[t.i]))}else if(last.type==='diagnostics')setPage(diagnosticHome(last.tab));else if(last.type==='settings')setPage(renderSettings());else if(last.type==='admin-login')setPage(renderAdminLogin());else if(last.type==='resource-hopper')setPage(renderResourceHopper());else if(last.type==='resource-detail')showResourceDetail(last.id);else if(last.type==='resource-linker')renderResourceLinker(last.id);}else closePage()}
 function toastMsg(msg){clearTimeout(toastTimer);toast.textContent=msg;toast.classList.add('show');toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
-document.addEventListener('click',e=>{if(e.target.closest('#settingsButton')){openSettings();return}if(e.target.closest('[data-admin-resource]')){openAdminArea();return}if(e.target.closest('[data-admin-signout]')){handleAdminSignout();return}if(e.target.closest('[data-settings-back]')){openSettings();return}const card=e.target.closest('.card');if(card){if(card.dataset.id==='objectives')openObjectives();else if(card.dataset.id==='calendar')openCalendar();else if(card.dataset.id==='diagnostics')openDiagnostics();else if(card.dataset.id==='medications')openMedications();else openPlaceholder(card.dataset.id,card);return}const resourceNotes=e.target.closest('[data-resource-notes]');if(resourceNotes){
-  const topic=resourceNotes.dataset.objectiveTopic,number=resourceNotes.dataset.objectiveNumber;
-  const section=objectiveData.find(s=>s.title===topic);
-  const objective=section?.objectives.find(o=>String(o.number)===String(number));
-  if(section&&objective){showObjectiveResourceNotes(section,objective,Number(resourceNotes.dataset.resourceNotes));}
-  return;
-}
-const resourceOpen=e.target.closest('[data-resource-open]');if(resourceOpen){openResourceFile(resourceOpen.dataset.resourceOpen);return}const resourceDetail=e.target.closest('[data-resource-detail]');if(resourceDetail){showResourceDetail(resourceDetail.dataset.resourceDetail);return}const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const pub=e.target.closest('[data-review-publish]');if(pub){publishReviewLinks(pub.dataset.reviewPublish);return}const skip=e.target.closest('[data-review-skip]');if(skip){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjectiveWithResources(Number(obj.dataset.objective));return}const act=e.target.closest('[data-action]');if(act){const names={study:'Study mode',quiz:'Objective-specific Quiz Me',nora:'Ask NORA'};toastMsg(names[act.dataset.action]+' is coming next.');return}});
+document.addEventListener('click',e=>{if(e.target.closest('#settingsButton')){openSettings();return}if(e.target.closest('[data-admin-resource]')){openAdminArea();return}if(e.target.closest('[data-admin-signout]')){handleAdminSignout();return}if(e.target.closest('[data-settings-back]')){openSettings();return}const card=e.target.closest('.card');if(card){if(card.dataset.id==='objectives')openObjectives();else if(card.dataset.id==='calendar')openCalendar();else if(card.dataset.id==='diagnostics')openDiagnostics();else if(card.dataset.id==='medications')openMedications();else openPlaceholder(card.dataset.id,card);return}const resourceOpen=e.target.closest('[data-resource-open]');if(resourceOpen){openResourceFile(resourceOpen.dataset.resourceOpen);return}const resourceDetail=e.target.closest('[data-resource-detail]');if(resourceDetail){showResourceDetail(resourceDetail.dataset.resourceDetail);return}const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const pub=e.target.closest('[data-review-publish]');if(pub){publishReviewLinks(pub.dataset.reviewPublish);return}const skip=e.target.closest('[data-review-skip]');if(skip){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjectiveWithResources(Number(obj.dataset.objective));return}const act=e.target.closest('[data-action]');if(act){const names={study:'Study mode',quiz:'Objective-specific Quiz Me',nora:'Ask NORA'};toastMsg(names[act.dataset.action]+' is coming next.');return}});
 back.addEventListener('click',goBack);
 document.addEventListener('input',e=>{if(e.target.id==='resourceSearch')renderResourceLibrary();});
 document.addEventListener('change',e=>{if(['resourceCourseFilter','resourceTopicFilter','resourceTypeFilter'].includes(e.target.id))renderResourceLibrary();});
