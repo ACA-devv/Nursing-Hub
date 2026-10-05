@@ -79,13 +79,68 @@ async function init(){
 let nav=[],toastTimer;
 const icons={calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2.5"></rect><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17M8 13h2M14 13h2M8 17h2M14 17h2"></path></svg>',objectives:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3.5" width="16" height="17" rx="2.5"></rect><path d="M8 8h8M8 12h8M8 16h4M5.8 8.1l.9.9 1.5-1.7"></path></svg>',diagnostics:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3.5v6.2L4.5 18a2 2 0 0 0 1.8 2.8h11.4a2 2 0 0 0 1.8-2.8L15 9.7V3.5M8 3.5h8M7 15h10"></path></svg>',medications:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="17" height="10" rx="5"></rect><path d="M12 7v10"></path></svg>',quiz:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.2 4.2A7.5 7.5 0 0 1 19.5 10c1.3 5.1-2.9 9.8-8.1 9.8-4.6 0-8.4-3.7-8.4-8.4 0-3.2 1.8-6 4.5-7.5"></path><path d="M8.8 9a3.1 3.1 0 0 1 3.1-2.4c1.7 0 3 .9 3 2.4 0 1.8-1.5 2.3-2.5 3.1-.7.5-1 1-.9 1.8M11.6 17h.01"></path></svg>',materials:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4.5 5.5A2.5 2.5 0 0 1 7 3h11.5v17H7a2.5 2.5 0 0 0-2.5 2.5zM4.5 5.5v15M8 7h7M8 10.5h7M8 14h5"></path></svg>'};
 
-const calendarEvents=[["2026-08-17","8:30 AM\u201312:30 PM","Orientation","class"],["2026-08-17","","Class 1: Antepartum Assessment","class"],["2026-08-18","8:30\u201311:30 AM","Maternal Child Calculation #1","class"],["2026-08-19","8:30 AM\u20133:00 PM","Calculation Class #2 & Lab","lab"],["2026-08-20","8:30\u201311:30 AM","Class 2: Newborn Assessment","class"],["2026-08-21","8:30\u201311:30 AM","Calculation Test #1 / Class 3: Peds Assessment","test"],["2026-08-24","8:30\u201311:30 AM","Daily Test #1 / Class 4: Postpartum Assessment","test"],["2026-08-25","8:30 AM\u20133:00 PM","Global Skills Practice","lab"],["2026-08-26","8:30 AM\u20133:00 PM","Assessment Lab","lab"],["2026-08-27","8:30 AM\u201312:00 PM","Global Skills Checkoff","lab"],["2026-08-28","8:30 AM\u201312:00 PM","Assessment Lab","lab"],["2026-08-31","8:30\u201311:30 AM","Unit Test #1 / Class 5: NB Nutrition","test"],["2026-09-02","8:30 AM\u20133:00 PM","Class 6: Fetal Surveillance / Clinical Posters","class"],["2026-09-03","9:00 AM\u20133:30 PM","Clinical Orientation","clinical"],["2026-09-04","8:30\u201311:30 AM","Class 7: Intrapartum #1 / Math Test #2","test"],["2026-09-11","8:30\u201311:30 AM","Daily Test #2 / Class 8: Intrapartum #2 / Global Skill Check #2","test"],["2026-09-11","11:59 PM","ATI Nutrition Practice A & B remediation due","deadline"],["2026-09-14","8:30 AM\u201312:00 PM","Unit Test #2 / ATI Nutrition Proctored / Health Fair Presentation to Faculty","test"],["2026-09-14","11:59 PM","ATI Nutrition Proctored remediation due 9/21","deadline"],["2026-09-18","8:30\u201311:30 AM","Class 9: High Risk OB","class"],["2026-09-21","8:30\u201311:30 AM","Class 10: High Risk NB #2","class"],["2026-09-22","8:00 AM\u201312:00 PM","Health Fair Presentation","class"],["2026-09-23","8:30\u201311:30 AM","Daily Test #3 / Class 11: High Risk NB #1 / Math Test #3","test"],["2026-09-25","11:59 PM","Midterm Clinical Self-evaluations due","deadline"],["2026-09-28","8:30\u201311:30 AM","Unit Test #3 / Midterm Review","test"],["2026-10-02","8:30 AM","Midterm Exam / Midterm Clinical Evaluations","test"],["2026-10-03","11:59 PM","Clinical post-paperwork due","deadline"],["2026-10-05","8:30 AM\u20133:00 PM","SIM","lab"],["2026-10-07","8:30\u201311:30 AM","Class 12: STI/Contraception / Class 13: PTL & Pre-eclampsia / Global Skills Check #3","class"],["2026-10-12","8:30\u201311:30 AM","Class 14: OB Emergencies / Math Test #4","test"],["2026-10-16","8:30\u201311:30 AM","Daily Test #4 / Class 15: Women\u2019s Health","test"],["2026-10-19","8:30\u201311:30 AM","Unit Test #4 / ATI Maternal NB Proctored / Global Skills Check #4","test"],["2026-10-19","11:59 PM","ATI Maternal NB remediation due 10/26","deadline"],["2026-10-23","8:30\u201311:30 AM","Class 16: Peds Growth and Development","class"],["2026-10-30","8:30\u201311:30 AM","Class 17: Peds Integ / Class 18: Peds Respiratory","class"],["2026-11-02","8:30\u201311:30 AM","Daily Test #5 / Class 19: Peds GI","test"],["2026-11-06","8:30\u201311:30 AM","Unit Test #5 / Class 20: Peds Cardiac #1","test"],["2026-11-09","8:30\u201311:30 AM","Class 21: Peds Cardiac #2","class"],["2026-11-13","8:30\u201311:30 AM","Class 22: Peds Musculoskeletal/Cancer / ATI Pediatric Nursing Practice A & B due","class"],["2026-11-16","8:30\u201311:30 AM","Daily Test #6 / Class 23: Peds Neuro / ATI Pediatric Nursing Proctored","test"],["2026-11-20","8:30\u201311:30 AM","Unit Test #6 / Final Exam Review","test"],["2026-11-20","11:59 PM","Final Clinical Self-evaluation due","deadline"],["2026-11-23","All day","Thanksgiving Break (11/23\u201311/27)","break"],["2026-11-30","8:30 AM","Make-up Test Day","test"],["2026-12-01","All day","Clinical Make-up Day","clinical"],["2026-12-07","8:30 AM","Final Exam / Final Clinical Evaluations","test"]];
+const calendarEvents=[
+["2026-08-17","8:30 AM–12:30 PM","Orientation / Class 1: Antepartum Assessment","class"],
+["2026-08-18","8:30–11:30 AM","Maternal Child Calculation #1","class"],
+["2026-08-19","8:30 AM–3:00 PM","Calculation Class #2 & Lab","lab"],
+["2026-08-20","8:30–11:30 AM","Class 2: Newborn Assessment","class"],
+["2026-08-21","8:30–11:30 AM","Calculation Test #1 / Class 3: Peds Assessment","test"],
+["2026-08-24","8:30–11:30 AM","Daily Test #1 / Class 4: Postpartum Assessment","test"],
+["2026-08-25","8:30 AM–3:00 PM","Global Skills Practice","lab"],
+["2026-08-26","8:30 AM–3:00 PM","Assessment Lab","lab"],
+["2026-08-27","8:30 AM–12:00 PM","Global Skills Checkoff","lab"],
+["2026-08-28","8:30 AM–12:00 PM","Assessment Lab","lab"],
+["2026-08-31","8:30–11:30 AM","Unit Test #1 / Class 5: NB Nutrition","test"],
+["2026-09-02","8:30 AM–3:00 PM","Class 6: Fetal Surveillance / Clinical Posters","class"],
+["2026-09-03","9:00 AM–3:30 PM","Clinical Orientation","clinical"],
+["2026-09-04","8:30–11:30 AM","Class 7: Intrapartum #1 / Math Test #2","test"],
+["2026-09-11","8:30–11:30 AM","Daily Test #2 / Class 8: Intrapartum #2 / Global Skill Check #2","test"],
+["2026-09-11","11:59 PM","ATI Nutrition Practice A & B remediation due","deadline"],
+["2026-09-14","8:30 AM–12:00 PM","Unit Test #2 / ATI Nutrition Proctored / Health Fair Presentation to Faculty","test"],
+["2026-09-14","11:59 PM","ATI Nutrition Proctored remediation due 9/21","deadline"],
+["2026-09-21","11:59 PM","ATI Nutrition Proctored remediation due","deadline"],
+["2026-09-18","8:30–11:30 AM","Class 9: High Risk OB","class"],
+["2026-09-21","8:30–11:30 AM","Class 10: High Risk NB #2","class"],
+["2026-09-22","8:00 AM–12:00 PM","Health Fair Presentation","class"],
+["2026-09-23","8:30–11:30 AM","Daily Test #3 / Class 11: High Risk NB #1 / Math Test #3","test"],
+["2026-09-25","11:59 PM","Midterm Clinical Self-evaluations due","deadline"],
+["2026-09-28","8:30–11:30 AM","Unit Test #3 / Midterm Review","test"],
+["2026-10-02","8:30 AM","Midterm Exam / Midterm Clinical Evaluations","test"],
+["2026-10-03","11:59 PM","Clinical post-paperwork due","deadline"],
+["2026-10-05","8:30 AM–3:00 PM","SIM","lab"],
+["2026-10-07","8:30–11:30 AM","Class 12: STI/Contraception","class"],
+["2026-10-07","8:30–11:30 AM","Class 13: PTL & Pre-eclampsia","class"],
+["2026-10-07","","Global Skills Check #3","lab"],
+["2026-10-08","All day","Fall Break","break"],
+["2026-10-09","All day","Fall Break","break"],
+["2026-10-12","8:30–11:30 AM","Class 14: OB Emergencies / Math Test #4","test"],
+["2026-10-16","8:30–11:30 AM","Daily Test #4 / Class 15: Women’s Health","test"],
+["2026-10-16","11:59 PM","ATI Maternal NB Practice A & B with remediation due 2359","deadline"],
+["2026-10-19","8:30–11:30 AM","Unit Test #4 / ATI Maternal NB Proctored / Global Skills Check #4","test"],
+["2026-10-19","11:59 PM","ATI Maternal NB remediation due 10/26","deadline"],
+["2026-10-26","11:59 PM","ATI Maternal NB Proctored remediation due","deadline"],
+["2026-10-23","8:30–11:30 AM","Class 16: Peds Growth and Development","class"],
+["2026-10-30","8:30–11:30 AM","Class 17: Peds Integ / Class 18: Peds Respiratory","class"],
+["2026-11-02","8:30–11:30 AM","Daily Test #5 / Class 19: Peds GI","test"],
+["2026-11-06","8:30–11:30 AM","Unit Test #5 / Class 20: Peds Cardiac #1","test"],
+["2026-11-09","8:30–11:30 AM","Class 21: Peds Cardiac #2","class"],
+["2026-11-13","8:30–11:30 AM","Class 22: Peds Musculoskeletal/Cancer","class"],
+["2026-11-13","11:59 PM","ATI Pediatric Nursing Practice A & B due 2359","deadline"],
+["2026-11-16","8:30–11:30 AM","Daily Test #6 / Class 23: Peds Neuro / ATI Pediatric Nursing Proctored","test"],
+["2026-11-23","11:59 PM","ATI Pediatric Nursing Proctored remediation due","deadline"],
+["2026-11-20","8:30–11:30 AM","Unit Test #6 / Final Exam Review","test"],
+["2026-11-20","11:59 PM","Final Clinical Self-evaluation due 2359","deadline"],
+["2026-11-23","All day","Thanksgiving Break (11/23–11/27)","break"],
+["2026-11-30","8:30 AM","Make-up Test Day","test"],
+["2026-12-01","All day","Clinical Make-up Day","clinical"],
+["2026-12-07","8:30 AM","Final Exam / Final Clinical Evaluations","test"]
+];
 const clinicalEvents=[["2026-09-09","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-09-16","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-09-30","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-10-14","Peds","Laurel Pediatrics","8:00 AM\u20135:00 PM","Patient paper due Sunday after"],["2026-10-15","SN3","North Jones Elementary","7:15 AM\u20133:00 PM","Written assignment due Sunday after"],["2026-10-20","L&D","SCRMC Labor and Delivery","7:00 AM\u20137:00 PM","Preclinical due Sunday before"],["2026-10-21","NUR","Nursery Rotation","7:00 AM\u20137:00 PM","Preclinical due Sunday before"],["2026-10-29","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-11-05","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-11-12","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-11-19","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"]];
 function fmtDate(ds){const d=new Date(ds+'T12:00:00');return {month:d.toLocaleDateString('en-US',{month:'short'}),day:d.getDate(),full:d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}),dow:d.toLocaleDateString('en-US',{weekday:'short'})}}
 function renderCalendar(filter='all'){
  let filtered=filter==='clinical'?[]:calendarEvents.filter(e=>filter==='all'||e[3]===filter);
  if(filter==='all'){
-  const dates=calendarEvents.map(e=>e[0]).sort();
+  const dates=calendarEvents.map(e=>e[0]).concat(['2026-12-11']).sort();
   if(dates.length){
    const start=new Date(dates[0]+'T12:00:00'), end=new Date(dates[dates.length-1]+'T12:00:00');
    const existing=new Set(filtered.map(e=>e[0]));
