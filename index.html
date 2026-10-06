@@ -774,6 +774,7 @@ async function openNora(prefill=''){
   if(status)status.textContent=`Connected to Nurse Hub · ${k.resources.length} published resources · ${k.chunks.length} indexed sections`;
   if(prefill)runNora(prefill);
 }
+window.openNora=openNora;
 function runNora(q){
   const status=document.getElementById('noraStatus');
   const answer=document.getElementById('noraAnswer');
@@ -821,10 +822,29 @@ function runNora(q){
   });
 }
 
-function goBack(){if(nav.length>1){nav.pop();const last=nav[nav.length-1];if(last.type==='medications')setPage(renderMedicationList());else if(last.type==='root')setPage(renderTopics());else if(last.type==='topic')setPage(renderTopic(objectiveData[last.i],last.i));else if(last.type==='objective'){const t=nav.find(x=>x.type==='topic');setPage(renderObjective(objectiveData[t.i].objectives[last.j],objectiveData[t.i]))}else if(last.type==='diagnostics')setPage(diagnosticHome(last.tab));else if(last.type==='settings')setPage(renderSettings());else if(last.type==='admin-login')setPage(renderAdminLogin());else if(last.type==='resource-hopper')setPage(renderResourceHopper());else if(last.type==='resource-detail')showResourceDetail(last.id);else if(last.type==='resource-linker')renderResourceLinker(last.id);else if(last.type==='nora')setPage(renderNora());else if(last.type==='resource-notes'){
-  const t=nav.find(x=>x.type==='topic'), s=t?objectiveData[t.i]:objectiveData.find(x=>x.title===last.section);
-  if(s){const o=s.objectives.find(x=>String(x.number)===String(last.objective));if(o){setPage(renderObjective(o,s));renderObjectiveResources(s,o).then(v=>{const box=document.querySelector('.objective-resource-slot');if(box)box.innerHTML=v;});}}
-}else closePage()}}
+function goBack(){
+  if(nav.length>1){
+    nav.pop();
+    const last=nav[nav.length-1];
+    if(last.type==='medications')setPage(renderMedicationList());
+    else if(last.type==='root')setPage(renderTopics());
+    else if(last.type==='topic')setPage(renderTopic(objectiveData[last.i],last.i));
+    else if(last.type==='objective'){const t=nav.find(x=>x.type==='topic');setPage(renderObjective(objectiveData[t.i].objectives[last.j],objectiveData[t.i]));}
+    else if(last.type==='diagnostics')setPage(diagnosticHome(last.tab));
+    else if(last.type==='settings')setPage(renderSettings());
+    else if(last.type==='admin-login')setPage(renderAdminLogin());
+    else if(last.type==='resource-hopper')setPage(renderResourceHopper());
+    else if(last.type==='resource-detail')showResourceDetail(last.id);
+    else if(last.type==='resource-linker')renderResourceLinker(last.id);
+    else if(last.type==='nora')setPage(renderNora());
+    else if(last.type==='resource-notes'){
+      const t=nav.find(x=>x.type==='topic'), s=t?objectiveData[t.i]:objectiveData.find(x=>x.title===last.section);
+      if(s){const o=s.objectives.find(x=>String(x.number)===String(last.objective));if(o){setPage(renderObjective(o,s));renderObjectiveResources(s,o).then(v=>{const box=document.querySelector('.objective-resource-slot');if(box)box.innerHTML=v;});}}
+    }
+  }else{
+    closePage();
+  }
+}
 function toastMsg(msg){clearTimeout(toastTimer);toast.textContent=msg;toast.classList.add('show');toastTimer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
@@ -858,9 +878,9 @@ let swipeStartX=0,swipeStartY=0,swipeTracking=false;page.addEventListener('touch
 // NORA listeners are additive and run in capture phase so they do not alter existing Nurse Hub handlers.
 document.addEventListener('click',e=>{
   const launcher=e.target.closest('#noraLauncher');
-  if(launcher){e.preventDefault();e.stopPropagation();openNora();return;}
+  if(launcher){e.preventDefault();e.stopPropagation();window.openNora?.();return;}
   const action=e.target.closest('[data-action="nora"]');
-  if(action){e.preventDefault();e.stopPropagation();openNora();return;}
+  if(action){e.preventDefault();e.stopPropagation();window.openNora?.();return;}
 },true);
 document.addEventListener('submit',e=>{
   if(e.target.id==='noraForm'){
