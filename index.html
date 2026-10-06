@@ -345,12 +345,12 @@ function renderTopic(s,i){return `<div class="page-header"><div class="page-kick
 function openObjective(j){const t=nav.find(x=>x.type==='topic');const s=objectiveData[t.i];nav.push({type:'objective',j});setPage(renderObjective(s.objectives[j],s))}
 function renderObjective(o,s){return `<div class="page-header"><div class="page-kicker">${esc(s.title)} · Objective ${o.number}</div><h2 class="page-title">Objective ${o.number}</h2></div><div class="meta-box"><p class="objective-text">${esc(o.text)}</p>${o.subitems.length?`<ul class="objective-subitems">${o.subitems.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div><div class="objective-meta">${o.courseObjectives?`<div class="meta-box"><span class="meta-label">Course Objective Mapping</span><div class="meta-value">Course objective ${esc(o.courseObjectives)}</div></div>`:''}${s.references.length?`<div class="meta-box"><span class="meta-label">Textbooks / References</span><ul class="reference-list">${s.references.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}</div><div class="objective-resource-slot"><div class="admin-message">Loading study resources…</div></div><div class="action-row"><button class="action-button" data-action="study">STUDY</button><button class="action-button" data-action="quiz">QUIZ ME</button><button class="action-button" data-action="nora">ASK NORA</button></div><p class="source-note">Study resources are linked through the Resource Hopper. AI-powered Study, Quiz Me, and NORA remain disabled until the content-processing phase.</p>`}
 
-function getLocalTheme(){return localStorage.getItem('nurseHubTheme')||'dark-default';}
+function getLocalTheme(){try{return localStorage.getItem('nurseHubTheme')||'dark-default';}catch(e){return 'dark-default';}}
 function applyLocalTheme(theme){
   const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue'];
   const next=allowed.includes(theme)?theme:'dark-default';
   document.documentElement.dataset.theme=next;
-  localStorage.setItem('nurseHubTheme',next);
+  try{localStorage.setItem('nurseHubTheme',next);}catch(e){}
   const meta=document.querySelector('meta[name="theme-color"]');
   if(meta)meta.setAttribute('content',next.startsWith('light-')?'#F4F5F6':'#0B0D0F');
 }
@@ -1011,7 +1011,7 @@ document.addEventListener('submit',e=>{
   }
 },true);
 
-applyLocalTheme(getLocalTheme());
-init();
+try{applyLocalTheme(getLocalTheme());}catch(e){document.documentElement.dataset.theme='dark-default';}
+init().catch(err=>{console.error('Nurse Hub initialization failed:',err);});
 </script>
 </body></html>
