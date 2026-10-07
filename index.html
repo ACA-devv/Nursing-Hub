@@ -677,11 +677,12 @@ async function replaceResourceFile(id){
 
   if(msg){msg.className='admin-message';msg.textContent='Reading and validating the replacement…';}
 
-  let text='',analysis;
+  let text='',analysis,rows;
   try{
     text=await extractResourceText(file);
     if(!text.trim())throw new Error('No readable text was found in the replacement file.');
     analysis=analyzeResource(text);
+    rows=resourceChunkRows(id,analysis);
   }catch(err){
     if(msg){msg.className='admin-message error';msg.textContent=err.message||'Could not read this file.';}
     return;
@@ -714,12 +715,6 @@ async function replaceResourceFile(id){
     const {error:deleteChunksError}=await supabaseClient.from('resource_chunks').delete().eq('resource_id',id);
     if(deleteChunksError)throw deleteChunksError;
 
-    const rows=analysis.chunks.map((content,i)=>({
-      resource_id:id,
-      chunk_index:i,
-      heading:(content.split('\n')[0]||'').slice(0,160),
-      content
-    }));
     if(rows.length){
       const {error:chunkError}=await supabaseClient.from('resource_chunks').insert(rows);
       if(chunkError)throw chunkError;
@@ -733,11 +728,11 @@ async function replaceResourceFile(id){
     const rebuilt=[];
     for(const suggestion of (analysis.suggestions||[])){
       if(!oldKeys.has(String(suggestion.key)))continue;
-      if(!Number.isInteger(suggestion.chunk))continue;
+      const indices=(suggestion.chunks||[suggestion.chunk]).filter(Number.isInteger);
       const old=oldLinks.find(x=>String(x.objective_key)===String(suggestion.key));
-      rebuilt.push({
+      for(const chunkIndex of indices)rebuilt.push({
         resource_id:id,
-        chunk_index:suggestion.chunk,
+        chunk_index:chunkIndex,
         objective_key:suggestion.key,
         course:old?.course||'NUR 2129',
         topic:old?.topic||suggestion.topic,
@@ -1031,10 +1026,18 @@ function analyzeResource(text){
   const topicScores=objectiveData.map((t,si)=>{const sc=scoreMatch(text,{text:'',subitems:[],courseObjectives:''},t.title);return {si,title:t.title,score:sc.titleHits};}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,8);
   return {chunks,suggestions:suggestions.slice(0,40),topics:topicScores};
 }
+function resourceChunkRows(resourceId,analysis){
+  return analysis.chunks.map((chunk,i)=>{
+    const content=typeof chunk==='string'?chunk:chunk?.content;
+    if(typeof content!=='string'||!content.trim())throw new Error('Extracted section '+(i+1)+' has no readable text.');
+    const heading=typeof chunk==='object'&&typeof chunk.heading==='string'?chunk.heading:(content.split('\n')[0]||'');
+    return {resource_id:resourceId,chunk_index:i,heading:heading.slice(0,160),content};
+  });
+}
 async function saveResourceProcessing(resourceId,text,analysis){
+  const rows=resourceChunkRows(resourceId,analysis);
   const {error:ce}=await supabaseClient.from('resource_content').insert({resource_id:resourceId,extracted_text:text,processing_status:'ready',processed_at:new Date().toISOString()});
   if(ce)throw ce;
-  const rows=analysis.chunks.map((chunk,i)=>({resource_id:resourceId,chunk_index:i,heading:String(chunk.heading||chunk.content||'').slice(0,160),content:String(chunk.content||chunk)}));
   if(rows.length){const {error}=await supabaseClient.from('resource_chunks').insert(rows);if(error)throw error;}
 }
 async function setResourceStatus(id,status,description){await supabaseClient.from('resources').update({status,description}).eq('id',id);}
