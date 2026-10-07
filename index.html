@@ -158,6 +158,58 @@ body{overflow-x:hidden}body.page-open{overflow:hidden}button,input{font:inherit}
 .replace-panel{display:grid;gap:12px}
 .replace-current{font-size:13px;color:var(--muted,#929AA1)}
 
+
+.objective-topic-group{padding:0;overflow:hidden}
+.objective-topic-toggle{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;cursor:pointer;list-style:none}
+.objective-topic-toggle::-webkit-details-marker{display:none}
+.objective-topic-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:15px}
+.objective-topic-title{display:block;margin:0;color:var(--text);font-size:14px;line-height:1.4}
+.objective-topic-hint{display:block;margin-top:5px;font-size:12px;color:var(--muted)}
+.objective-topic-chevron{color:var(--accent);font-size:22px;transition:transform .2s}
+.objective-topic-group[open] .objective-topic-chevron{transform:rotate(180deg)}
+.topic-hint-open{display:none}
+.objective-topic-group[open] .topic-hint-open{display:inline}
+.objective-topic-group[open] .topic-hint-closed{display:none}
+.objective-topic-sections{padding:0 12px 12px}
+.objective-note-list{margin:0;padding-left:20px;list-style:disc}
+.objective-note-list li{padding-left:4px}
+.objective-note-list li+li{margin-top:9px}
+.objective-note-list li::marker{color:var(--accent)}
+
+:root{--intro-bg:#000;--bg:#000}
+[data-theme^="light-"]{--intro-bg:#fff;--bg:#fff}
+.welcome-intro{position:fixed;inset:0;z-index:2000;background:var(--intro-bg);display:grid;place-items:center;cursor:pointer;transition:opacity .45s ease;touch-action:manipulation}
+.laser-stage{width:min(84vw,460px);color:var(--accent)}
+.laser-stage svg{display:block;width:100%;overflow:visible}
+.laser-letter{fill:transparent;stroke:currentColor;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:laser-draw .55s ease-out var(--letter-delay) forwards,laser-fill .35s ease calc(var(--letter-delay) + .4s) forwards;filter:drop-shadow(0 0 3px currentColor)}
+.laser-frame{fill:none;stroke:currentColor;stroke-width:1.7;stroke-dasharray:1;stroke-dashoffset:1;animation:laser-draw .45s ease 1.55s forwards,led-glow .55s ease 2s forwards}
+.laser-stage{animation:laser-exit .35s ease 2.7s forwards}
+.intro-skip{position:absolute;bottom:max(32px,env(safe-area-inset-bottom));font-size:11px;color:var(--muted);letter-spacing:.05em}
+@keyframes laser-draw{to{stroke-dashoffset:0}}
+@keyframes laser-fill{to{fill:currentColor;stroke-width:.4}}
+@keyframes led-glow{to{filter:drop-shadow(0 0 4px currentColor) drop-shadow(0 0 10px currentColor)}}
+@keyframes laser-exit{to{opacity:0;filter:blur(3px)}}
+body.intro-running .app{opacity:0;pointer-events:none}
+.app{transition:opacity .5s ease}
+.dashboard-date{color:var(--muted);font-size:11px;margin:8px 0 0;letter-spacing:.05em}
+.continue-study{display:flex;align-items:center;gap:14px;width:100%;padding:17px;margin:0 0 20px;border-radius:17px;border:1px solid rgba(var(--accent-rgb),.25);background:linear-gradient(120deg,rgba(var(--accent-rgb),.09),var(--card));color:var(--text);text-align:left;cursor:pointer}
+.continue-study strong,.continue-study small{display:block}
+.continue-study small{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.4}
+.continue-study .continue-icon{font-size:23px;color:var(--accent)}
+@media(hover:hover){.card:hover{transform:translateY(-4px);border-color:rgba(var(--accent-rgb),.4);box-shadow:0 16px 35px rgba(0,0,0,.2)}.list-card:hover,.continue-study:hover,.objective-topic-toggle:hover{border-color:var(--accent);background-color:rgba(var(--accent-rgb),.05)}}
+.card:focus-visible,.continue-study:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.card:active{transform:scale(.97);border-color:var(--accent)}
+.page-content-enter .page-header{animation:content-in .28s ease both}
+.page-content-enter>.settings-panel,.page-content-enter>.list,.page-content-enter>.meta-box,.page-content-enter>.objective-meta{animation:content-in .35s ease .06s both}
+@keyframes content-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.objective-topic-group[open]{border-color:rgba(var(--accent-rgb),.4)}
+.resource-skeleton{height:70px;margin-top:12px;border-radius:13px;background:linear-gradient(100deg,var(--card) 25%,var(--surface) 45%,var(--card) 65%);background-size:220% 100%;animation:skeleton-wave 1.4s ease infinite}
+@keyframes skeleton-wave{to{background-position:-220% 0}}
+.toast::before{content:'✓';display:inline-block;color:var(--accent);margin-right:8px}
+.nora-avatar{animation:avatar-in .4s ease both}
+@keyframes avatar-in{from{box-shadow:0 0 0 8px rgba(var(--accent-rgb),.15)}to{box-shadow:0 0 0 0 transparent}}
+@media(prefers-reduced-motion:reduce){.welcome-intro{display:none}.app{opacity:1!important;pointer-events:auto!important}.laser-letter,.laser-frame,.laser-stage,.resource-skeleton,.nora-avatar{animation:none!important}.page-content-enter>*{animation:none!important}}
+
 </style>
 <script>
 (function(){
@@ -170,9 +222,13 @@ body{overflow-x:hidden}body.page-open{overflow:hidden}button,input{font:inherit}
 </script>
 </head>
 <body>
+<div id="welcomeIntro" class="welcome-intro" role="status" aria-label="Welcome to Nurse Hub" tabindex="0">
+<div class="laser-stage"><svg viewBox="0 0 409 150" role="img" aria-label="Nurse Hub"><g transform="translate(32 0)"><path class="laser-letter" pathLength="1" style="--letter-delay:0.00s" d="M6.432 44.224H15.136000000000001L36.32 84.19200000000001V44.224H42.592V92.0H33.888L12.704 52.032V92.0H6.432Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.13s" d="M54.592 77.856V56.16H60.480000000000004V77.632Q60.480000000000004 82.72 62.464000000000006 85.264Q64.44800000000001 87.80799999999999 68.416 87.80799999999999Q73.184 87.80799999999999 75.952 84.768Q78.72 81.728 78.72 76.48V56.16H84.608V92.0H78.72V86.496Q76.576 89.76 73.744 91.344Q70.912 92.928 67.168 92.928Q60.992000000000004 92.928 57.792 89.088Q54.592 85.248 54.592 77.856ZM69.408 55.296Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.26s" d="M117.504 61.664Q116.512 61.088 115.344 60.816Q114.176 60.544 112.768 60.544Q107.77600000000001 60.544 105.10400000000001 63.791999999999994Q102.432 67.03999999999999 102.432 73.12V92.0H96.512V56.16H102.432V61.727999999999994Q104.288 58.464 107.26400000000001 56.879999999999995Q110.24000000000001 55.296 114.49600000000001 55.296Q115.104 55.296 115.84 55.376Q116.57600000000001 55.455999999999996 117.47200000000001 55.616Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.39s" d="M146.52800000000002 57.216V62.784Q144.032 61.504 141.344 60.864000000000004Q138.656 60.224000000000004 135.776 60.224000000000004Q131.392 60.224000000000004 129.2 61.568Q127.00800000000001 62.912 127.00800000000001 65.6Q127.00800000000001 67.648 128.57600000000002 68.816Q130.144 69.984 134.88 71.03999999999999L136.89600000000002 71.488Q143.168 72.832 145.808 75.28Q148.448 77.728 148.448 82.112Q148.448 87.104 144.496 90.01599999999999Q140.544 92.928 133.632 92.928Q130.752 92.928 127.632 92.368Q124.512 91.808 121.05600000000001 90.688V84.608Q124.32000000000001 86.304 127.488 87.152Q130.656 88.0 133.76 88.0Q137.92000000000002 88.0 140.16000000000003 86.576Q142.4 85.152 142.4 82.56Q142.4 80.16 140.784 78.88Q139.168 77.6 133.696 76.416L131.648 75.936Q126.176 74.78399999999999 123.744 72.39999999999999Q121.31200000000001 70.01599999999999 121.31200000000001 65.856Q121.31200000000001 60.8 124.89600000000002 58.048Q128.48000000000002 55.296 135.072 55.296Q138.336 55.296 141.216 55.775999999999996Q144.096 56.256 146.52800000000002 57.216Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.52s" d="M188.48 72.608V75.488H161.408Q161.792 81.568 165.072 84.75200000000001Q168.352 87.936 174.208 87.936Q177.6 87.936 180.784 87.10400000000001Q183.968 86.272 187.10399999999998 84.608V90.176Q183.936 91.52 180.608 92.22399999999999Q177.28 92.928 173.856 92.928Q165.28 92.928 160.272 87.936Q155.264 82.944 155.264 74.432Q155.264 65.632 160.01600000000002 60.464Q164.768 55.296 172.832 55.296Q180.064 55.296 184.272 59.952Q188.48 64.608 188.48 72.608ZM182.59199999999998 70.88Q182.528 66.048 179.88799999999998 63.168Q177.248 60.288 172.896 60.288Q167.968 60.288 165.00799999999998 63.071999999999996Q162.048 65.856 161.6 70.912Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.65s" d="M219.23199999999997 44.224H225.69599999999997V63.808H249.18399999999997V44.224H255.64799999999997V92.0H249.18399999999997V69.248H225.69599999999997V92.0H219.23199999999997Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.78s" d="M267.64799999999997 77.856V56.16H273.536V77.632Q273.536 82.72 275.52 85.264Q277.50399999999996 87.80799999999999 281.472 87.80799999999999Q286.24 87.80799999999999 289.00800000000004 84.768Q291.776 81.728 291.776 76.48V56.16H297.664V92.0H291.776V86.496Q289.632 89.76 286.79999999999995 91.344Q283.96799999999996 92.928 280.224 92.928Q274.048 92.928 270.84799999999996 89.088Q267.64799999999997 85.248 267.64799999999997 77.856ZM282.464 55.296Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.91s" d="M335.52 74.112Q335.52 67.616 332.84799999999996 63.92Q330.176 60.224000000000004 325.50399999999996 60.224000000000004Q320.832 60.224000000000004 318.15999999999997 63.92Q315.488 67.616 315.488 74.112Q315.488 80.608 318.15999999999997 84.304Q320.832 88.0 325.50399999999996 88.0Q330.176 88.0 332.84799999999996 84.304Q335.52 80.608 335.52 74.112ZM315.488 61.599999999999994Q317.344 58.4 320.176 56.848Q323.008 55.296 326.94399999999996 55.296Q333.472 55.296 337.552 60.480000000000004Q341.632 65.664 341.632 74.112Q341.632 82.56 337.552 87.744Q333.472 92.928 326.94399999999996 92.928Q323.008 92.928 320.176 91.376Q317.344 89.824 315.488 86.624V92.0H309.568V42.208H315.488Z"/></g><rect class="laser-frame" x="6" y="14" width="397" height="122" rx="23" pathLength="1"/></svg></div>
+<span class="intro-skip">Tap anywhere to skip</span></div>
 <main class="app">
-<header class="header" style="position:relative"><button class="settings-button" id="settingsButton" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path><path d="M19.2 13.1a7.5 7.5 0 0 0 0-2.2l1.6-1.2-1.7-3-1.9.7a7.8 7.8 0 0 0-1.9-1.1L15 4.2h-3.5l-.3 2.1c-.7.3-1.3.6-1.9 1.1l-1.9-.7-1.7 3 1.6 1.2a7.5 7.5 0 0 0 0 2.2l-1.6 1.2 1.7 3 1.9-.7c.6.5 1.2.9 1.9 1.1l.3 2.1H15l.3-2.1c.7-.3 1.3-.6 1.9-1.1l1.9.7 1.7-3-1.6-1.2Z"></path></svg></button><h1 class="brand">Nurse Hub</h1><p class="subtitle">School Dashboard</p></header>
+<header class="header" style="position:relative"><button class="settings-button" id="settingsButton" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path><path d="M19.2 13.1a7.5 7.5 0 0 0 0-2.2l1.6-1.2-1.7-3-1.9.7a7.8 7.8 0 0 0-1.9-1.1L15 4.2h-3.5l-.3 2.1c-.7.3-1.3.6-1.9 1.1l-1.9-.7-1.7 3 1.6 1.2a7.5 7.5 0 0 0 0 2.2l-1.6 1.2 1.7 3 1.9-.7c.6.5 1.2.9 1.9 1.1l.3 2.1H15l.3-2.1c.7-.3 1.3-.6 1.9-1.1l1.9.7 1.7-3-1.6-1.2Z"></path></svg></button><h1 class="brand">Nurse Hub</h1><p class="subtitle" id="dashboardGreeting"></p><p class="dashboard-date" id="dashboardDate"></p></header>
 <div class="search-dimmer" id="searchDimmer"></div>
+<div id="continueStudy"></div>
 <section class="search-wrap">
 <button class="search-button" id="searchButton" aria-label="Search Nurse Hub"><svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg><span class="search-placeholder">Search Nurse Hub</span><input id="searchInput" class="search-input" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Search Nurse Hub"><span class="search-cancel" id="searchCancel"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"></path></svg></span></button>
 <div class="search-results" id="searchResults"></div>
@@ -188,6 +244,24 @@ body{overflow-x:hidden}body.page-open{overflow:hidden}button,input{font:inherit}
 </section></main>
 <section class="page" id="detailPage" aria-hidden="true"><div class="page-inner"><button class="back-button" id="backButton" aria-label="Go back"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button><div id="pageContent"></div></div></section>
 <div class="toast" id="toast"></div>
+<script>
+(function(){
+  const intro=document.getElementById('welcomeIntro');
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){intro.remove();return;}
+  const app=document.querySelector('.app');app.inert=true;
+  document.body.classList.add('intro-running');
+  let done=false;
+  function finish(){
+    if(done)return;done=true;
+    intro.style.opacity='0';
+    document.body.classList.remove('intro-running');app.inert=false;
+    setTimeout(()=>intro.remove(),460);
+  }
+  intro.addEventListener('click',finish);
+  intro.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '||e.key==='Escape'){e.preventDefault();finish();}});
+  setTimeout(finish,3250);
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL="https://uuycdrctpdpfodgbcwjk.supabase.co";
@@ -216,7 +290,7 @@ async function init(){
     document.documentElement.dataset.theme=next;
     try{localStorage.setItem('nurseHubTheme',next);}catch(e){}
     const meta=document.querySelector('meta[name="theme-color"]');
-    if(meta)meta.setAttribute('content',next.startsWith('light-')?'#F4F5F6':'#0B0D0F');
+    if(meta)meta.setAttribute('content',next.startsWith('light-')?'#FFFFFF':'#000000');
   }
   function getThemeMode(){return getLocalTheme().startsWith('light-')?'light':'dark';}
   function getThemeAccent(){const theme=getLocalTheme();return theme.substring(theme.indexOf('-')+1);}
@@ -433,14 +507,75 @@ function openMedications(){nav=[{type:'medications'}];setPage(renderMedicationLi
 function openMedication(id){nav.push({type:'medication',id});setPage(renderMedicationDetail(findMedication(id)));}
 function showPage(){page.classList.add('open');page.setAttribute('aria-hidden','false');document.body.classList.add('page-open')}
 function closePage(){page.classList.remove('open');page.setAttribute('aria-hidden','true');document.body.classList.remove('page-open');nav=[];cards.forEach(c=>c.classList.remove('active'))}
-function setPage(html){content.innerHTML=html;showPage();content.scrollIntoView({block:'start'});}
+function setPage(html){content.innerHTML=html;content.classList.remove('page-content-enter');void content.offsetWidth;content.classList.add('page-content-enter');showPage();content.scrollIntoView({block:'start'});}
 function topicIcon(){return icons.objectives}
 function openObjectives(){nav=[{type:'root'}];setPage(renderTopics())}
 function renderTopics(){return `<div class="page-header"><div class="page-kicker">Objectives</div><h2 class="page-title">NUR 2129</h2><p class="page-subtitle">Maternal Child Nursing · ${objectiveData.length} class/topic sections</p></div><div class="list">${objectiveData.map((s,i)=>`<button class="list-card topic-card" data-topic="${i}"><span class="list-number">${String(i+1).padStart(2,'0')}</span><span class="list-copy"><span class="list-title">${esc(s.title)}</span><span class="list-meta">${s.objectives.length} objectives</span></span><span class="chevron">›</span></button>`).join('')}</div><p class="source-note">Content is based on the provided NUR 2129 objectives document. Formatting has been cleaned up for the app while retaining the source wording and references.</p>`}
 function openTopic(i){nav.push({type:'topic',i});setPage(renderTopic(objectiveData[i],i))}
 function renderTopic(s,i){return `<div class="page-header"><div class="page-kicker">NUR 2129 · Topic ${i+1}</div><h2 class="page-title">${esc(s.title)}</h2><p class="page-subtitle">Select an objective to view its details, course-objective mapping, references, and future study tools.</p></div><div class="list">${s.objectives.map((o,j)=>`<button class="list-card" data-objective="${j}"><span class="list-number">${o.number}</span><span class="list-copy"><span class="list-title">${esc(o.text)}</span><span class="list-meta">${o.courseObjectives?'Course objective '+esc(o.courseObjectives):'Objective'}</span></span><span class="chevron">›</span></button>`).join('')}</div>`}
-function openObjective(j){const t=nav.find(x=>x.type==='topic');const s=objectiveData[t.i];const objective=s.objectives[j];nav.push({type:'objective',j});setPage(renderObjective(objective,s));const box=document.querySelector('.objective-resource-slot');if(box){renderObjectiveResources(s,objective).then(v=>{box.innerHTML=v||'<div class="admin-message">No study resources uploaded for this objective yet.</div>';}).catch(err=>{console.error('Objective resource load failed',err);box.innerHTML='<div class="admin-message error">Unable to load study resources right now.</div>';});}}
-function renderObjective(o,s){return `<div class="page-header"><div class="page-kicker">${esc(s.title)} · Objective ${o.number}</div><h2 class="page-title">Objective ${o.number}</h2></div><div class="meta-box"><p class="objective-text">${esc(o.text)}</p>${o.subitems.length?`<ul class="objective-subitems">${o.subitems.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div><div class="objective-meta">${o.courseObjectives?`<div class="meta-box"><span class="meta-label">Course Objective Mapping</span><div class="meta-value">Course objective ${esc(o.courseObjectives)}</div></div>`:''}${s.references.length?`<div class="meta-box"><span class="meta-label">Textbooks / References</span><ul class="reference-list">${s.references.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}</div><div class="objective-resource-slot"><div class="admin-message">Loading study resources…</div></div><div class="action-row"><button class="action-button" data-action="study">STUDY</button><button class="action-button" data-action="quiz">QUIZ ME</button><button class="action-button" data-action="nora">ASK NORA</button></div><p class="source-note">Study resources are linked through the Resource Hopper. NORA can retrieve and organize indexed Nurse Hub content; generative AI is not required for this layer.</p>`}
+function showObjectivePage(section,objective){
+  rememberStudy(section,objective);
+  setPage(renderObjective(objective,section));
+  const box=document.querySelector('.objective-resource-slot');
+  if(!box)return;
+  renderObjectiveResources(section,objective).then(html=>{
+    if(box.isConnected)box.innerHTML=html||'<div class="admin-message">No study resources uploaded for this objective yet.</div>';
+  }).catch(err=>{
+    console.error('Objective resource load failed',err);
+    if(box.isConnected)box.innerHTML='<div class="admin-message error">Unable to load study resources right now.</div>';
+  });
+}
+function getUserName(){
+  try{return (localStorage.getItem('nurseHubUserName')||'').trim().slice(0,60);}catch(e){return '';}
+}
+function updateDashboard(){
+  const hour=new Date().getHours(),period=hour<12?'morning':hour<18?'afternoon':'evening';
+  document.getElementById('dashboardGreeting').textContent='Good '+period+', '+(getUserName()||'future nurse');
+  document.getElementById('dashboardDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  const box=document.getElementById('continueStudy');
+  let saved=null;
+  try{saved=JSON.parse(localStorage.getItem('nurseHubLastStudy')||'null');}catch(e){}
+  const section=objectiveData.find(s=>s.title===saved?.section);
+  const objective=section?.objectives.find(o=>String(o.number)===String(saved?.objective));
+  box.innerHTML=objective?`<button type="button" class="continue-study" data-continue-study><span class="continue-icon" aria-hidden="true">↗</span><span><strong>Pick up where you left off</strong><small>${esc(section.title)} · Objective ${esc(objective.number)}</small></span><span class="chevron" aria-hidden="true">›</span></button>`:'';
+}
+function rememberStudy(section,objective){
+  try{localStorage.setItem('nurseHubLastStudy',JSON.stringify({section:section.title,objective:objective.number}));}catch(e){}
+  updateDashboard();
+}
+function renderProfileSettings(){
+  return `<div class="page-header"><div class="page-kicker">Settings · Personalization</div><h2 class="page-title">Make it yours</h2><p class="page-subtitle">Add a name for your dashboard and NORA greetings. This preference stays on this device.</p></div><div class="settings-card"><form id="profileForm" class="admin-login-form"><div class="admin-field"><label for="profileName">Your name</label><input id="profileName" maxlength="60" autocomplete="given-name" placeholder="Future nurse" value="${esc(getUserName())}"></div><button class="admin-primary" type="submit">SAVE NAME</button><p class="hopper-note">Leave it blank to use “future nurse.”</p><div class="admin-message" id="profileMessage"></div></form></div>`;
+}
+updateDashboard();
+setInterval(updateDashboard,60000);
+document.addEventListener('submit',e=>{
+  if(e.target.id!=='profileForm')return;
+  e.preventDefault();
+  const name=document.getElementById('profileName').value.trim().slice(0,60);
+  try{
+    if(name)localStorage.setItem('nurseHubUserName',name);else localStorage.removeItem('nurseHubUserName');
+    updateDashboard();toastMsg(name?'Name saved. Welcome, '+name+'.':'Default greeting restored.');
+  }catch(err){document.getElementById('profileMessage').textContent='Your browser could not save this preference.';}
+});
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-settings-profile]')){setSettingsSubpage(renderProfileSettings());return;}
+  if(e.target.closest('[data-continue-study]')){
+    let saved;try{saved=JSON.parse(localStorage.getItem('nurseHubLastStudy')||'null');}catch(err){return;}
+    const si=objectiveData.findIndex(s=>s.title===saved?.section);
+    const oi=si>=0?objectiveData[si].objectives.findIndex(o=>String(o.number)===String(saved?.objective)):-1;
+    if(oi>=0){openObjectives();openTopic(si);openObjective(oi);}
+  }
+});
+document.addEventListener('toggle',e=>{
+  if(!e.target.matches?.('.objective-topic-group')||!e.target.open||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  e.target.querySelector('.objective-topic-sections')?.animate([{opacity:0,transform:'translateY(-6px)'},{opacity:1,transform:'translateY(0)'}],{duration:220,easing:'ease-out'});
+},true);
+function openObjective(j){
+  const t=nav.find(x=>x.type==='topic'),s=objectiveData[t.i];
+  nav.push({type:'objective',j});
+  showObjectivePage(s,s.objectives[j]);
+}
+function renderObjective(o,s){return `<div class="page-header"><div class="page-kicker">${esc(s.title)} · Objective ${o.number}</div><h2 class="page-title">Objective ${o.number}</h2></div><div class="meta-box"><p class="objective-text">${esc(o.text)}</p>${o.subitems.length?`<ul class="objective-subitems">${o.subitems.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div><div class="objective-meta">${o.courseObjectives?`<div class="meta-box"><span class="meta-label">Course Objective Mapping</span><div class="meta-value">Course objective ${esc(o.courseObjectives)}</div></div>`:''}${s.references.length?`<div class="meta-box"><span class="meta-label">Textbooks / References</span><ul class="reference-list">${s.references.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}</div><div class="objective-resource-slot"><div role="status" aria-label="Loading study resources"><div class="resource-skeleton" aria-hidden="true"></div><div class="resource-skeleton" aria-hidden="true"></div></div></div><div class="action-row"><button class="action-button" data-action="study">STUDY</button><button class="action-button" data-action="quiz">QUIZ ME</button><button class="action-button" data-action="nora">ASK NORA</button></div><p class="source-note">Study resources are linked through the Resource Hopper. NORA can retrieve and organize indexed Nurse Hub content; generative AI is not required for this layer.</p>`}
 
 function getLocalTheme(){
   try{return localStorage.getItem('nurseHubTheme')||'dark-default';}
@@ -452,7 +587,7 @@ function applyLocalTheme(theme){
   document.documentElement.dataset.theme=next;
   try{localStorage.setItem('nurseHubTheme',next);}catch(e){}
   const meta=document.querySelector('meta[name="theme-color"]');
-  if(meta)meta.setAttribute('content',next.startsWith('light-')?'#F4F5F6':'#0B0D0F');
+  if(meta)meta.setAttribute('content',next.startsWith('light-')?'#FFFFFF':'#000000');
 }
 function getThemeMode(){
   return getLocalTheme().startsWith('light-')?'light':'dark';
@@ -483,7 +618,7 @@ function renderAboutSettings(){
   return `<div class="page-header"><div class="page-kicker">Settings · About</div><h2 class="page-title">About Nurse Hub</h2><p class="page-subtitle">A personal nursing school dashboard built to keep your coursework, clinical reference, and study tools together.</p></div>
 <div class="settings-panel">
 <div class="settings-card"><h3>Version</h3><div class="about-version">
-<div class="about-row"><span>Current version</span><span>1.0</span></div>
+<div class="about-row"><span>Current version</span><span>1.1</span></div>
 <div class="about-row"><span>Latest update</span><span>October 2026</span></div>
 <div class="about-row"><span>Developer</span><span>Austin Ashley</span></div>
 </div></div>
@@ -506,6 +641,7 @@ function renderSettings(){
 const signedIn=!!currentAdmin;
 return `<div class="page-header"><div class="page-kicker">Nurse Hub</div><h2 class="page-title">Settings</h2><p class="page-subtitle">Personalize the app, learn about Nurse Hub, or manage private resources.</p></div>
 <div class="settings-panel">
+<div class="settings-card"><h3>Your name</h3><p>Personalize dashboard and NORA greetings on this device.</p><button class="settings-action" data-settings-profile>PERSONALIZE</button></div>
 <div class="settings-card"><h3>Appearance</h3><p>Choose dark or light mode and your personal accent color.</p><button class="settings-action" data-settings-appearance>OPEN APPEARANCE</button></div>
 <div class="settings-card"><h3>About</h3><p>Version information, recent updates, and developer details.</p><button class="settings-action" data-settings-about>ABOUT NURSE HUB</button></div>
 <div class="settings-card"><h3>NORA</h3><p>Learn what NORA means and what the Nurse Hub assistant is designed to do.</p><button class="settings-action" data-settings-nora>ABOUT NORA</button></div>
@@ -560,7 +696,7 @@ return `<div class="page-header"><div class="page-kicker">Admin · Private</div>
 </form></div>
 <div class="settings-card"><h3>Resource Library</h3><p>Every uploaded resource stays available here and can be opened from Nurse Hub.</p>
 <div class="resource-toolbar"><input id="resourceSearch" type="search" placeholder="Search resources…"><div class="resource-filters"><select id="resourceCourseFilter"><option value="">All courses</option></select><select id="resourceTopicFilter"><option value="">All topics</option></select><select id="resourceTypeFilter"><option value="">All types</option></select></div></div>
-<div id="resourceList" class="resource-library"><div class="admin-message">Loading resources…</div></div>
+<div id="resourceList" class="resource-library"><div role="status" aria-label="Loading resources"><div class="resource-skeleton" aria-hidden="true"></div></div></div>
 </div></div>`;
 }
 async function loadResourceChunks(){
@@ -870,6 +1006,12 @@ async function renderObjectiveResources(section,objective){
   }).join('');
   return `<div class="meta-box objective-resource-box"><span class="meta-label">Study Resources</span>${cards}</div>`;
 }
+function renderObjectiveNoteText(content){
+  const items=String(content||'').replace(/\r\n?/g,'\n').split(/\n+/)
+    .flatMap(line=>line.split(/\s+[-–—]\s+/))
+    .map(line=>line.replace(/^\s*[-–—•●▪]\s*/,'').trim()).filter(Boolean);
+  return `<ul class="objective-note-list">${items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`;
+}
 async function showObjectiveResourceNotes(section,objective,resourceId){
   const r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(resourceId));
   if(!r){
@@ -881,7 +1023,7 @@ async function showObjectiveResourceNotes(section,objective,resourceId){
   const chunks=getChunksForObjective(section,objective,resourceId);
   nav.push({type:'resource-notes',resourceId:Number(resourceId),section:section.title,objective:objective.number});
 
-  const renderChunk=c=>`<article class="objective-note"><div class="objective-note-kicker">${esc(c.section||c.heading||'Related section')}</div><div class="objective-note-text">${esc(c.content).replace(/\n\n/g,'</p><p>').replace(/^/,'<p>').replace(/$/,'</p>')}</div></article>`;
+  const renderChunk=c=>`<article class="objective-note"><div class="objective-note-kicker">${esc(c.section||c.heading||'Related section')}</div><div class="objective-note-text">${renderObjectiveNoteText(c.content)}</div></article>`;
   const structuredGroups=new Map();
   chunks.forEach((c,i)=>{
     const h=String(c.heading||'');
@@ -894,12 +1036,12 @@ async function showObjectiveResourceNotes(section,objective,resourceId){
   });
   let noteBody='';
   if(structuredGroups.size){
-    noteBody=[...structuredGroups.entries()].map(([topic,items])=>`<section class="objective-topic-group"><div class="objective-topic-title">${esc(topic)}</div><div class="objective-topic-sections">${items.map(renderChunk).join('')}</div></section>`).join('');
+    noteBody=[...structuredGroups.entries()].map(([topic,items])=>`<details class="objective-topic-group"><summary class="objective-topic-toggle"><span><span class="objective-topic-title">${esc(topic)}</span><span class="objective-topic-hint"><span class="topic-hint-closed">Click to view notes</span><span class="topic-hint-open">Click to hide notes</span></span></span><span class="objective-topic-chevron" aria-hidden="true">⌄</span></summary><div class="objective-topic-sections">${items.map(renderChunk).join('')}</div></details>`).join('');
   }else{
     noteBody=chunks.length?chunks.map((c,i)=>renderChunk({...c,section:c.heading||`Related section ${i+1}`})).join(''):'<div class="admin-message">No specific extracted section was strong enough to display for this objective. The original source remains available in Resource Library.</div>';
   }
   const coverage=structuredGroups.size?`<small>Showing ${chunks.length} source sections across ${structuredGroups.size} topics for this objective.</small>`:`<small>Showing ${chunks.length} source sections matched to this objective.</small>`;
-  setPage(`<div class="page-header"><div class="page-kicker">${esc(section.title)} · Objective ${esc(objective.number)}</div><h2 class="page-title">Objective-Specific Notes</h2><p class="page-subtitle">${esc(resource.title)} · ${esc(resource.file_name)}</p></div><div class="settings-panel"><div class="settings-card"><div class="objective-note-source"><span class="meta-label">Source</span><strong>${esc(resource.title)}</strong>${coverage}</div></div><div class="settings-card"><h3>Related Notes</h3><div class="objective-notes">${noteBody}</div></div></div>`);
+  setPage(`<div class="page-header"><div class="page-kicker">${esc(section.title)} · Objective ${esc(objective.number)}</div><h2 class="page-title">Objective-Specific Notes</h2><p class="page-subtitle">${esc(resource.title)} · ${esc(resource.file_name)}</p></div><div class="settings-panel"><div class="settings-card notes-objective"><span class="meta-label">Objective ${esc(objective.number)}</span><p class="objective-text">${esc(objective.text)}</p>${objective.subitems?.length?`<ul class="objective-subitems">${objective.subitems.map(item=>`<li>${esc(item)}</li>`).join("")}</ul>`:""}</div><div class="settings-card"><div class="objective-note-source"><span class="meta-label">Source</span><strong>${esc(resource.title)}</strong>${coverage}</div></div><div class="settings-card"><h3>Related Notes</h3><div class="objective-notes">${noteBody}</div></div></div>`);
 }
 async function renderResourceLinker(id){
 const r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(id));if(!r)return;
@@ -1200,7 +1342,7 @@ function noraRetrieve(q,mode='NURSE_HUB'){
   return {matches:merged.sort((a,b)=>b.score-a.score).slice(0,12),objectiveRefs:refs,resources,structured,mode:sourceMode};
 }
 function noraIntentLabel(intent){return ({SEARCH:'SEARCH',EXPLAIN:'EXPLAIN',DEFINE:'DEFINE',COMPARE:'COMPARE',SUMMARIZE:'SUMMARIZE',STUDY:'STUDY',QUIZ:'QUIZ',OPEN_OBJECTIVE:'NAVIGATE',OPEN_TOPIC:'NAVIGATE',OPEN_RESOURCE:'NAVIGATE',OPEN_MEDICATION:'NAVIGATE',OPEN_DIAGNOSTIC:'NAVIGATE',OPEN_CALENDAR:'NAVIGATE',GREETING:'CHAT',HELP:'HELP'})[intent]||'SEARCH'}
-function noraWelcome(){return ["Hey! What can I help you find?","What are we working on today?","Need something from Nurse Hub?","Ready to study? What do you need?"][Math.floor(Math.random()*4)]}
+function noraWelcome(){return getUserName()?'Hey, '+getUserName()+'! What are we studying today?':'Hey, future nurse! What are we studying today?'}
 function noraAppend(role,text,html){
   if(!window.noraChatMessages)window.noraChatMessages=[];
   window.noraChatMessages.push({role:role,text:String(text||""),html:String(html||"")});
@@ -1319,7 +1461,7 @@ function noraGapHtml(retrieval){
 }
 function noraBuildAnswer(q,retrieval,classification){
   const {intent,mode}=classification, matches=retrieval.matches;
-  if(intent==='GREETING')return `<p>${noraWelcome()}</p>${noraQuickActions()}`;
+  if(intent==='GREETING')return `<p>${esc(noraWelcome())}</p>${noraQuickActions()}`;
   if(intent==='HELP')return `<p>I’m the free, in-app Nurse Hub assistant. I can do more than keyword search:</p><ul class="nora-list"><li>Connect questions to objectives and their linked resources</li><li>Prioritize instructor-uploaded material when it exists</li><li>Search diagnostics, medications, vitals, and course objectives</li><li>Follow up using the context of our current conversation</li><li>Navigate you directly to objectives, resources, medications, diagnostics, or Calendar</li><li>Build a source-based study view from the information Nurse Hub actually has</li></ul><p class="nora-context-note">I do not browse the outside web or generate general medical knowledge. For that kind of advanced reasoning, use ChatGPT separately.</p>${noraQuickActions()}`;
   const navTarget=noraNavigationTarget(q,retrieval);
   if(navTarget)return `<p>I found the relevant Nurse Hub destination. Tap below to open it.</p><div class="nora-action-grid"><button type="button" class="nora-action" data-nora-nav='${esc(JSON.stringify(navTarget))}'>OPEN IN NURSE HUB</button></div>`;
@@ -1366,6 +1508,7 @@ async function runNora(q){
   if(!window.noraChatMessages)window.noraChatMessages=[];
   noraAppend('user',q,'');setPage(renderNora());
   const status=document.getElementById('noraStatus');if(status)status.textContent='NORA is checking Nurse Hub…';
+  await loadNoraKnowledge();
   const c=noraClassify(q);
   const retrieval=noraRetrieve(q,c.mode);
   window.noraContext={query:q,classification:c,retrieval,at:Date.now()};
@@ -1387,7 +1530,7 @@ function goBack(){
     if(last.type==='medications')setPage(renderMedicationList());
     else if(last.type==='root')setPage(renderTopics());
     else if(last.type==='topic')setPage(renderTopic(objectiveData[last.i],last.i));
-    else if(last.type==='objective'){const t=nav.find(x=>x.type==='topic');setPage(renderObjective(objectiveData[t.i].objectives[last.j],objectiveData[t.i]));}
+    else if(last.type==='objective'){const t=nav.find(x=>x.type==='topic');showObjectivePage(objectiveData[t.i],objectiveData[t.i].objectives[last.j]);}
     else if(last.type==='diagnostics')setPage(diagnosticHome(last.tab,last.vitalMode,last.vitalAge));
     else if(last.type==='settings')setPage(renderSettings());
     else if(last.type==='admin-login')setPage(renderAdminLogin());
