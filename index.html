@@ -143,9 +143,21 @@ body{overflow-x:hidden}body.page-open{overflow:hidden}button,input{font:inherit}
 .nora-info-item p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
 @media(max-width:420px){.settings-accent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+.nora-focused-excerpt{margin-top:10px;color:#D8DDE0;line-height:1.55}.nora-source-label{color:#929AA1;font-weight:500}.nora-study-snippet,.nora-compare-item{padding:12px 0;border-top:1px solid var(--border)}.nora-related{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}.nora-related-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+
 /* NORA Consolidation 1 */
 .nora-intent-row{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.nora-intent-pill{padding:5px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.nora-intent-pill.active{color:var(--cyan);border-color:rgba(var(--accent-rgb),.22)}
 .nora-source-group{margin-top:13px}.nora-source-group-title{margin:0 0 7px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.nora-source-card{width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 11px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);text-align:left}.nora-source-card strong{display:block;font-size:12px}.nora-source-card small{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;line-height:1.4}.nora-source-card .nora-source-type{flex:none;color:var(--cyan);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.nora-gap{margin-top:12px;padding:11px 12px;border-radius:12px;background:var(--surface);border:1px dashed rgba(255,255,255,.12)}.nora-gap strong{display:block;font-size:12px}.nora-gap p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.nora-context-note{margin-top:10px;color:#747d83;font-size:10.5px;line-height:1.45}.nora-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.nora-action-grid .nora-action{width:100%}
+
+/* Hopper resource management */
+.resource-row-danger{border-color:rgba(255,110,110,.22)}
+.resource-management{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.resource-mini-danger{border-color:rgba(255,110,110,.45)!important;color:#ff8f8f!important}
+.resource-mini-danger:hover{background:rgba(255,110,110,.08)!important}
+.replace-panel{display:grid;gap:12px}
+.replace-current{font-size:13px;color:var(--muted,#929AA1)}
+
 </style>
 <script>
 (function(){
@@ -184,6 +196,7 @@ const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHA
 let currentAdmin=null;
 
 const sections={settings:{title:"Settings",description:"App & admin controls"},calendar:{title:"Calendar",description:"Class schedule & clinicals"},objectives:{title:"Objectives",description:"Course content"},diagnostics:{title:"Diagnostics",description:"Labs, tests & clinical reference"},medications:{title:"Medications",description:"Drug information & notes"},quiz:{title:"Quiz Me",description:"Practice active recall"},materials:{title:"Study Materials",description:"Notes, guides & resources"}};
+let objectiveData=[];
 const objectiveDataCompressed="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";
 async function decodeObjectiveData(){
   const bytes=Uint8Array.from(atob(objectiveDataCompressed),c=>c.charCodeAt(0));
@@ -208,7 +221,7 @@ async function init(){
   function getThemeMode(){return getLocalTheme().startsWith('light-')?'light':'dark';}
   function getThemeAccent(){const theme=getLocalTheme();return theme.substring(theme.indexOf('-')+1);}
   try{applyLocalTheme(getLocalTheme());}catch(e){document.documentElement.dataset.theme='dark-default';}
-  const objectiveData=await decodeObjectiveData();
+  objectiveData=await decodeObjectiveData();
   const cards=document.querySelectorAll('.card'),page=document.getElementById('detailPage'),content=document.getElementById('pageContent'),back=document.getElementById('backButton'),searchButton=document.getElementById('searchButton'),searchInput=document.getElementById('searchInput'),searchCancel=document.getElementById('searchCancel'),results=document.getElementById('searchResults'),dimmer=document.getElementById('searchDimmer'),toast=document.getElementById('toast');
 let nav=[],toastTimer;
 loadPublicResourceKnowledge().catch(err=>console.warn('Public resource knowledge load failed',err));
@@ -593,8 +606,164 @@ const q=(document.getElementById('resourceSearch')?.value||'').trim().toLowerCas
 const course=document.getElementById('resourceCourseFilter')?.value||'',topic=document.getElementById('resourceTopicFilter')?.value||'',type=document.getElementById('resourceTypeFilter')?.value||'';
 const rs=(window.nurseHubResources||[]).filter(r=>(!q||[r.title,r.file_name,r.course,r.topic,r.description].filter(Boolean).join(' ').toLowerCase().includes(q))&&(!course||r.course===course)&&(!topic||r.topic===topic)&&(!type||r.content_type===type));
 if(!rs.length){box.innerHTML='<div class="admin-message">No resources match those filters.</div>';return}
-box.innerHTML=rs.map(r=>`<div class="resource-row"><div class="resource-row-main"><strong>${esc(r.title)}</strong><span>${esc(r.file_name)} · ${esc(r.course||'No course')} · ${esc(r.topic||'No topic')}</span><span>${esc(r.content_type||'Other')} · ${esc(r.status||'pending')}</span></div><div class="resource-actions"><button class="admin-secondary resource-mini" data-resource-open="${r.id}">OPEN</button><button class="admin-secondary resource-mini" data-resource-detail="${r.id}">DETAILS</button></div></div>`).join('');
+box.innerHTML=rs.map(r=>`<div class="resource-row ${String(r.status||'').toLowerCase()==='error'?'resource-row-danger':''}"><div class="resource-row-main"><strong>${esc(r.title)}</strong><span>${esc(r.file_name)} · ${esc(r.course||'No course')} · ${esc(r.topic||'No topic')}</span><span>${esc(r.content_type||'Other')} · ${esc(r.status||'pending')}</span></div><div class="resource-actions"><button class="admin-secondary resource-mini" data-resource-open="${r.id}">OPEN</button><button class="admin-secondary resource-mini" data-resource-detail="${r.id}">DETAILS</button><button class="admin-secondary resource-mini" data-resource-replace="${r.id}">REPLACE</button><button class="admin-secondary resource-mini resource-mini-danger" data-resource-delete="${r.id}">DELETE</button></div></div>`).join('');
 }
+
+async function deleteResource(id){
+  if(!currentAdmin){toastMsg('Admin session expired. Sign in again.');return}
+  const r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(id));
+  if(!r){toastMsg('Resource not found.');return}
+  const ok=window.confirm(`Delete "${r.title}"?\n\nThis removes the resource, extracted text, searchable sections, objective links, and stored file. This cannot be undone.`);
+  if(!ok)return;
+
+  toastMsg('Deleting resource…');
+  try{
+    // Remove dependent indexed records first so the resource cannot leave
+    // behind stale chunks or objective mappings.
+    const cleanupTables=[
+      ['resource_chunk_objective_links','resource_id'],
+      ['resource_objective_links','resource_id'],
+      ['resource_chunks','resource_id'],
+      ['resource_content','resource_id']
+    ];
+    for(const [table,column] of cleanupTables){
+      const {error}=await supabaseClient.from(table).delete().eq(column,id);
+      if(error)throw error;
+    }
+
+    const {error:resourceError}=await supabaseClient.from('resources').delete().eq('id',id);
+    if(resourceError)throw resourceError;
+
+    if(r.file_path){
+      const {error:storageError}=await supabaseClient.storage.from('nurse-resources').remove([r.file_path]);
+      if(storageError)console.warn('Resource database record was deleted, but old file cleanup failed:',storageError);
+    }
+
+    await loadPublicResourceKnowledge().catch(()=>{});
+    await loadResources();
+    toastMsg('Resource deleted.');
+  }catch(err){
+    toastMsg(err?.message||'Unable to delete resource.');
+    await loadResources();
+  }
+}
+
+function openResourceReplace(id){
+  const r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(id));
+  if(!r){toastMsg('Resource not found.');return}
+  nav.push({type:'resource-replace',id});
+  setPage(`<div class="page-header"><div class="page-kicker">Hopper · Replace</div><h2 class="page-title">${esc(r.title)}</h2><p class="page-subtitle">Replace the source file while keeping this resource and its existing objective connections.</p></div>
+  <div class="settings-panel"><div class="settings-card replace-panel">
+    <div><span class="meta-label">Current file</span><div class="replace-current">${esc(r.file_name)}</div></div>
+    <div class="admin-field"><label for="replaceResourceFile">New resource file</label><input id="replaceResourceFile" type="file" required><div class="file-name" id="replaceResourceFileName">No file selected</div></div>
+    <p class="source-note">The new file will be extracted and validated before the current file is removed. Your resource title, course, topic, description, status, and existing objective links will remain attached to this resource.</p>
+    <button class="admin-primary" type="button" data-resource-replace-confirm="${r.id}">PROCESS & REPLACE</button>
+    <button class="admin-secondary" type="button" data-resource-replace-cancel>CANCEL</button>
+    <div id="replaceResourceMessage" class="admin-message"></div>
+  </div></div>`);
+}
+
+async function replaceResourceFile(id){
+  if(!currentAdmin){toastMsg('Admin session expired. Sign in again.');return}
+  const input=document.getElementById('replaceResourceFile');
+  const msg=document.getElementById('replaceResourceMessage');
+  const file=input?.files?.[0];
+  if(!file){if(msg){msg.className='admin-message error';msg.textContent='Choose a replacement file first.';}return}
+
+  const {data:old,error:readError}=await supabaseClient.from('resources')
+    .select('id,title,file_path')
+    .eq('id',id).maybeSingle();
+  if(readError||!old){if(msg){msg.className='admin-message error';msg.textContent=readError?.message||'Resource not found.';}return}
+
+  if(msg){msg.className='admin-message';msg.textContent='Reading replacement and preparing fresh Hopper processing…';}
+
+  let text='',analysis;
+  try{
+    text=await extractResourceText(file);
+    if(!text.trim())throw new Error('No readable text was found in the replacement file.');
+    analysis=analyzeResource(text);
+  }catch(err){
+    if(msg){msg.className='admin-message error';msg.textContent=err.message||'Could not read this file.';}
+    return;
+  }
+
+  // Upload the new source first. The old resource remains intact until the
+  // replacement file has passed extraction/analysis.
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const newPath=`${currentAdmin.id}/${Date.now()}_${safeName}`;
+  const {error:uploadError}=await supabaseClient.storage.from('nurse-resources').upload(newPath,file,{upsert:false});
+  if(uploadError){if(msg){msg.className='admin-message error';msg.textContent=uploadError.message;}return}
+
+  try{
+    // True replacement semantics: remove every database/indexing record
+    // associated with the old resource. No old objective links survive.
+    const cleanupTables=[
+      ['resource_chunk_objective_links','resource_id'],
+      ['resource_objective_links','resource_id'],
+      ['resource_chunks','resource_id'],
+      ['resource_content','resource_id']
+    ];
+    for(const [table,column] of cleanupTables){
+      const {error}=await supabaseClient.from(table).delete().eq(column,id);
+      if(error)throw error;
+    }
+
+    const {error:resourceDeleteError}=await supabaseClient.from('resources').delete().eq('id',id);
+    if(resourceDeleteError)throw resourceDeleteError;
+
+    if(old.file_path){
+      const {error:oldStorageError}=await supabaseClient.storage.from('nurse-resources').remove([old.file_path]);
+      if(oldStorageError)console.warn('Old source cleanup failed:',oldStorageError);
+    }
+
+    // Create a completely new Hopper resource, then send it through the same
+    // processing/review pipeline as a normal upload.
+    const resourceId=crypto.randomUUID();
+    const title=file.name.replace(/\.[^/.]+$/,'').replace(/[_-]+/g,' ').trim()||file.name;
+    const {error:newResourceError}=await supabaseClient.from('resources').insert({
+      id:resourceId,
+      uploaded_by:currentAdmin.id,
+      title,
+      file_name:file.name,
+      file_path:newPath,
+      course:'',
+      topic:'',
+      content_type:file.type||'application/octet-stream',
+      status:'pending',
+      description:'',
+      source_type:'upload',
+      updated_at:new Date().toISOString()
+    });
+    if(newResourceError)throw newResourceError;
+
+    await saveResourceProcessing(resourceId,text,analysis);
+
+    window.pendingReviewSuggestions=analysis.suggestions||[];
+    window.pendingReviewResourceId=resourceId;
+    window.pendingReviewAnalysis=analysis;
+
+    const links=(analysis.suggestions||[]).map((x,i)=>`<label class="processing-item"><input type="checkbox" data-review-link="${i}" checked><span><strong>${esc(x.topic)} · Objective ${esc(x.objective)}</strong><span class="resource-excerpt">${esc(x.text)}</span></span></label>`).join('');
+    const top=(analysis.topics||[]).map(x=>`<span class="tag">${esc(x.title)}</span>`).join('')||'<span class="source-note">No strong topic match detected.</span>';
+
+    setPage(`<div class="page-header"><div class="page-kicker">Hopper · Review Replacement</div><h2 class="page-title">${esc(title)}</h2><p class="page-subtitle">The old resource was removed and this file is now a brand-new Hopper resource. Review its fresh objective connections before publishing.</p></div>
+    <div class="settings-panel">
+      <div class="settings-card"><h3>Detected topics</h3><div>${top}</div></div>
+      <div class="settings-card"><h3>Suggested objective links</h3><p class="source-note">These are fresh automatic matches from the replacement file. The previous resource's links were deleted and are not carried over.</p><div class="processing-list">${links||'<div class="admin-message">No objective matches were strong enough to suggest.</div>'}</div>
+        <div class="review-actions"><button class="admin-primary" data-review-publish="${resourceId}">PUBLISH SELECTED LINKS</button><button class="admin-secondary" data-review-skip="${resourceId}">SKIP LINKS</button></div>
+        <div id="reviewMessage" class="admin-message"></div>
+      </div>
+    </div>`);
+    toastMsg('Old resource replaced. Review the new Hopper matches.');
+  }catch(err){
+    // If creation/processing failed after upload, remove the new object so it
+    // does not become an orphan. The old resource may already be deleted, so
+    // surface the failure clearly rather than pretending replacement succeeded.
+    await supabaseClient.storage.from('nurse-resources').remove([newPath]).catch(()=>{});
+    if(msg){msg.className='admin-message error';msg.textContent='Replacement failed: '+(err.message||'Unknown error');}
+    console.error('Resource replacement failed',err);
+  }
+}
+
 async function openResourceFile(id){
 let r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(id));
 if(!r){
@@ -893,7 +1062,7 @@ function noraFindObjectiveRefs(q){
   objectiveData.forEach((s,si)=>s.objectives.forEach((o,oi)=>{
     const key=noraObjectiveKeyFromData(s,o); const exact=new RegExp(`\\bobjective\\s*${String(o.number).replace('.','\\.')}\\b`,'i').test(lower);
     const topicHit=noraNorm(s.title).split(' ').some(w=>w.length>3&&lower.includes(w));
-    const textScore=noraScoreText([s.title,o.text,...o.subitems].join(' '),noraTokens(q));
+    const textScore=noraTermScore([s.title,o.text,...o.subitems].join(' '),noraTokens(q));
     if(exact||topicHit||textScore>=2)refs.push({si,oi,section:s,objective:o,key,score:(exact?12:0)+(topicHit?5:0)+textScore});
   }));
   return refs.sort((a,b)=>b.score-a.score).slice(0,5);
@@ -908,10 +1077,13 @@ function noraBuildResourceMatches(q,mode='NURSE_HUB'){
     const r=byId.get(String(c.resource_id)); if(!r)return;
     const chunkLink=k.chunkLinks.find(x=>String(x.resource_id)===String(c.resource_id)&&Number(x.chunk_index)===Number(c.chunk_index));
     const resourceText=[r.title,r.course,r.topic,r.description].join(' ');
-    let score=noraScoreText([resourceText,c.heading,c.content].join(' '),tokens);
+    let score=noraTermScore([resourceText,c.heading,c.content].join(' '),tokens);
+    const contentScore=noraTermScore(c.content,tokens);
     const linked=linkedResourceIds.has(String(r.id)) || (chunkLink&&linkedKeys.has(chunkLink.objective_key));
-    if(linked)score+=10;
-    if(mode==='NOTES_ONLY')score+=linked?6:0;
+    // Linked material is a useful tie-breaker, not a substitute for topical relevance.
+    if(linked)score+=Math.min(3,contentScore);
+    if(mode==='NOTES_ONLY')score+=linked?1:0;
+    score+=Math.min(4,contentScore);
     if(score>0)matches.push({type:'resource',score,linked,resourceId:r.id,resource:r,chunk:c,objectiveLink:chunkLink||null,title:r.title,detail:c.heading||r.topic||'Uploaded resource section',content:c.content});
   });
   return matches.sort((a,b)=>b.score-a.score).slice(0,18);
@@ -919,7 +1091,7 @@ function noraBuildResourceMatches(q,mode='NURSE_HUB'){
 function noraStructuredMatches(q){
   const tokens=noraTokens(q),matches=[];
   objectiveData.forEach((s,si)=>s.objectives.forEach((o,oi)=>{
-    const text=[s.title,o.number,o.text,...o.subitems,o.courseObjectives].join(' '),score=noraScoreText(text,tokens);
+    const text=[s.title,o.number,o.text,...o.subitems,o.courseObjectives].join(' '),score=noraTermScore(text,tokens);
     if(score)matches.push({type:'objective',score,si,oi,title:`Objective ${o.number} · ${s.title}`,detail:o.text,section:s,objective:o});
   }));
   Object.values(labData||{}).flat().forEach(l=>{const hay=[l.name,l.abbr,l.range,l.why,l.low?.label,l.low?.info,...(l.low?.causes||[]),l.high?.label,l.high?.info,...(l.high?.causes||[])].join(' '),score=noraScoreText(hay,tokens);if(score)matches.push({type:'lab',score,title:l.name,detail:l.range,id:l.id,item:l})});
@@ -948,8 +1120,79 @@ function noraChatHtml(){const msgs=window.noraChatMessages||[];if(!msgs.length)r
 function noraQuickActions(){return `<div class="nora-quick-row"><button type="button" class="nora-quick" data-nora-prompt="Help me study">Study</button><button type="button" class="nora-quick" data-nora-prompt="Quiz me">Quiz me</button><button type="button" class="nora-quick" data-nora-prompt="What can you do?">What can you do?</button></div>`}
 function renderNora(){return `<div class="nora-page nora-chat-page"><div class="nora-chat-top"><div class="nora-chat-identity"><div class="nora-avatar">N</div><div><h2 class="nora-title">NORA</h2><div class="nora-online">Nurse Hub assistant · no external AI</div></div></div></div><div class="nora-chat-scroll" id="noraChatScroll"><div class="nora-chat-messages" id="noraAnswer">${noraChatHtml()}</div>${(window.noraChatMessages||[]).length?'<div class="nora-chat-spacer"></div>':noraQuickActions()}</div><form class="nora-composer" id="noraForm"><input id="noraInput" class="nora-input" autocomplete="off" autocapitalize="sentences" placeholder="Message NORA…"><button class="nora-send" type="submit" aria-label="Send to NORA">↑</button></form><div class="nora-status" id="noraStatus">NORA uses indexed Nurse Hub knowledge.</div><p class="nora-disclaimer">Source boundary: NORA can organize and retrieve Nurse Hub content, but it does not invent outside medical knowledge.</p></div>`}
 function noraSourceCard(m,i){const type=m.type==='resource'?(m.linked?'Instructor resource':'Uploaded resource'):m.type;const detail=m.type==='resource'?(m.detail||m.resource?.topic||'Indexed resource'):(m.detail||'');return `<button type="button" class="nora-source-card" data-nora-match="${i}"><span><strong>${esc(m.title)}</strong><small>${esc(detail)}</small></span><span class="nora-source-type">${esc(type)}</span></button>`}
+function noraTermVariants(token){
+  const t=noraNorm(token);
+  const variants=new Set([t]);
+  if(t.length>=7)variants.add(t.slice(0,7));
+  if(t.endsWith('s')&&t.length>4)variants.add(t.slice(0,-1));
+  if(t.endsWith('ies')&&t.length>5)variants.add(t.slice(0,-3)+'y');
+  if(t.endsWith('ing')&&t.length>6)variants.add(t.slice(0,-3));
+  if(t.endsWith('ed')&&t.length>5)variants.add(t.slice(0,-2));
+  return [...variants];
+}
+function noraTermScore(text,tokens){
+  const hay=noraNorm(text);let score=0;
+  tokens.forEach(t=>{
+    const vars=noraTermVariants(t);
+    if(vars.some(v=>v.length>=5&&hay.includes(v)))score+=2;
+    if(hay.includes(t))score+=2;
+  });
+  return score;
+}
+function noraRelevantSentences(text,q,maxCount=3,maxChars=520){
+  const raw=String(text||'').replace(/\r/g,'\n');
+  const parts=raw.split(/(?<=[.!?])\s+|\n+/)
+    .map(x=>x.replace(/^[•●▪◦–—-]+\s*/,'').replace(/\s+/g,' ').trim())
+    .filter(x=>x.length>=8);
+  if(!parts.length)return '';
+  const tokens=noraTokens(q);
+  const scored=parts.map((sentence,index)=>({
+    sentence,index,
+    score:noraTermScore(sentence,tokens)
+  })).filter(x=>x.score>0);
+  if(!scored.length)return '';
+
+  scored.sort((a,b)=>b.score-a.score||a.index-b.index);
+  const anchor=scored[0];
+  const selected=[anchor];
+  // Add nearby context only when it is genuinely relevant or is immediately adjacent
+  // to the strongest hit. This keeps a definition from pulling in unrelated material.
+  for(const candidate of scored.slice(1)){
+    if(selected.length>=maxCount)break;
+    const distance=Math.abs(candidate.index-anchor.index);
+    if(distance<=2)selected.push(candidate);
+  }
+  selected.sort((a,b)=>a.index-b.index);
+
+  const picked=[];let chars=0;
+  for(const item of selected){
+    const clean=item.sentence;
+    if(picked.some(x=>noraNorm(x)===noraNorm(clean)))continue;
+    if(chars+clean.length>maxChars && picked.length)continue;
+    picked.push(clean);chars+=clean.length+1;
+  }
+  return picked.join(' ');
+}
+function noraDirectObjectiveLinks(retrieval){
+  const seen=new Set(),items=[];
+  retrieval.resources.forEach(m=>{
+    const l=m.objectiveLink;
+    if(!l||seen.has(l.objective_key))return;
+    seen.add(l.objective_key);
+    items.push(l);
+  });
+  return items.slice(0,3);
+}
+function noraRelatedObjectivesHtml(retrieval){
+  const links=noraDirectObjectiveLinks(retrieval);
+  if(!links.length)return '';
+  return `<div class="nora-related"><div class="nora-related-title">Related objectives</div><div class="link-chip-row">${links.map(l=>`<button type="button" class="link-chip" data-nora-nav='${esc(JSON.stringify({type:'objective',si:objectiveData.findIndex(s=>s.title===l.topic),oi:(objectiveData.find(s=>s.title===l.topic)?.objectives||[]).findIndex(o=>String(o.number)===String(l.objective_number))}))}'>${esc(l.topic||l.course||'Objective')} · ${esc(String(l.objective_number||''))}</button>`).join('')}</div></div>`;
+}
 function noraExplainMatch(m,q){
-  if(m.type==='resource')return `<strong>${esc(m.title)}</strong> — ${esc(m.detail||'Relevant indexed section')}.<div class="nora-context-note">${esc(String(m.content||'').slice(0,700))}${String(m.content||'').length>700?'…':''}</div>`;
+  if(m.type==='resource'){
+    const excerpt=noraRelevantSentences(m.content,q,3,520);
+    return `<strong>${esc(m.title)}</strong> <span class="nora-source-label">· ${esc(m.detail||'Relevant section')}</span>${excerpt?`<div class="nora-focused-excerpt">${esc(excerpt)}</div>`:`<div class="nora-context-note">I found this source section, but it does not contain enough readable text to extract a focused answer.</div>`}`;
+  }
   if(m.type==='objective')return `<strong>${esc(m.title)}</strong>: ${esc(m.detail||'')}`;
   if(m.type==='vital')return `<strong>${esc(m.subject)}</strong> — ${esc(m.detail)}.`;
   if(m.type==='lab'){const x=m.item||Object.values(labData||{}).flat().find(v=>v.id===m.id);if(x){const ql=noraNorm(q);if(/low|hypo|decreased/.test(ql))return `<strong>${esc(x.name)}</strong> — low: ${esc(x.low?.label||'Low value')}. ${esc(x.low?.info||'')}`;if(/high|hyper|elevated|increased/.test(ql))return `<strong>${esc(x.name)}</strong> — high: ${esc(x.high?.label||'High value')}. ${esc(x.high?.info||'')}`;return `<strong>${esc(x.name)}</strong> has a Nurse Hub reference range of <strong>${esc(x.range)}</strong>. ${esc(x.why||'')}`}}
@@ -996,20 +1239,22 @@ function noraBuildAnswer(q,retrieval,classification){
   const top=matches[0];
   let body=`<div class="nora-intent-row"><span class="nora-intent-pill active">${esc(noraIntentLabel(intent))}</span><span class="nora-intent-pill">${esc(mode)}</span></div>`;
   if(intent==='COMPARE'){
-    const items=matches.slice(0,6);body+=`<p>I found ${items.length} related Nurse Hub entries. I can organize them side-by-side, but I won’t invent comparison points that aren't present in the app.</p>`;
+    const items=matches.slice(0,4);body+=`<p>I found ${items.length} relevant Nurse Hub entries. I can compare only what the stored material actually covers.</p>`;
+    body+=items.map((m)=>`<div class="nora-compare-item"><strong>${esc(m.title)}</strong><div>${noraExplainMatch(m,q)}</div></div>`).join('');
   }else if(intent==='SUMMARIZE'||intent==='STUDY'){
-    body+=`<p>Here’s a source-based study view from the strongest matches I found:</p>`;
+    body+=`<p>Here’s a focused source-based view using the strongest passages I found:</p>`;
+    body+=matches.slice(0,4).map(m=>`<div class="nora-study-snippet">${noraExplainMatch(m,q)}</div>`).join('');
   }else body+=`<p>${noraExplainMatch(top,q)}</p>`;
-  const groups={};matches.slice(0,8).forEach((m,i)=>{const key=m.type==='resource'?(m.linked?'Instructor resources':'Uploaded resources'):'Nurse Hub reference';(groups[key]??=[]).push([m,i])});
+  const groups={};matches.slice(0,5).forEach((m,i)=>{const key=m.type==='resource'?(m.linked?'Instructor resources':'Uploaded resources'):'Nurse Hub reference';(groups[key]??=[]).push([m,i])});
   Object.entries(groups).forEach(([title,items])=>{body+=`<div class="nora-source-group"><div class="nora-source-group-title">${esc(title)}</div>${items.map(([m,i])=>noraSourceCard(m,i)).join('')}</div>`});
-  body+=noraGapHtml(retrieval);
+  if(classification.mode!=='NOTES_ONLY' && /\bobjective\b/i.test(q))body+=noraRelatedObjectivesHtml(retrieval);
   body+=`<div class="nora-action-row"><button type="button" class="nora-action" data-nora-prompt="Study this">STUDY</button><button type="button" class="nora-action" data-nora-prompt="Quiz me on this">QUIZ ME</button></div>`;
   return body;
 }
 function noraStudyContext(q,retrieval){
-  const resources=retrieval.resources.slice(0,8);if(!resources.length)return `<p>I can’t build a source-based study view yet because no uploaded resource matched this topic.</p>`;
+  const resources=retrieval.resources.slice(0,5);if(!resources.length)return `<p>I can’t build a source-based study view yet because no uploaded resource matched this topic.</p>`;
   const seen=new Set(),items=[];resources.forEach(m=>{const key=String(m.resourceId)+'|'+m.chunk.chunk_index;if(!seen.has(key)){seen.add(key);items.push(m)}});
-  return `<p>Here’s an organized study map using the indexed material I found. Original source wording remains available through each section.</p><div class="nora-study-grid">${items.slice(0,8).map(m=>`<div class="nora-study-card"><span class="nora-study-type">${m.linked?'Instructor-linked':'Uploaded'}</span><strong>${esc(m.title)}</strong><p><strong>${esc(m.detail||'Section')}</strong><br>${esc(String(m.content||'').slice(0,650))}${String(m.content||'').length>650?'…':''}</p></div>`).join('')}</div>${noraGapHtml(retrieval)}<div class="nora-context-note">This is organization and retrieval, not newly generated medical content.</div>`;
+  return `<p>Here’s a focused study view from the most relevant passages in your uploaded material. I’m leaving unrelated source text out.</p><div class="nora-study-grid">${items.slice(0,4).map(m=>{const excerpt=noraRelevantSentences(m.content,q,3,560);return `<div class="nora-study-card"><span class="nora-study-type">${m.linked?'Instructor-linked':'Uploaded'}</span><strong>${esc(m.title)}</strong><p><strong>${esc(m.detail||'Section')}</strong><br>${esc(excerpt||'No focused passage could be extracted from this section.')}</p></div>`}).join('')}</div>${noraRelatedObjectivesHtml(retrieval)}<div class="nora-context-note">This version of NORA reorganizes and extracts stored material; it does not add outside medical facts.</div>`;
 }
 function noraNavigateMatch(m){
   if(!m)return;
@@ -1058,6 +1303,7 @@ function goBack(){
     else if(last.type==='settings')setPage(renderSettings());
     else if(last.type==='admin-login')setPage(renderAdminLogin());
     else if(last.type==='resource-hopper')setPage(renderResourceHopper());
+    else if(last.type==='resource-replace'){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();}
     else if(last.type==='resource-detail')showResourceDetail(last.id);
     else if(last.type==='resource-linker')renderResourceLinker(last.id);
     else if(last.type==='nora')setPage(renderNora());
@@ -1087,7 +1333,13 @@ if(e.target.closest('[data-admin-resource]')){openAdminArea();return}if(e.target
   if(section&&objective){showObjectiveResourceNotes(section,objective,Number(resourceNotes.dataset.resourceNotes));}
   return;
 }
-const resourceOpen=e.target.closest('[data-resource-open]');if(resourceOpen){openResourceFile(resourceOpen.dataset.resourceOpen);return}const resourceDetail=e.target.closest('[data-resource-detail]');if(resourceDetail){showResourceDetail(resourceDetail.dataset.resourceDetail);return}const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const pub=e.target.closest('[data-review-publish]');if(pub){publishReviewLinks(pub.dataset.reviewPublish);return}const skip=e.target.closest('[data-review-skip]');if(skip){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const vm=e.target.closest('[data-vitals-mode]');if(vm&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode=vm.dataset.vitalsMode;nav[nav.length-1].vitalAge='infant';setPage(diagnosticHome('vitals',nav[nav.length-1].vitalMode,'infant'));return}const va=e.target.closest('[data-vitals-age]');if(va&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode='pediatric';nav[nav.length-1].vitalAge=va.dataset.vitalsAge;setPage(diagnosticHome('vitals','pediatric',va.dataset.vitalsAge));return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjective(Number(obj.dataset.objective));return}const startQuizBtn=e.target.closest('[data-start-quiz]');if(startQuizBtn){startQuiz();return}const act=e.target.closest('[data-action]');if(act){if(act.dataset.action==='quiz'){openQuizSetup('');return}if(act.dataset.action==='nora'){window.openNora?.();return}toastMsg('Study mode is coming next.');return}});
+const resourceOpen=e.target.closest('[data-resource-open]');if(resourceOpen){openResourceFile(resourceOpen.dataset.resourceOpen);return}
+const resourceDetail=e.target.closest('[data-resource-detail]');if(resourceDetail){showResourceDetail(resourceDetail.dataset.resourceDetail);return}
+const resourceDelete=e.target.closest('[data-resource-delete]');if(resourceDelete){deleteResource(resourceDelete.dataset.resourceDelete);return}
+const resourceReplace=e.target.closest('[data-resource-replace]');if(resourceReplace){openResourceReplace(resourceReplace.dataset.resourceReplace);return}
+const resourceReplaceConfirm=e.target.closest('[data-resource-replace-confirm]');if(resourceReplaceConfirm){replaceResourceFile(resourceReplaceConfirm.dataset.resourceReplaceConfirm);return}
+const resourceReplaceCancel=e.target.closest('[data-resource-replace-cancel]');if(resourceReplaceCancel){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}
+const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const pub=e.target.closest('[data-review-publish]');if(pub){publishReviewLinks(pub.dataset.reviewPublish);return}const skip=e.target.closest('[data-review-skip]');if(skip){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const vm=e.target.closest('[data-vitals-mode]');if(vm&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode=vm.dataset.vitalsMode;nav[nav.length-1].vitalAge='infant';setPage(diagnosticHome('vitals',nav[nav.length-1].vitalMode,'infant'));return}const va=e.target.closest('[data-vitals-age]');if(va&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode='pediatric';nav[nav.length-1].vitalAge=va.dataset.vitalsAge;setPage(diagnosticHome('vitals','pediatric',va.dataset.vitalsAge));return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjective(Number(obj.dataset.objective));return}const startQuizBtn=e.target.closest('[data-start-quiz]');if(startQuizBtn){startQuiz();return}const act=e.target.closest('[data-action]');if(act){if(act.dataset.action==='quiz'){openQuizSetup('');return}if(act.dataset.action==='nora'){window.openNora?.();return}toastMsg('Study mode is coming next.');return}});
 back.addEventListener('click',goBack);
 document.addEventListener('input',e=>{if(e.target.id==='resourceSearch')renderResourceLibrary();});
 document.addEventListener('change',e=>{if(['resourceCourseFilter','resourceTopicFilter','resourceTypeFilter'].includes(e.target.id))renderResourceLibrary();});
@@ -1102,7 +1354,10 @@ function searchData(){const q=searchInput.value.trim().toLowerCase();if(!q){resu
  medicationIndex.forEach(m=>{const hay=[m.name,m.brand,m.className,m.indications,m.action,...m.common,...m.adverse,m.contra,...m.precautions,...m.nursing,...m.teaching,...(m.keywords||[])].join(' ').toLowerCase();if(hay.includes(q))all.push({type:'medication',id:m.id,label:m.name,detail:`${m.className}${m.brand?' · '+m.brand:''}`})});
  const cardsFound=Object.entries(sections).filter(([id,x])=>(id+' '+x.title+' '+x.description).toLowerCase().includes(q)).map(([id,x])=>({type:'dashboard',id,label:x.title,detail:x.description}));
  const resultsAll=[...cardsFound,...all,...resourceHits].slice(0,40);if(!resultsAll.length){results.innerHTML='<div class="no-results">No results found</div>';return}results.innerHTML=resultsAll.map((r,n)=>`<button class="result" data-search-index="${n}"><span class="result-icon">${r.type==='dashboard'?(icons[r.id]||icons.objectives):r.type==='medication'?icons.medications:r.type==='lab'||r.type==='lab-section'||r.type==='test'?icons.diagnostics:topicIcon()}</span><span class="result-text"><strong>${esc(r.label)}</strong><span>${esc(r.detail)}</span></span></button>`).join('');results.querySelectorAll('.result').forEach((el,i)=>el.addEventListener('click',()=>{const r=resultsAll[i];if(r.type==='resource-chunk'){closeSearch();openSettings();setTimeout(()=>{toastMsg('Open Resource Hopper to view this resource section.');},120);return}else if(r.type==='dashboard'){closeSearch();if(r.id==='diagnostics')openDiagnostics();else if(r.id==='medications')openMedications();else openPlaceholder(r.id);}else if(r.type==='medication'){closeSearch();openMedications();setTimeout(()=>openMedication(r.id),20)}else if(r.type==='lab'){closeSearch();openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData).find(k=>findLab(r.id,k));if(g){nav.push({type:'lab',id:r.id,group:g});setPage(renderLabDetail(findLab(r.id,g)));}},20)}else if(r.type==='lab-section'){closeSearch();openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData).find(k=>findLab(r.id,k));if(g){nav.push({type:'lab',id:r.id,group:g});setPage(renderLabDetail(findLab(r.id,g)));setTimeout(()=>document.getElementById(r.id+'-'+r.section)?.scrollIntoView({behavior:'smooth',block:'start'}),30);}},20)}else if(r.type==='test'){closeSearch();openDiagnostics('tests');setTimeout(()=>{const g=Object.keys(testData).find(k=>findTest(r.id,k));if(g){nav.push({type:'test',id:r.id,group:g});setPage(renderTestDetail(findTest(r.id,g)));}},20)}else if(r.type==='topic'){closeSearch();openObjectives();setTimeout(()=>openTopic(r.si),20)}else{closeSearch();openObjectives();setTimeout(()=>{openTopic(r.si);setTimeout(()=>openObjective(r.oi),20)},20)}}))}
-searchButton.addEventListener('click',e=>{if(!document.body.classList.contains('searching')){document.body.classList.add('searching');searchInput.focus({preventScroll:true});searchData()}});searchInput.addEventListener('input',searchData);searchCancel.addEventListener('click',e=>{e.stopPropagation();closeSearch()});dimmer.addEventListener('click',closeSearch);document.addEventListener('submit',e=>{if(e.target.id==='adminLoginForm'){handleAdminLogin(e);return}if(e.target.id==='resourceForm'){handleResourceUpload(e);return}});document.addEventListener('change',e=>{if(e.target.id==='resourceFile'){const f=e.target.files[0];const el=document.getElementById('resourceFileName');if(el)el.textContent=f?f.name:'No file selected'}});
+searchButton.addEventListener('click',e=>{if(!document.body.classList.contains('searching')){document.body.classList.add('searching');searchInput.focus({preventScroll:true});searchData()}});searchInput.addEventListener('input',searchData);searchCancel.addEventListener('click',e=>{e.stopPropagation();closeSearch()});dimmer.addEventListener('click',closeSearch);document.addEventListener('submit',e=>{if(e.target.id==='adminLoginForm'){handleAdminLogin(e);return}if(e.target.id==='resourceForm'){handleResourceUpload(e);return}});document.addEventListener('change',e=>{
+if(e.target.id==='resourceFile'){const f=e.target.files[0];const el=document.getElementById('resourceFileName');if(el)el.textContent=f?f.name:'No file selected'}
+if(e.target.id==='replaceResourceFile'){const f=e.target.files[0];const el=document.getElementById('replaceResourceFileName');if(el)el.textContent=f?f.name:'No file selected'}
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(page.classList.contains('open'))goBack();else if(document.body.classList.contains('searching'))closeSearch()}});
 // Native-feeling edge swipe back on touch devices
 let swipeStartX=0,swipeStartY=0,swipeTracking=false;page.addEventListener('touchstart',e=>{if(!page.classList.contains('open'))return;const t=e.changedTouches[0];if(t.clientX<=32){swipeStartX=t.clientX;swipeStartY=t.clientY;swipeTracking=true}}, {passive:true});page.addEventListener('touchend',e=>{if(!swipeTracking)return;swipeTracking=false;const t=e.changedTouches[0],dx=t.clientX-swipeStartX,dy=Math.abs(t.clientY-swipeStartY);if(dx>80&&dy<90)goBack()}, {passive:true});
