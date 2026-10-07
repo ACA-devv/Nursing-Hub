@@ -592,9 +592,16 @@ if(!rs.length){box.innerHTML='<div class="admin-message">No resources match thos
 box.innerHTML=rs.map(r=>`<div class="resource-row"><div class="resource-row-main"><strong>${esc(r.title)}</strong><span>${esc(r.file_name)} · ${esc(r.course||'No course')} · ${esc(r.topic||'No topic')}</span><span>${esc(r.content_type||'Other')} · ${esc(r.status||'pending')}</span></div><div class="resource-actions"><button class="admin-secondary resource-mini" data-resource-open="${r.id}">OPEN</button><button class="admin-secondary resource-mini" data-resource-detail="${r.id}">DETAILS</button></div></div>`).join('');
 }
 async function openResourceFile(id){
-const r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(id));if(!r)return;
+let r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(id));
+if(!r){
+  const {data,error}=await supabaseClient.from('resources').select('id,title,file_name,file_path,course,topic,content_type,status').eq('id',id).maybeSingle();
+  if(error||!data){toastMsg(error?.message||'Resource not found.');return}
+  r=data;
+}
+if(r.status!=='published'){toastMsg('This resource is not published yet.');return}
+if(!r.file_path){toastMsg('This resource does not have an attached source file.');return}
 const {data,error}=await supabaseClient.storage.from('nurse-resources').createSignedUrl(r.file_path,600);
-if(error){toastMsg(error.message);return}
+if(error||!data?.signedUrl){toastMsg(error?.message||'Unable to open the source file.');return}
 window.open(data.signedUrl,'_blank','noopener,noreferrer');
 }
 async function showResourceDetail(id){
@@ -639,7 +646,7 @@ function getChunksForObjective(section,objective,resourceId){
   const chunks=(window.nurseHubChunks||[]).filter(c=>String(c.resource_id)===String(resourceId));
   if(!chunks.length)return [];
   const key=objectiveKey(section,objective);
-  const exactLinks=(window.nurseHubChunkObjectiveLinks||[]).filter(x=>String(x.resource_id)===String(resourceId)&&x.objective_key===key);
+  const exactLinks=(window.nurseHubChunkObjectiveLinks||[]).filter(x=>String(x.resource_id)===String(resourceId)&&String(x.objective_key)===String(key));
   if(exactLinks.length){
     const byIndex=new Map(chunks.map(c=>[String(c.chunk_index),c]));
     const exact=exactLinks.map(x=>byIndex.get(String(x.chunk_index))).filter(Boolean);
@@ -652,11 +659,12 @@ function getChunksForObjective(section,objective,resourceId){
     const base=scoreMatch((c.heading||'')+' '+(c.content||''),objective,section.title);
     const exactHits=exactTerms.filter(w=>hay.includes(w)).length;
     const headingBoost=cleanWords(c.heading||'').filter(w=>exactTerms.includes(w)).length*2;
-    return {chunk:c,score:base.score+exactHits+headingBoost};
+    const topicHits=cleanWords(section.title).filter(w=>hay.includes(w)).length;
+    return {chunk:c,score:base.score+exactHits+headingBoost+topicHits};
   });
-  const strong=scored.filter(x=>x.score>=4).sort((a,b)=>b.score-a.score);
+  const strong=scored.filter(x=>x.score>=3).sort((a,b)=>b.score-a.score);
   if(strong.length)return strong.slice(0,8).map(x=>x.chunk);
-  return scored.filter(x=>x.score>=2).sort((a,b)=>b.score-a.score).slice(0,4).map(x=>x.chunk);
+  return scored.filter(x=>x.score>=1).sort((a,b)=>b.score-a.score).slice(0,4).map(x=>x.chunk);
 }
 async function renderObjectiveResources(section,objective){
   const rs=await getResourcesForObjective(section,objective);
