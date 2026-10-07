@@ -142,6 +142,10 @@ body{overflow-x:hidden}body.page-open{overflow:hidden}button,input{font:inherit}
 .nora-info-item strong{display:block;font-size:13px;color:var(--text)}
 .nora-info-item p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
 @media(max-width:420px){.settings-accent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* NORA Consolidation 1 */
+.nora-intent-row{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.nora-intent-pill{padding:5px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.nora-intent-pill.active{color:var(--cyan);border-color:rgba(var(--accent-rgb),.22)}
+.nora-source-group{margin-top:13px}.nora-source-group-title{margin:0 0 7px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.nora-source-card{width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 11px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);text-align:left}.nora-source-card strong{display:block;font-size:12px}.nora-source-card small{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;line-height:1.4}.nora-source-card .nora-source-type{flex:none;color:var(--cyan);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.nora-gap{margin-top:12px;padding:11px 12px;border-radius:12px;background:var(--surface);border:1px dashed rgba(255,255,255,.12)}.nora-gap strong{display:block;font-size:12px}.nora-gap p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.nora-context-note{margin-top:10px;color:#747d83;font-size:10.5px;line-height:1.45}.nora-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.nora-action-grid .nora-action{width:100%}
 </style>
 <script>
 (function(){
@@ -423,7 +427,7 @@ function renderTopics(){return `<div class="page-header"><div class="page-kicker
 function openTopic(i){nav.push({type:'topic',i});setPage(renderTopic(objectiveData[i],i))}
 function renderTopic(s,i){return `<div class="page-header"><div class="page-kicker">NUR 2129 · Topic ${i+1}</div><h2 class="page-title">${esc(s.title)}</h2><p class="page-subtitle">Select an objective to view its details, course-objective mapping, references, and future study tools.</p></div><div class="list">${s.objectives.map((o,j)=>`<button class="list-card" data-objective="${j}"><span class="list-number">${o.number}</span><span class="list-copy"><span class="list-title">${esc(o.text)}</span><span class="list-meta">${o.courseObjectives?'Course objective '+esc(o.courseObjectives):'Objective'}</span></span><span class="chevron">›</span></button>`).join('')}</div>`}
 function openObjective(j){const t=nav.find(x=>x.type==='topic');const s=objectiveData[t.i];const objective=s.objectives[j];nav.push({type:'objective',j});setPage(renderObjective(objective,s));const box=document.querySelector('.objective-resource-slot');if(box){renderObjectiveResources(s,objective).then(v=>{box.innerHTML=v||'<div class="admin-message">No study resources uploaded for this objective yet.</div>';}).catch(err=>{console.error('Objective resource load failed',err);box.innerHTML='<div class="admin-message error">Unable to load study resources right now.</div>';});}}
-function renderObjective(o,s){return `<div class="page-header"><div class="page-kicker">${esc(s.title)} · Objective ${o.number}</div><h2 class="page-title">Objective ${o.number}</h2></div><div class="meta-box"><p class="objective-text">${esc(o.text)}</p>${o.subitems.length?`<ul class="objective-subitems">${o.subitems.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div><div class="objective-meta">${o.courseObjectives?`<div class="meta-box"><span class="meta-label">Course Objective Mapping</span><div class="meta-value">Course objective ${esc(o.courseObjectives)}</div></div>`:''}${s.references.length?`<div class="meta-box"><span class="meta-label">Textbooks / References</span><ul class="reference-list">${s.references.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}</div><div class="objective-resource-slot"><div class="admin-message">Loading study resources…</div></div><div class="action-row"><button class="action-button" data-action="study">STUDY</button><button class="action-button" data-action="quiz">QUIZ ME</button><button class="action-button" data-action="nora">ASK NORA</button></div><p class="source-note">Study resources are linked through the Resource Hopper. AI-powered Study, Quiz Me, and NORA remain disabled until the content-processing phase.</p>`}
+function renderObjective(o,s){return `<div class="page-header"><div class="page-kicker">${esc(s.title)} · Objective ${o.number}</div><h2 class="page-title">Objective ${o.number}</h2></div><div class="meta-box"><p class="objective-text">${esc(o.text)}</p>${o.subitems.length?`<ul class="objective-subitems">${o.subitems.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</div><div class="objective-meta">${o.courseObjectives?`<div class="meta-box"><span class="meta-label">Course Objective Mapping</span><div class="meta-value">Course objective ${esc(o.courseObjectives)}</div></div>`:''}${s.references.length?`<div class="meta-box"><span class="meta-label">Textbooks / References</span><ul class="reference-list">${s.references.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}</div><div class="objective-resource-slot"><div class="admin-message">Loading study resources…</div></div><div class="action-row"><button class="action-button" data-action="study">STUDY</button><button class="action-button" data-action="quiz">QUIZ ME</button><button class="action-button" data-action="nora">ASK NORA</button></div><p class="source-note">Study resources are linked through the Resource Hopper. NORA can retrieve and organize indexed Nurse Hub content; generative AI is not required for this layer.</p>`}
 
 function getLocalTheme(){
   try{return localStorage.getItem('nurseHubTheme')||'dark-default';}
@@ -827,327 +831,221 @@ async function publishReviewLinks(resourceId){
 }
 
 function openPlaceholder(id,source){closeSearch();if(id==='settings'){setTimeout(openSettings,80);return}if(id==='calendar'){if(source)source.classList.add('active');setTimeout(()=>openCalendar(),120);return}if(source)source.classList.add('active');setTimeout(()=>{setPage(`<div class="detail-content"><div class="detail-icon">${icons[id]||icons.objectives}</div><h2 class="detail-title">${esc(sections[id].title)}</h2><p class="coming-soon">Coming Soon</p></div>`)},120)}
-// NORA: additive navigator layer. Existing Nurse Hub functions remain the source of truth.
-async function loadNoraKnowledge(){
-  const out={resources:[],chunks:[]};
+// NORA Consolidation 1 — deterministic Nurse Hub intelligence layer.
+// No external LLM/API is used here. NORA classifies requests, retrieves indexed app knowledge,
+// prioritizes instructor-linked material, preserves source boundaries, and performs navigation.
+const NORA_INTENTS={
+  EXPLAIN:/\b(explain|teach|tell me about|help me understand|how does|what does)\b/i,
+  DEFINE:/\b(define|definition|what is|what are|meaning of)\b/i,
+  COMPARE:/\b(compare|difference between|different from|versus|vs\.?|contrast)\b/i,
+  SUMMARIZE:/\b(summarize|summary|sum up|condense|in short)\b/i,
+  STUDY:/\b(study|review|help me learn|study guide|review guide)\b/i,
+  QUIZ:/\b(quiz|test me|practice questions|practice quiz)\b/i,
+  OPEN_OBJECTIVE:/\b(open|show|go to|take me to)\b.*\b(objective|obj\.?\s*\d+)/i,
+  OPEN_TOPIC:/\b(open|show|go to|take me to)\b.*\b(class|course|topic|unit|module)\b/i,
+  OPEN_RESOURCE:/\b(open|show|go to|find)\b.*\b(resource|notes|note|study material|file|document|powerpoint|ppt|pdf)\b/i,
+  OPEN_MEDICATION:/\b(open|show|go to)\b.*\b(medication|med|drug)\b/i,
+  OPEN_DIAGNOSTIC:/\b(open|show|go to)\b.*\b(lab|diagnostic|test|vital|vitals)\b/i,
+  OPEN_CALENDAR:/\b(open|show|go to|what('s| is))\b.*\b(calendar|schedule|clinical|class schedule)\b/i
+};
+
+function noraTokens(q){
+  const stop=new Set(['the','and','for','with','from','that','this','what','which','where','when','does','about','into','your','you','can','could','would','should','please','tell','show','find','open','take','me','give','make','help','how','why','is','are','was','were','have','has','had','my','our','their','them','this','that','there','here','just','really','like','need','want','know','learn']);
+  return [...new Set(String(q||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(w=>w.length>2&&!stop.has(w)))];
+}
+function noraNorm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').replace(/\s+/g,' ').trim()}
+function noraScoreText(text,tokens){
+  const hay=noraNorm(text); let score=0;
+  tokens.forEach(t=>{if(hay.includes(t))score+=hay===t?4:1});
+  return score;
+}
+function noraClassify(q){
+  const lower=String(q||'').trim();
+  if(!lower)return {intent:'HELP',mode:'NURSE_HUB',confidence:1};
+  if(/^((hi|hey|hello|yo|sup|good morning|good afternoon|good evening)\b)/i.test(lower))return {intent:'GREETING',mode:'NURSE_HUB',confidence:1};
+  if(/what can you do|how can you help|what do you know/i.test(lower))return {intent:'HELP',mode:'NURSE_HUB',confidence:1};
+  if(/strictly|only.*notes|notes only|from my notes|from the uploaded material/i.test(lower))return {intent:NORA_INTENTS.QUIZ.test(lower)?'QUIZ':(NORA_INTENTS.STUDY.test(lower)?'STUDY':'EXPLAIN'),mode:'NOTES_ONLY',confidence:.95};
+  for(const [intent,re] of Object.entries(NORA_INTENTS)){if(re.test(lower))return {intent,mode:'NURSE_HUB',confidence:.86};}
+  return {intent:'SEARCH',mode:'NURSE_HUB',confidence:.55};
+}
+
+async function loadNoraKnowledge(force=false){
+  if(window.noraKnowledge && !force)return window.noraKnowledge;
+  const out={resources:[],chunks:[],objectiveLinks:[],chunkLinks:[],loadedAt:Date.now()};
   try{
-    const r=await supabaseClient.from('resources').select('id,title,file_name,course,topic,description,status,source_type').in('status',['ready','published']).order('updated_at',{ascending:false});
+    const [r,c,o,co]=await Promise.all([
+      supabaseClient.from('resources').select('id,title,file_name,course,topic,description,status,source_type,updated_at').eq('status','published').order('updated_at',{ascending:false}),
+      supabaseClient.from('resource_chunks').select('resource_id,chunk_index,heading,content').limit(5000),
+      supabaseClient.from('resource_objective_links').select('resource_id,objective_key,course,topic,objective_number').limit(5000),
+      supabaseClient.from('resource_chunk_objective_links').select('resource_id,chunk_index,objective_key,course,topic,objective_number').limit(5000)
+    ]);
     if(!r.error)out.resources=r.data||[];
-    const c=await supabaseClient.from('resource_chunks').select('resource_id,chunk_index,heading,content').limit(5000);
     if(!c.error)out.chunks=c.data||[];
-  }catch(e){}
+    if(!o.error)out.objectiveLinks=o.data||[];
+    if(!co.error)out.chunkLinks=co.data||[];
+  }catch(e){console.warn('NORA knowledge load failed',e)}
   window.noraKnowledge=out;
   return out;
 }
-function noraTokens(q){
-  return [...new Set(String(q||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(w=>w.length>2))];
-}
-function noraScore(text,tokens){
-  const hay=String(text||'').toLowerCase();
-  return tokens.reduce((n,w)=>n+(hay.includes(w)?1:0),0);
-}
-function noraLocalMatches(q){
-  const tokens=noraTokens(q), matches=[];
-  if(!tokens.length)return matches;
-
+function noraObjectiveKeyFromData(section,o){return typeof objectiveKey==='function'?objectiveKey(section,o):`${section.title}::${o.number}`}
+function noraFindObjectiveRefs(q){
+  const lower=String(q||'').toLowerCase(); const refs=[];
   objectiveData.forEach((s,si)=>s.objectives.forEach((o,oi)=>{
-    const text=[s.title,o.number,o.text,...o.subitems,o.courseObjectives].join(' ');
-    const score=noraScore(text,tokens)+(tokens.some(t=>s.title.toLowerCase().includes(t))?1:0);
-    if(score>0)matches.push({type:'objective',score,si,oi,title:`Objective ${o.number} · ${s.title}`,detail:o.text});
+    const key=noraObjectiveKeyFromData(s,o); const exact=new RegExp(`\\bobjective\\s*${String(o.number).replace('.','\\.')}\\b`,'i').test(lower);
+    const topicHit=noraNorm(s.title).split(' ').some(w=>w.length>3&&lower.includes(w));
+    const textScore=noraScoreText([s.title,o.text,...o.subitems].join(' '),noraTokens(q));
+    if(exact||topicHit||textScore>=2)refs.push({si,oi,section:s,objective:o,key,score:(exact?12:0)+(topicHit?5:0)+textScore});
   }));
-
-  const k=window.noraKnowledge||{resources:[],chunks:[]};
-  const byId=new Map(k.resources.map(r=>[String(r.id),r]));
+  return refs.sort((a,b)=>b.score-a.score).slice(0,5);
+}
+function noraBuildResourceMatches(q,mode='NURSE_HUB'){
+  const k=window.noraKnowledge||{resources:[],chunks:[],objectiveLinks:[],chunkLinks:[]};
+  const byId=new Map(k.resources.map(r=>[String(r.id),r])); const tokens=noraTokens(q); const refs=noraFindObjectiveRefs(q);
+  const linkedKeys=new Set(refs.map(r=>r.key)); const linkedResourceIds=new Set();
+  k.objectiveLinks.forEach(l=>{if(linkedKeys.has(l.objective_key))linkedResourceIds.add(String(l.resource_id))});
+  const matches=[];
   k.chunks.forEach(c=>{
-    const r=byId.get(String(c.resource_id));
-    if(!r)return;
-    const score=noraScore([r.title,r.topic,r.course,r.description,c.heading,c.content].join(' '),tokens);
-    if(score>0)matches.push({
-      type:'resource',
-      score,
-      resourceId:r.id,
-      title:r.title,
-      detail:c.heading||'Relevant resource section',
-      content:c.content,
-      resource:r
-    });
+    const r=byId.get(String(c.resource_id)); if(!r)return;
+    const chunkLink=k.chunkLinks.find(x=>String(x.resource_id)===String(c.resource_id)&&Number(x.chunk_index)===Number(c.chunk_index));
+    const resourceText=[r.title,r.course,r.topic,r.description].join(' ');
+    let score=noraScoreText([resourceText,c.heading,c.content].join(' '),tokens);
+    const linked=linkedResourceIds.has(String(r.id)) || (chunkLink&&linkedKeys.has(chunkLink.objective_key));
+    if(linked)score+=10;
+    if(mode==='NOTES_ONLY')score+=linked?6:0;
+    if(score>0)matches.push({type:'resource',score,linked,resourceId:r.id,resource:r,chunk:c,objectiveLink:chunkLink||null,title:r.title,detail:c.heading||r.topic||'Uploaded resource section',content:c.content});
   });
-
-  // Structured vital-sign knowledge is kept separate from broad keyword matches.
-  const ql=String(q||'').toLowerCase();
-  const age=ql.includes('infant')?'infant':ql.includes('toddler')||ql.includes('preschool')?'toddler':ql.includes('school age')||ql.includes('adolescent')||ql.includes('teen')?'school':null;
-  const vitalSubject=ql.includes('heart rate')||/\bhr\b/.test(ql)?'Heart Rate':ql.includes('respiratory rate')||/\brr\b/.test(ql)?'Respiratory Rate':ql.includes('systolic')||/\bsbp\b/.test(ql)?'Systolic BP':ql.includes('diastolic')||/\bdbp\b/.test(ql)?'Diastolic BP':ql.includes('blood pressure')||/\bbp\b/.test(ql)?'Blood Pressure':ql.includes('temperature')||ql.includes('temp')?'Temperature':ql.includes('spo2')||ql.includes('oxygen saturation')?'SpO₂':null;
-  if(ql.includes('vital')||vitalSubject){
-    const mode=age?'pediatric':'adult';
-    const ages=age?[age]:(mode==='adult'?['adult']:['infant','toddler','school']);
-    ages.forEach(a=>{
-      const set=mode==='adult'?vitalsData.adult:vitalsData.pediatric[a];
-      (set.items||[]).forEach(item=>{if(!vitalSubject||item[0].toLowerCase().includes(vitalSubject.toLowerCase())||vitalSubject==='Blood Pressure'&&/BP/.test(item[0]))matches.push({type:'vital',score:(vitalSubject?5:2)+(age?3:0),id:`${mode}-${a}-${item[0]}`,title:item[0],detail:`${set.label||'Adult'} · ${item[1]}`,mode,age:a,subject:item[0],range:item[1]});});
-    });
-  }
-
-  // Also make the existing diagnostics and medication data searchable by NORA.
-  Object.values(labData||{}).flat().forEach(l=>{
-    const hay=[l.name,l.abbr,l.range,l.why,l.low.label,l.low.info,...l.low.causes,...l.low.care,l.high.label,l.high.info,...l.high.causes,...l.high.care].join(' ');
-    const score=noraScore(hay,tokens);
-    if(score>0)matches.push({type:'lab',score,title:l.name,detail:l.range,id:l.id});
-  });
-  Object.values(testData||{}).flat().forEach(t=>{
-    const hay=[t.name,t.why,t.prep,...t.nursing,...t.cautions].join(' ');
-    const score=noraScore(hay,tokens);
-    if(score>0)matches.push({type:'test',score,title:t.name,detail:t.why,id:t.id});
-  });
-  (medicationIndex||[]).forEach(m=>{
-    const hay=[m.name,m.brand,m.className,m.indications,m.action,...m.common,...m.adverse,m.contra,...m.precautions,...m.nursing,...m.teaching,...(m.keywords||[])].join(' ');
-    const score=noraScore(hay,tokens);
-    if(score>0)matches.push({type:'medication',score,title:m.name,detail:m.className,id:m.id});
-  });
-
-  return matches.sort((a,b)=>b.score-a.score).slice(0,12);
+  return matches.sort((a,b)=>b.score-a.score).slice(0,18);
 }
-function noraNavigate(m){
-  if(m.type==='objective'){
-    nav=[{type:'root'}];
-    setPage(renderTopics());
-    setTimeout(()=>{
-      openTopic(m.si);
-      setTimeout(()=>{
-        const section=objectiveData[m.si], objective=section.objectives[m.oi];
-        nav.push({type:'objective',j:m.oi});
-        setPage(renderObjective(objective,section));
-        const box=document.querySelector('.objective-resource-slot');
-        if(box)renderObjectiveResources(section,objective).then(v=>{box.innerHTML=v;});
-      },50);
-    },50);
-    return;
-  }
-  if(m.type==='resource'){
-    showResourceDetail(m.resourceId);
-    return;
-  }
-  if(m.type==='vital'){
-    openDiagnostics('vitals',m.mode==='pediatric'?'pediatric':'adult',m.age||'infant');
-    return;
-  }
-  if(m.type==='lab'){
-    openDiagnostics('labs');
-    setTimeout(()=>{
-      const g=Object.keys(labData||{}).find(k=>findLab(m.id,k));
-      if(g){
-        nav.push({type:'lab',id:m.id,group:g});
-        setPage(renderLabDetail(findLab(m.id,g)));
-      }
-    },20);
-    return;
-  }
-  if(m.type==='test'){
-    openDiagnostics('tests');
-    setTimeout(()=>{
-      const g=Object.keys(testData||{}).find(k=>findTest(m.id,k));
-      if(g){
-        nav.push({type:'test',id:m.id,group:g});
-        setPage(renderTestDetail(findTest(m.id,g)));
-      }
-    },20);
-    return;
-  }
-  if(m.type==='medication'){
-    openMedications();
-    setTimeout(()=>openMedication(m.id),20);
-  }
+function noraStructuredMatches(q){
+  const tokens=noraTokens(q),matches=[];
+  objectiveData.forEach((s,si)=>s.objectives.forEach((o,oi)=>{
+    const text=[s.title,o.number,o.text,...o.subitems,o.courseObjectives].join(' '),score=noraScoreText(text,tokens);
+    if(score)matches.push({type:'objective',score,si,oi,title:`Objective ${o.number} · ${s.title}`,detail:o.text,section:s,objective:o});
+  }));
+  Object.values(labData||{}).flat().forEach(l=>{const hay=[l.name,l.abbr,l.range,l.why,l.low?.label,l.low?.info,...(l.low?.causes||[]),l.high?.label,l.high?.info,...(l.high?.causes||[])].join(' '),score=noraScoreText(hay,tokens);if(score)matches.push({type:'lab',score,title:l.name,detail:l.range,id:l.id,item:l})});
+  Object.values(testData||{}).flat().forEach(t=>{const hay=[t.name,t.why,t.prep,...(t.nursing||[]),...(t.cautions||[])].join(' '),score=noraScoreText(hay,tokens);if(score)matches.push({type:'test',score,title:t.name,detail:t.why,id:t.id,item:t})});
+  (medicationIndex||[]).forEach(m=>{const hay=[m.name,m.brand,m.className,m.indications,m.action,...(m.common||[]),...(m.adverse||[]),m.contra,...(m.precautions||[]),...(m.nursing||[]),...(m.teaching||[]),...(m.keywords||[])].join(' '),score=noraScoreText(hay,tokens);if(score)matches.push({type:'medication',score,title:m.name,detail:m.className,id:m.id,item:m})});
+  const ql=noraNorm(q); const vitalSubject=ql.includes('heart rate')||/\bhr\b/.test(ql)?'Heart Rate':ql.includes('respiratory rate')||/\brr\b/.test(ql)?'Respiratory Rate':ql.includes('blood pressure')||/\bbp\b/.test(ql)?'Blood Pressure':ql.includes('temperature')||ql.includes('temp')?'Temperature':ql.includes('spo2')||ql.includes('oxygen saturation')?'SpO₂':null;
+  if(ql.includes('vital')||vitalSubject){Object.entries(vitalsData||{}).forEach(([mode,set])=>{if(mode==='adult'){(set.items||[]).forEach(item=>{if(!vitalSubject||item[0].toLowerCase().includes(vitalSubject.toLowerCase())||vitalSubject==='Blood Pressure'&&/BP/.test(item[0]))matches.push({type:'vital',score:5,title:item[0],detail:`Adult · ${item[1]}`,mode:'adult',age:'adult',subject:item[0],range:item[1]})})}else Object.entries(set||{}).forEach(([age,data])=>(data.items||[]).forEach(item=>{if(!vitalSubject||item[0].toLowerCase().includes(vitalSubject.toLowerCase())||vitalSubject==='Blood Pressure'&&/BP/.test(item[0]))matches.push({type:'vital',score:5,title:item[0],detail:`${data.label||age} · ${item[1]}`,mode:'pediatric',age,subject:item[0],range:item[1]})}))})}
+  return matches.sort((a,b)=>b.score-a.score).slice(0,18);
 }
-function noraWelcome(){
-  const greetings=[
-    "Hey! What can I help you with?",
-    "What’s up? Need anything?",
-    "What are we working on today?",
-    "Got a nursing question?",
-    "Ready to study? What do you need?",
-    "Need help finding something in Nurse Hub?",
-    "What can I help you with?"
-  ];
-  return greetings[Math.floor(Math.random()*greetings.length)];
+function noraRetrieve(q,mode='NURSE_HUB'){
+  const refs=noraFindObjectiveRefs(q), resources=noraBuildResourceMatches(q,mode), structured=noraStructuredMatches(q);
+  const sourceMode=mode==='NOTES_ONLY'?'NOTES_ONLY':'NURSE_HUB';
+  let merged=[];
+  if(sourceMode==='NOTES_ONLY') merged=resources;
+  else merged=[...resources,...structured];
+  const seen=new Set(); merged=merged.filter(m=>{const key=m.type+'|'+(m.resourceId||m.id||m.title)+'|'+(m.chunk?.chunk_index??'');if(seen.has(key))return false;seen.add(key);return true});
+  return {matches:merged.sort((a,b)=>b.score-a.score).slice(0,12),objectiveRefs:refs,resources,structured,mode:sourceMode};
 }
-function noraChatHtml(){
-  const msgs=window.noraChatMessages||[];
-  if(!msgs.length)return `<div class="nora-welcome"><div class="nora-avatar">N</div><div><div class="nora-welcome-name">NORA</div><p>${esc(noraWelcome())}</p><p class="nora-welcome-sub">I can help you work with the information already inside Nurse Hub — objectives, diagnostics, medications, and uploaded study resources.</p></div></div>`;
-  return msgs.map((m,i)=>{
-    if(m.role==='user')return `<div class="nora-message-row user-row"><div class="nora-bubble user-bubble">${esc(m.text)}</div></div>`;
-    return `<div class="nora-message-row"><div class="nora-avatar small">N</div><div class="nora-bubble nora-bubble-main">${m.html||''}</div></div>`;
-  }).join('');
-}
-function noraQuickActions(){
-  return `<div class="nora-quick-row"><button type="button" class="nora-quick" data-nora-prompt="Help me study">Study</button><button type="button" class="nora-quick" data-nora-prompt="Quiz me">Quiz me</button><button type="button" class="nora-quick" data-nora-prompt="What can you help me with?">What can you do?</button></div>`;
-}
-function renderNora(){
-  const msgs=window.noraChatMessages||[];
-  return `<div class="nora-page nora-chat-page">
-    <div class="nora-chat-top">
-      <div class="nora-chat-identity"><div class="nora-avatar">N</div><div><h2 class="nora-title">NORA</h2><div class="nora-online">Nurse Hub assistant · connected</div></div></div>
-    </div>
-    <div class="nora-chat-scroll" id="noraChatScroll">
-      <div class="nora-chat-messages" id="noraAnswer">${noraChatHtml()}</div>
-      ${msgs.length?'<div class="nora-chat-spacer"></div>':noraQuickActions()}
-    </div>
-    <form class="nora-composer" id="noraForm">
-      <input id="noraInput" class="nora-input" autocomplete="off" autocapitalize="sentences" placeholder="Message NORA…">
-      <button class="nora-send" type="submit" aria-label="Send to NORA">↑</button>
-    </form>
-    <div class="nora-status" id="noraStatus">NORA uses information currently available inside Nurse Hub.</div>
-    <p class="nora-disclaimer">NORA is grounded in your Nurse Hub content. It may not know information that has not been added to the app.</p>
-  </div>`;
-}
-function noraAppend(role,text,html){
-  if(!window.noraChatMessages)window.noraChatMessages=[];
-  window.noraChatMessages.push({role,text,html});
-}
-function noraScrollBottom(){
-  const box=document.getElementById('noraChatScroll');
-  if(box)setTimeout(()=>{box.scrollTop=box.scrollHeight},30);
-}
-function noraFindBest(q){
-  return noraLocalMatches(q).slice(0,8);
-}
-function noraBuildAnswer(q,matches){
-  const lower=q.toLowerCase();
-  if(/^(hi|hey|hello|yo|sup|what's up|whats up|good morning|good afternoon|good evening)\b/.test(lower)){
-    return `<p>Hey! I’m here. You can ask me about your Nurse Hub material, a medication, lab, diagnostic test, objective, or an uploaded resource.</p>${noraQuickActions()}`;
-  }
-  if(/what can you do|help me|how can you help|what do you know/.test(lower)){
-    return `<p>I can search the information inside Nurse Hub and connect related material.</p><ul class="nora-list"><li>Find course objectives and related topics</li><li>Search uploaded Hopper resources</li><li>Look up labs, diagnostics, and medications</li><li>Build a focused study guide from matching material</li><li>Make a practice quiz from the material I can find</li></ul>${noraQuickActions()}`;
-  }
-  if(/\b(quiz|test me|quiz me)\b/.test(lower)){
-    return `<p>Opening Quiz Me with this topic.</p>`;
-  }
-  if(/\b(study guide|study this|help me study|study)\b/.test(lower)){
-    return noraBuildStudyGuide(q,matches);
-  }
-  if(!matches.length){
-    return `<p>I couldn’t find a strong match for that in the current Nurse Hub knowledge base.</p><p>Try asking with a specific medication, lab, diagnostic test, objective phrase, or a term from one of your uploaded resources.</p>`;
-  }
-  const top=matches[0];
-  let intro=`<p>${noraExplainMatch(top,q)}</p>`;
-  const related=matches.slice(0,4);
-  intro+=`<div class="nora-source-title">Related in Nurse Hub</div><div class="nora-result-stack">${related.map((m,i)=>`<button type="button" class="nora-result" data-nora-match="${i}"><span><strong>${esc(m.title)}</strong><small>${esc(m.detail||'')}</small></span><span>›</span></button>`).join('')}</div>`;
-  intro+=`<div class="nora-action-row"><button type="button" class="nora-action" data-nora-prompt="Study this">STUDY</button><button type="button" class="nora-action" data-nora-prompt="Quiz me on this">QUIZ ME</button></div>`;
-  return intro;
-}
+function noraIntentLabel(intent){return ({SEARCH:'SEARCH',EXPLAIN:'EXPLAIN',DEFINE:'DEFINE',COMPARE:'COMPARE',SUMMARIZE:'SUMMARIZE',STUDY:'STUDY',QUIZ:'QUIZ',OPEN_OBJECTIVE:'NAVIGATE',OPEN_TOPIC:'NAVIGATE',OPEN_RESOURCE:'NAVIGATE',OPEN_MEDICATION:'NAVIGATE',OPEN_DIAGNOSTIC:'NAVIGATE',OPEN_CALENDAR:'NAVIGATE',GREETING:'CHAT',HELP:'HELP'})[intent]||'SEARCH'}
+function noraWelcome(){return ["Hey! What can I help you find?","What are we working on today?","Need something from Nurse Hub?","Ready to study? What do you need?"][Math.floor(Math.random()*4)]}
+function noraChatHtml(){const msgs=window.noraChatMessages||[];if(!msgs.length)return `<div class="nora-welcome"><div class="nora-avatar">N</div><div><div class="nora-welcome-name">NORA</div><p>${esc(noraWelcome())}</p><p class="nora-welcome-sub">I can search, connect, organize, and navigate information already inside Nurse Hub. I do not use outside web or paid AI services.</p></div></div>`;return msgs.map(m=>m.role==='user'?`<div class="nora-message-row user-row"><div class="nora-bubble user-bubble">${esc(m.text)}</div></div>`:`<div class="nora-message-row"><div class="nora-avatar small">N</div><div class="nora-bubble nora-bubble-main">${m.html||''}</div></div>`).join('')}
+function noraQuickActions(){return `<div class="nora-quick-row"><button type="button" class="nora-quick" data-nora-prompt="Help me study">Study</button><button type="button" class="nora-quick" data-nora-prompt="Quiz me">Quiz me</button><button type="button" class="nora-quick" data-nora-prompt="What can you do?">What can you do?</button></div>`}
+function renderNora(){return `<div class="nora-page nora-chat-page"><div class="nora-chat-top"><div class="nora-chat-identity"><div class="nora-avatar">N</div><div><h2 class="nora-title">NORA</h2><div class="nora-online">Nurse Hub assistant · no external AI</div></div></div></div><div class="nora-chat-scroll" id="noraChatScroll"><div class="nora-chat-messages" id="noraAnswer">${noraChatHtml()}</div>${(window.noraChatMessages||[]).length?'<div class="nora-chat-spacer"></div>':noraQuickActions()}</div><form class="nora-composer" id="noraForm"><input id="noraInput" class="nora-input" autocomplete="off" autocapitalize="sentences" placeholder="Message NORA…"><button class="nora-send" type="submit" aria-label="Send to NORA">↑</button></form><div class="nora-status" id="noraStatus">NORA uses indexed Nurse Hub knowledge.</div><p class="nora-disclaimer">Source boundary: NORA can organize and retrieve Nurse Hub content, but it does not invent outside medical knowledge.</p></div>`}
+function noraSourceCard(m,i){const type=m.type==='resource'?(m.linked?'Instructor resource':'Uploaded resource'):m.type;const detail=m.type==='resource'?(m.detail||m.resource?.topic||'Indexed resource'):(m.detail||'');return `<button type="button" class="nora-source-card" data-nora-match="${i}"><span><strong>${esc(m.title)}</strong><small>${esc(detail)}</small></span><span class="nora-source-type">${esc(type)}</span></button>`}
 function noraExplainMatch(m,q){
-  if(m.type==='vital')return `<strong>${esc(m.subject)}</strong> — ${esc(m.detail)}.`;
-  if(m.type==='lab'){
-    const x=Object.values(labData||{}).flat().find(v=>v.id===m.id);
-    if(x){
-      if(/normal|range|reference|value/.test(q.toLowerCase()))return `<strong>${esc(x.name)}</strong> has a Nurse Hub reference range of <strong>${esc(x.range)}</strong>. ${esc(x.why||'')}`;
-      if(/low|hypo|decreased/.test(q.toLowerCase()))return `<strong>${esc(x.name)}</strong> — low: ${esc(x.low?.label||'Low value')}. ${esc(x.low?.info||'')}`;
-      if(/high|hyper|elevated|increased/.test(q.toLowerCase()))return `<strong>${esc(x.name)}</strong> — high: ${esc(x.high?.label||'High value')}. ${esc(x.high?.info||'')}`;
-      return `<strong>${esc(x.name)}</strong> has a reference range of <strong>${esc(x.range)}</strong>. ${esc(x.why||'')}`;
-    }
-  }
-  if(m.type==='medication'){
-    const x=(medicationIndex||[]).find(v=>v.id===m.id);
-    if(x)return `<strong>${esc(x.name)}</strong> is listed as ${esc(x.className||'a medication')}. ${esc(x.indications||x.action||'')}`;
-  }
-  if(m.type==='test'){
-    const x=Object.values(testData||{}).flat().find(v=>v.id===m.id);
-    if(x)return `<strong>${esc(x.name)}</strong>: ${esc(x.why||'')} ${x.prep?`Preparation: ${esc(x.prep)}`:''}`;
-  }
+  if(m.type==='resource')return `<strong>${esc(m.title)}</strong> — ${esc(m.detail||'Relevant indexed section')}.<div class="nora-context-note">${esc(String(m.content||'').slice(0,700))}${String(m.content||'').length>700?'…':''}</div>`;
   if(m.type==='objective')return `<strong>${esc(m.title)}</strong>: ${esc(m.detail||'')}`;
-  if(m.type==='resource')return `<strong>${esc(m.title)}</strong> — ${esc(m.detail||'')}. ${esc(String(m.content||'').slice(0,500))}${String(m.content||'').length>500?'…':''}`;
+  if(m.type==='vital')return `<strong>${esc(m.subject)}</strong> — ${esc(m.detail)}.`;
+  if(m.type==='lab'){const x=m.item||Object.values(labData||{}).flat().find(v=>v.id===m.id);if(x){const ql=noraNorm(q);if(/low|hypo|decreased/.test(ql))return `<strong>${esc(x.name)}</strong> — low: ${esc(x.low?.label||'Low value')}. ${esc(x.low?.info||'')}`;if(/high|hyper|elevated|increased/.test(ql))return `<strong>${esc(x.name)}</strong> — high: ${esc(x.high?.label||'High value')}. ${esc(x.high?.info||'')}`;return `<strong>${esc(x.name)}</strong> has a Nurse Hub reference range of <strong>${esc(x.range)}</strong>. ${esc(x.why||'')}`}}
+  if(m.type==='medication'){const x=m.item||(medicationIndex||[]).find(v=>v.id===m.id);if(x)return `<strong>${esc(x.name)}</strong> is listed as ${esc(x.className||'a medication')}. ${esc(x.indications||x.action||'')}`}
+  if(m.type==='test'){const x=m.item||Object.values(testData||{}).flat().find(v=>v.id===m.id);if(x)return `<strong>${esc(x.name)}</strong>: ${esc(x.why||'')} ${x.prep?`Preparation: ${esc(x.prep)}`:''}`}
   return esc(m.detail||m.title||'I found a related item in Nurse Hub.');
 }
-function noraBuildStudyGuide(q,matches){
-  if(!matches.length)return `<p>I can build a focused guide once you give me a topic, medication, lab, objective, or course term.</p>`;
-  const unique=matches.slice(0,5);
-  return `<p>Here’s a focused study set from the Nurse Hub material I found:</p><div class="nora-study-grid">${unique.map(m=>`<div class="nora-study-card"><span class="nora-study-type">${esc(m.type)}</span><strong>${esc(m.title)}</strong><p>${noraExplainMatch(m,q)}</p></div>`).join('')}</div><div class="nora-action-row"><button type="button" class="nora-action" data-nora-prompt="Quiz me on this">QUIZ ME</button></div>`;
+function noraNavigationTarget(q,retrieval){
+  const lower=noraNorm(q);
+  if(NORA_INTENTS.OPEN_CALENDAR.test(q))return {type:'calendar'};
+  const obj=retrieval.objectiveRefs[0];
+  if(NORA_INTENTS.OPEN_OBJECTIVE.test(q)&&obj)return {type:'objective',si:obj.si,oi:obj.oi};
+  if(NORA_INTENTS.OPEN_TOPIC.test(q)&&obj)return {type:'topic',si:obj.si};
+  const m=retrieval.matches[0];
+  if(NORA_INTENTS.OPEN_MEDICATION.test(q)&&m?.type==='medication')return {type:'medication',id:m.id};
+  if(NORA_INTENTS.OPEN_DIAGNOSTIC.test(q)&&m?.type==='lab')return {type:'lab',id:m.id};
+  if(NORA_INTENTS.OPEN_DIAGNOSTIC.test(q)&&m?.type==='test')return {type:'test',id:m.id};
+  if(NORA_INTENTS.OPEN_RESOURCE.test(q)&&m?.type==='resource')return {type:'resource',id:m.resourceId};
+  return null;
 }
-function noraBuildQuiz(q,matches){
-  if(!matches.length)return `<p>I need a topic before I can make a useful quiz. Try “quiz me on potassium,” “quiz me on furosemide,” or name one of your course topics.</p>`;
-  const qs=matches.slice(0,5).map((m,i)=>({m,q:i+1}));
-  return `<p>Let’s do a quick Nurse Hub practice round. Answer these in your next message as <strong>1–5</strong>.</p><div class="nora-quiz">${qs.map(x=>`<div class="nora-quiz-item"><strong>${x.q}. ${esc(x.m.title)}</strong><p>${noraQuizPrompt(x.m)}</p></div>`).join('')}</div><p class="nora-quiz-note">Send your answers and I’ll check them against the Nurse Hub information I used.</p>`;
+function noraRenderNavigation(target){
+  if(!target)return false;
+  if(target.type==='calendar'){openCalendar();return true}
+  if(target.type==='objective'){openObjectives();setTimeout(()=>{openTopic(target.si);setTimeout(()=>openObjectiveWithResources(target.oi),30)},30);return true}
+  if(target.type==='topic'){openObjectives();setTimeout(()=>openTopic(target.si),30);return true}
+  if(target.type==='medication'){openMedications();setTimeout(()=>openMedication(target.id),30);return true}
+  if(target.type==='lab'){openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData||{}).find(k=>findLab(target.id,k));if(g){nav.push({type:'lab',id:target.id,group:g});setPage(renderLabDetail(findLab(target.id,g)))}} ,30);return true}
+  if(target.type==='test'){openDiagnostics('tests');setTimeout(()=>{const g=Object.keys(testData||{}).find(k=>findTest(target.id,k));if(g){nav.push({type:'test',id:target.id,group:g});setPage(renderTestDetail(findTest(target.id,g)))}} ,30);return true}
+  if(target.type==='resource'){showResourceDetail(target.id);return true}
+  return false;
 }
-function noraQuizPrompt(m){
-  if(m.type==='lab'){const x=Object.values(labData||{}).flat().find(v=>v.id===m.id);return x?`What is the Nurse Hub reference range for this lab?`: 'What is the key reference information for this lab?';}
-  if(m.type==='medication'){const x=(medicationIndex||[]).find(v=>v.id===m.id);return x?`What medication class is listed for ${x.name}?`:'What is the listed medication class?';}
-  if(m.type==='objective')return 'What is the main concept being tested by this objective?';
-  if(m.type==='test')return 'What is the primary reason for this diagnostic test?';
-  return 'What is the most important point in this resource section?';
+function noraGapHtml(retrieval){
+  const refs=retrieval.objectiveRefs;if(!refs.length)return '';
+  return refs.slice(0,3).map(r=>{const direct=retrieval.resources.filter(m=>m.objectiveLink&&m.objectiveLink.objective_key===r.key);if(direct.length)return `<div class="nora-gap"><strong>Objective ${esc(r.objective.number)} has linked material</strong><p>${direct.length} indexed section${direct.length===1?'':'s'} were connected to this objective. NORA will prioritize those sections.</p></div>`;return `<div class="nora-gap"><strong>Objective ${esc(r.objective.number)} has no directly linked published resource</strong><p>NORA found the objective in Nurse Hub, but no published Hopper material is directly linked to it yet.</p></div>`}).join('');
 }
-function quizTopicFromPrompt(q){
-  const x=String(q||'').replace(/\b(quiz|test|me|on|about|this|please|can|you|give|make|a|an|the)\b/gi,' ').replace(/\s+/g,' ').trim();
-  return x||'';
+function noraBuildAnswer(q,retrieval,classification){
+  const {intent,mode}=classification, matches=retrieval.matches;
+  if(intent==='GREETING')return `<p>${noraWelcome()}</p>${noraQuickActions()}`;
+  if(intent==='HELP')return `<p>I’m the free, in-app Nurse Hub assistant. I can do more than keyword search:</p><ul class="nora-list"><li>Connect questions to objectives and their linked resources</li><li>Prioritize instructor-uploaded material when it exists</li><li>Search diagnostics, medications, vitals, and course objectives</li><li>Follow up using the context of our current conversation</li><li>Navigate you directly to objectives, resources, medications, diagnostics, or Calendar</li><li>Build a source-based study view from the information Nurse Hub actually has</li></ul><p class="nora-context-note">I do not browse the outside web or generate general medical knowledge. For that kind of advanced reasoning, use ChatGPT separately.</p>${noraQuickActions()}`;
+  const navTarget=noraNavigationTarget(q,retrieval);
+  if(navTarget)return `<p>I found the relevant Nurse Hub destination. Tap below to open it.</p><div class="nora-action-grid"><button type="button" class="nora-action" data-nora-nav='${esc(JSON.stringify(navTarget))}'>OPEN IN NURSE HUB</button></div>`;
+  if(intent==='QUIZ')return `<p>I found the material for this topic. I’ll hand the topic to Nurse Hub’s current Quiz Me tool rather than pretending I can generate NCLEX-level reasoning without an AI model.</p><div class="nora-action-grid"><button type="button" class="nora-action" data-nora-open-quiz="${esc(q)}">OPEN QUIZ ME</button></div>${noraGapHtml(retrieval)}`;
+  if(!matches.length)return `<p>I couldn’t find enough matching information inside Nurse Hub.</p><p>Try a specific objective, medication, lab, diagnostic, course topic, or term from an uploaded resource.</p><p class="nora-context-note">I won’t fill the gap with outside medical information because this version of NORA is intentionally source-bounded.</p>`;
+  const top=matches[0];
+  let body=`<div class="nora-intent-row"><span class="nora-intent-pill active">${esc(noraIntentLabel(intent))}</span><span class="nora-intent-pill">${esc(mode)}</span></div>`;
+  if(intent==='COMPARE'){
+    const items=matches.slice(0,6);body+=`<p>I found ${items.length} related Nurse Hub entries. I can organize them side-by-side, but I won’t invent comparison points that aren't present in the app.</p>`;
+  }else if(intent==='SUMMARIZE'||intent==='STUDY'){
+    body+=`<p>Here’s a source-based study view from the strongest matches I found:</p>`;
+  }else body+=`<p>${noraExplainMatch(top,q)}</p>`;
+  const groups={};matches.slice(0,8).forEach((m,i)=>{const key=m.type==='resource'?(m.linked?'Instructor resources':'Uploaded resources'):'Nurse Hub reference';(groups[key]??=[]).push([m,i])});
+  Object.entries(groups).forEach(([title,items])=>{body+=`<div class="nora-source-group"><div class="nora-source-group-title">${esc(title)}</div>${items.map(([m,i])=>noraSourceCard(m,i)).join('')}</div>`});
+  body+=noraGapHtml(retrieval);
+  body+=`<div class="nora-action-row"><button type="button" class="nora-action" data-nora-prompt="Study this">STUDY</button><button type="button" class="nora-action" data-nora-prompt="Quiz me on this">QUIZ ME</button></div>`;
+  return body;
 }
-function renderQuizSetup(prefill=''){
-  const topic=quizTopicFromPrompt(prefill);
-  return `<div class="page-header"><div class="page-kicker">Practice</div><h2 class="page-title">Quiz Me</h2><p class="page-subtitle">Set up a focused quiz from Nurse Hub objectives, diagnostics, medications, and Hopper resources.</p></div><div class="quiz-setup-grid"><div class="quiz-setup-card"><label for="quizTopic">Topic</label><input id="quizTopic" value="${esc(topic)}" placeholder="e.g. fetal surveillance, potassium, newborn nutrition"></div><div class="quiz-setup-card"><label for="quizCount">Questions</label><select id="quizCount"><option value="5">5</option><option value="10">10</option><option value="15">15</option></select></div><div class="quiz-setup-card"><label for="quizDifficulty">Difficulty</label><select id="quizDifficulty"><option>Mixed</option><option>Easy</option><option>Medium</option><option>Hard</option></select></div><div class="quiz-setup-card"><label for="quizType">Question type</label><select id="quizType"><option value="single">Single choice</option><option value="mixed">Mixed</option><option value="truefalse">True / False</option></select></div><button type="button" class="admin-primary" data-start-quiz>START QUIZ</button><div id="quizSetupMessage" class="admin-message"></div></div>`;
+function noraStudyContext(q,retrieval){
+  const resources=retrieval.resources.slice(0,8);if(!resources.length)return `<p>I can’t build a source-based study view yet because no uploaded resource matched this topic.</p>`;
+  const seen=new Set(),items=[];resources.forEach(m=>{const key=String(m.resourceId)+'|'+m.chunk.chunk_index;if(!seen.has(key)){seen.add(key);items.push(m)}});
+  return `<p>Here’s an organized study map using the indexed material I found. Original source wording remains available through each section.</p><div class="nora-study-grid">${items.slice(0,8).map(m=>`<div class="nora-study-card"><span class="nora-study-type">${m.linked?'Instructor-linked':'Uploaded'}</span><strong>${esc(m.title)}</strong><p><strong>${esc(m.detail||'Section')}</strong><br>${esc(String(m.content||'').slice(0,650))}${String(m.content||'').length>650?'…':''}</p></div>`).join('')}</div>${noraGapHtml(retrieval)}<div class="nora-context-note">This is organization and retrieval, not newly generated medical content.</div>`;
 }
-function openQuizSetup(prefill=''){nav.push({type:'quiz-setup',prefill});setPage(renderQuizSetup(prefill));}
-function quizSources(topic){
-  const q=noraTokens(topic), matches=noraLocalMatches(topic).filter(m=>m.type!=='vital'||q.some(t=>['vital','heart','rate','respiratory','blood','temperature','infant','pediatric','adult'].includes(t)));
-  return matches;
+function noraNavigateMatch(m){
+  if(!m)return;
+  if(m.type==='objective'){openObjectives();setTimeout(()=>{openTopic(m.si);setTimeout(()=>openObjectiveWithResources(m.oi),30)},30);return}
+  if(m.type==='resource'){showResourceDetail(m.resourceId);return}
+  if(m.type==='vital'){openDiagnostics('vitals',m.mode,m.age);return}
+  if(m.type==='medication'){openMedications();setTimeout(()=>openMedication(m.id),30);return}
+  if(m.type==='lab'){openDiagnostics('labs');setTimeout(()=>{const g=Object.keys(labData||{}).find(k=>findLab(m.id,k));if(g){nav.push({type:'lab',id:m.id,group:g});setPage(renderLabDetail(findLab(m.id,g)))}} ,30);return}
+  if(m.type==='test'){openDiagnostics('tests');setTimeout(()=>{const g=Object.keys(testData||{}).find(k=>findTest(m.id,k));if(g){nav.push({type:'test',id:m.id,group:g});setPage(renderTestDetail(findTest(m.id,g)))}} ,30)}
 }
-function makeQuizQuestions(topic,count,type){
-  const matches=quizSources(topic); if(!matches.length)return [];
-  const out=[];
-  const labs=matches.filter(m=>m.type==='lab');
-  const meds=matches.filter(m=>m.type==='medication');
-  const vitals=matches.filter(m=>m.type==='vital');
-  const objs=matches.filter(m=>m.type==='objective');
-  const tests=matches.filter(m=>m.type==='test');
-  function pushSingle(question,correct,distractors,source){const opts=[correct,...distractors.filter(x=>x!==correct).slice(0,3)];if(opts.length<4)return;out.push({question,options:opts,answer:correct,source});}
-  vitals.slice(0,Math.ceil(count/3)).forEach(m=>{const pool=(vitals.map(x=>x.range));const ds=[...new Set(pool.filter(x=>x!==m.range))];pushSingle(`What is the Nurse Hub reference range for ${m.subject} in ${m.detail.split(' · ')[0]}?`,m.range,ds,m);});
-  labs.slice(0,Math.ceil(count/3)).forEach(m=>{const x=Object.values(labData).flat().find(v=>v.id===m.id);if(!x)return;const ds=Object.values(labData).flat().map(v=>v.range).filter(r=>r!==x.range);pushSingle(`What is the Nurse Hub reference range for ${x.name}?`,x.range,ds,m);});
-  meds.slice(0,Math.ceil(count/3)).forEach(m=>{const x=medicationIndex.find(v=>v.id===m.id);if(!x)return;const ds=[...new Set(medicationIndex.map(v=>v.className).filter(c=>c!==x.className))];pushSingle(`Which medication class is listed for ${x.name}?`,x.className,ds,m);});
-  objs.slice(0,count).forEach(m=>{const ds=objectiveData.flatMap(s=>s.objectives.map(o=>o.text)).filter(x=>x!==m.detail);pushSingle(`Which statement matches ${m.title}?`,m.detail,ds,m);});
-  tests.slice(0,count).forEach(m=>{const x=Object.values(testData).flat().find(v=>v.id===m.id);if(!x)return;const ds=Object.values(testData).flat().map(v=>v.why).filter(v=>v!==x.why);pushSingle(`What is the primary reason for ${x.name}?`,x.why,ds,m);});
-  return out.slice(0,count);
-}
-function renderQuiz(questions,topic,difficulty,type){return `<div class="page-header"><div class="page-kicker">Quiz Me · ${esc(difficulty)}</div><h2 class="page-title">${esc(topic||'Nurse Hub Practice')}</h2><p class="page-subtitle">${questions.length} questions · ${esc(type==='mixed'?'Mixed':type==='truefalse'?'True / False':'Single choice')}</p></div><form id="quizForm"><div id="quizQuestions">${questions.map((q,i)=>`<section class="quiz-question"><h3>${i+1}. ${esc(q.question)}</h3>${q.options.map((o,j)=>`<label class="quiz-option"><input type="radio" name="q${i}" value="${j}" required><span>${esc(o)}</span></label>`).join('')}</section>`).join('')}</div><button class="admin-primary" type="submit">CHECK ANSWERS</button><div id="quizResult" class="quiz-result" hidden></div></form>`}
-function startQuiz(){const topic=document.getElementById('quizTopic')?.value.trim()||'';const count=Number(document.getElementById('quizCount')?.value||5);const difficulty=document.getElementById('quizDifficulty')?.value||'Mixed';const type=document.getElementById('quizType')?.value||'single';const qs=makeQuizQuestions(topic,count,type);if(!qs.length){const m=document.getElementById('quizSetupMessage');if(m)m.textContent='No strong Nurse Hub material matched that topic yet. Try a specific objective, lab, medication, or uploaded-resource term.';return}nav.push({type:'quiz',topic,difficulty,type});setPage(renderQuiz(qs,topic,difficulty,type));window.currentQuiz=qs;}
-function gradeQuiz(e){e.preventDefault();const qs=window.currentQuiz||[];let score=0;qs.forEach((q,i)=>{const chosen=document.querySelector(`input[name="q${i}"]:checked`);if(chosen&&q.options[Number(chosen.value)]===q.answer)score++;});const box=document.getElementById('quizResult');if(box){box.hidden=false;box.innerHTML=`<strong>${score}/${qs.length}</strong><div>${score===qs.length?'Perfect.':score>=Math.ceil(qs.length*.7)?'Nice work. Review the missed concepts and try another round.':'Keep going. Review the source material and try again.'}</div>`;box.scrollIntoView({behavior:'smooth',block:'nearest'});}}
-
 async function openNora(prefill=''){
-  if(!window.noraChatMessages)window.noraChatMessages=[];
-  nav.push({type:'nora'});
-  setPage(renderNora());
-  const input=document.getElementById('noraInput');
-  if(input){setTimeout(()=>input.focus(),80);}
-  const k=await loadNoraKnowledge();
-  const status=document.getElementById('noraStatus');
-  if(status)status.textContent=`Connected · ${k.resources.length} published resources · ${k.chunks.length} indexed sections`;
-  const form=document.getElementById('noraForm');
-  if(form)form.addEventListener('submit',e=>{e.preventDefault();const q=input?.value?.trim()||'';if(q){input.value='';runNora(q);}});
-  document.querySelectorAll('[data-nora-prompt]').forEach(b=>b.addEventListener('click',()=>{const q=b.dataset.noraPrompt||'';runNora(q);}));
+  if(!window.noraChatMessages)window.noraChatMessages=[];nav.push({type:'nora'});setPage(renderNora());
+  const input=document.getElementById('noraInput');if(input)setTimeout(()=>input.focus(),80);
+  const k=await loadNoraKnowledge();const status=document.getElementById('noraStatus');if(status)status.textContent=`Indexed · ${k.resources.length} published resources · ${k.chunks.length} sections`;
   if(prefill)runNora(prefill);
 }
 window.openNora=openNora;
 async function runNora(q){
-  q=String(q||'').trim();
-  if(!q)return;
+  q=String(q||'').trim();if(!q)return;
   if(!window.noraChatMessages)window.noraChatMessages=[];
-  noraAppend('user',q,'');
-  setPage(renderNora());
-  const input=document.getElementById('noraInput');
-  if(input)setTimeout(()=>input.focus(),20);
-  const status=document.getElementById('noraStatus');
-  if(status)status.textContent='Thinking with Nurse Hub…';
-  const matches=noraFindBest(q);
-  const wantsQuiz=/\b(quiz|test me|quiz me)\b/i.test(q);
-  const html=noraBuildAnswer(q,matches);
-  noraAppend('assistant','',html);
-  setPage(renderNora());
-  if(wantsQuiz){
-    setTimeout(()=>openQuizSetup(q),40);
-    return;
+  noraAppend('user',q,'');setPage(renderNora());
+  const status=document.getElementById('noraStatus');if(status)status.textContent='NORA is checking Nurse Hub…';
+  const c=noraClassify(q);
+  let retrieval=noraRetrieve(q,c.mode);
+  // Conversational follow-up: if the new question is underspecified, reuse the previous topic
+  // as retrieval context without inventing an answer.
+  const prior=window.noraContext;
+  if(prior&&retrieval.matches.length===0&&noraTokens(q).length<=5&&prior.query){
+    const followupQuery=`${prior.query} ${q}`;
+    const followup=noraRetrieve(followupQuery,c.mode);
+    if(followup.matches.length)retrieval=followup;
   }
-  const status2=document.getElementById('noraStatus');
-  if(status2)status2.textContent=`Nurse Hub · ${matches.length} relevant result${matches.length===1?'':'s'}`;
-  const input2=document.getElementById('noraInput');
-  if(input2){input2.blur();}
-  const active=document.activeElement; if(active&&active instanceof HTMLElement&&active!==document.body)active.blur();
-  document.querySelectorAll('[data-nora-prompt]').forEach(b=>b.addEventListener('click',()=>{const prompt=b.dataset.noraPrompt||'';if(/\bquiz\b/i.test(prompt)){openQuizSetup(prompt);return}runNora(prompt);}));
-  const latest=window.noraChatMessages[window.noraChatMessages.length-1];
-  const box=document.getElementById('noraAnswer');
-  if(box){box.querySelectorAll('[data-nora-match]').forEach(btn=>btn.addEventListener('click',()=>{const m=matches[Number(btn.dataset.noraMatch)];if(m)noraNavigate(m);}));}
+  window.noraContext={query:q,classification:c,retrieval,at:Date.now()};
+  const navTarget=noraNavigationTarget(q,retrieval);
+  if(navTarget){noraAppend('assistant','',noraBuildAnswer(q,retrieval,c));setPage(renderNora());setTimeout(()=>noraRenderNavigation(navTarget),60);return}
+  let html;
+  if(c.intent==='STUDY')html=noraStudyContext(q,retrieval);else html=noraBuildAnswer(q,retrieval,c);
+  noraAppend('assistant','',html);setPage(renderNora());
+  const status2=document.getElementById('noraStatus');if(status2)status2.textContent=`Nurse Hub · ${retrieval.matches.length} relevant result${retrieval.matches.length===1?'':'s'} · ${noraIntentLabel(c.intent)}`;
+  const input2=document.getElementById('noraInput');if(input2)input2.blur();
   noraScrollBottom();
 }
 window.runNora=runNora;
@@ -1220,12 +1118,21 @@ document.addEventListener('click',e=>{
   if(launcher){e.preventDefault();e.stopPropagation();window.openNora?.();return;}
   const action=e.target.closest('[data-action="nora"]');
   if(action){e.preventDefault();e.stopPropagation();window.openNora?.();return;}
+  const navBtn=e.target.closest('[data-nora-nav]');
+  if(navBtn){e.preventDefault();e.stopPropagation();try{noraRenderNavigation(JSON.parse(navBtn.dataset.noraNav));}catch(err){console.warn(err)}return;}
+  const match=e.target.closest('[data-nora-match]');
+  if(match){e.preventDefault();e.stopPropagation();const ctx=window.noraContext?.retrieval;const m=ctx?.matches?.[Number(match.dataset.noraMatch)];if(m)noraNavigateMatch(m);return;}
+  const qbtn=e.target.closest('[data-nora-open-quiz]');
+  if(qbtn){e.preventDefault();e.stopPropagation();openQuizSetup(qbtn.dataset.noraOpenQuiz||'');return;}
 },true);
 document.addEventListener('submit',e=>{
   if(e.target.id==='noraForm'){
     e.preventDefault();
     e.stopPropagation();
-    runNora(document.getElementById('noraInput')?.value||'');
+    const input=document.getElementById('noraInput');
+    const value=input?.value||'';
+    if(input){input.value='';input.blur();}
+    runNora(value);
   }
 },true);
 
