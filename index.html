@@ -940,6 +940,10 @@ function noraRetrieve(q,mode='NURSE_HUB'){
 }
 function noraIntentLabel(intent){return ({SEARCH:'SEARCH',EXPLAIN:'EXPLAIN',DEFINE:'DEFINE',COMPARE:'COMPARE',SUMMARIZE:'SUMMARIZE',STUDY:'STUDY',QUIZ:'QUIZ',OPEN_OBJECTIVE:'NAVIGATE',OPEN_TOPIC:'NAVIGATE',OPEN_RESOURCE:'NAVIGATE',OPEN_MEDICATION:'NAVIGATE',OPEN_DIAGNOSTIC:'NAVIGATE',OPEN_CALENDAR:'NAVIGATE',GREETING:'CHAT',HELP:'HELP'})[intent]||'SEARCH'}
 function noraWelcome(){return ["Hey! What can I help you find?","What are we working on today?","Need something from Nurse Hub?","Ready to study? What do you need?"][Math.floor(Math.random()*4)]}
+function noraAppend(role,text,html){
+  if(!window.noraChatMessages)window.noraChatMessages=[];
+  window.noraChatMessages.push({role:role,text:String(text||""),html:String(html||"")});
+}
 function noraChatHtml(){const msgs=window.noraChatMessages||[];if(!msgs.length)return `<div class="nora-welcome"><div class="nora-avatar">N</div><div><div class="nora-welcome-name">NORA</div><p>${esc(noraWelcome())}</p><p class="nora-welcome-sub">I can search, connect, organize, and navigate information already inside Nurse Hub. I do not use outside web or paid AI services.</p></div></div>`;return msgs.map(m=>m.role==='user'?`<div class="nora-message-row user-row"><div class="nora-bubble user-bubble">${esc(m.text)}</div></div>`:`<div class="nora-message-row"><div class="nora-avatar small">N</div><div class="nora-bubble nora-bubble-main">${m.html||''}</div></div>`).join('')}
 function noraQuickActions(){return `<div class="nora-quick-row"><button type="button" class="nora-quick" data-nora-prompt="Help me study">Study</button><button type="button" class="nora-quick" data-nora-prompt="Quiz me">Quiz me</button><button type="button" class="nora-quick" data-nora-prompt="What can you do?">What can you do?</button></div>`}
 function renderNora(){return `<div class="nora-page nora-chat-page"><div class="nora-chat-top"><div class="nora-chat-identity"><div class="nora-avatar">N</div><div><h2 class="nora-title">NORA</h2><div class="nora-online">Nurse Hub assistant · no external AI</div></div></div></div><div class="nora-chat-scroll" id="noraChatScroll"><div class="nora-chat-messages" id="noraAnswer">${noraChatHtml()}</div>${(window.noraChatMessages||[]).length?'<div class="nora-chat-spacer"></div>':noraQuickActions()}</div><form class="nora-composer" id="noraForm"><input id="noraInput" class="nora-input" autocomplete="off" autocapitalize="sentences" placeholder="Message NORA…"><button class="nora-send" type="submit" aria-label="Send to NORA">↑</button></form><div class="nora-status" id="noraStatus">NORA uses indexed Nurse Hub knowledge.</div><p class="nora-disclaimer">Source boundary: NORA can organize and retrieve Nurse Hub content, but it does not invent outside medical knowledge.</p></div>`}
@@ -1029,15 +1033,7 @@ async function runNora(q){
   noraAppend('user',q,'');setPage(renderNora());
   const status=document.getElementById('noraStatus');if(status)status.textContent='NORA is checking Nurse Hub…';
   const c=noraClassify(q);
-  let retrieval=noraRetrieve(q,c.mode);
-  // Conversational follow-up: if the new question is underspecified, reuse the previous topic
-  // as retrieval context without inventing an answer.
-  const prior=window.noraContext;
-  if(prior&&retrieval.matches.length===0&&noraTokens(q).length<=5&&prior.query){
-    const followupQuery=`${prior.query} ${q}`;
-    const followup=noraRetrieve(followupQuery,c.mode);
-    if(followup.matches.length)retrieval=followup;
-  }
+  const retrieval=noraRetrieve(q,c.mode);
   window.noraContext={query:q,classification:c,retrieval,at:Date.now()};
   const navTarget=noraNavigationTarget(q,retrieval);
   if(navTarget){noraAppend('assistant','',noraBuildAnswer(q,retrieval,c));setPage(renderNora());setTimeout(()=>noraRenderNavigation(navTarget),60);return}
@@ -1129,10 +1125,7 @@ document.addEventListener('submit',e=>{
   if(e.target.id==='noraForm'){
     e.preventDefault();
     e.stopPropagation();
-    const input=document.getElementById('noraInput');
-    const value=input?.value||'';
-    if(input){input.value='';input.blur();}
-    runNora(value);
+    runNora(document.getElementById('noraInput')?.value||'');
   }
 },true);
 
