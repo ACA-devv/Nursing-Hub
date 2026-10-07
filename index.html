@@ -80,9 +80,9 @@ body{overflow-x:hidden}body.page-open{overflow:hidden}button,input{font:inherit}
 .hopper-note{color:#929aa1;font-size:.82rem;line-height:1.45}
 @media(min-width:620px){.resource-toolbar{grid-template-columns:1.4fr 1fr}.resource-filters{grid-template-columns:1fr 1fr 1fr}.resource-detail-grid{grid-template-columns:1fr 1fr}}
 
-.optional-label{font-size:.75rem;color:#929AA1;font-weight:500}.hopper-processing-card{margin-top:12px;background:#202428}.processing-list{display:grid;gap:9px}.processing-item{padding:11px 12px;border:1px solid #2b3035;border-radius:12px;background:#171A1D}.processing-item strong{display:block;margin-bottom:4px}.match-pill{display:inline-block;margin:3px 4px 0 0;padding:4px 7px;border-radius:999px;background:#202428;color:#F2F4F5;font-size:.72rem}.review-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.review-check{display:flex;gap:10px;align-items:flex-start;padding:10px 0}.review-check input{margin-top:3px}.resource-excerpt{font-size:.82rem;color:#929AA1;line-height:1.5;margin-top:5px}
+.optional-label{font-size:.75rem;color:#929AA1;font-weight:500}.hopper-processing-card{margin-top:12px;background:#202428}.processing-list{display:grid;gap:9px}.processing-item{padding:11px 12px;border:1px solid #2b3035;border-radius:12px;background:#171A1D}.processing-item strong{display:block;margin-bottom:4px}.match-pill{display:inline-block;margin:3px 4px 0 0;padding:4px 7px;border-radius:999px;background:#202428;color:#F2F4F5;font-size:.72rem}.review-actions,.review-select-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.review-check{display:flex;gap:10px;align-items:flex-start;padding:10px 0}.review-check input{margin-top:3px}.resource-excerpt{font-size:.82rem;color:#929AA1;line-height:1.5;margin-top:5px}
 
-.objective-note-source{display:flex;flex-direction:column;gap:5px}.objective-note-source small{color:var(--muted,#929AA1);line-height:1.45}.objective-notes{display:flex;flex-direction:column;gap:12px}.objective-note{padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.025)}.objective-note-kicker{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:8px}.objective-note-text{font-size:.92rem;line-height:1.6;color:#F2F4F5}.objective-note-text p{margin:0 0 10px}.objective-note-text p:last-child{margin-bottom:0}
+.objective-topic-group{padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:15px}.objective-topic-title{font-size:13px;font-weight:800;color:var(--cyan);margin-bottom:9px}.objective-topic-sections{display:grid;gap:9px}.objective-topic-group+.objective-topic-group{margin-top:10px}.objective-note-source{display:flex;flex-direction:column;gap:5px}.objective-note-source small{color:var(--muted,#929AA1);line-height:1.45}.objective-notes{display:flex;flex-direction:column;gap:12px}.objective-note{padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.025)}.objective-note-kicker{font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:8px}.objective-note-text{font-size:.92rem;line-height:1.6;color:#F2F4F5}.objective-note-text p{margin:0 0 10px}.objective-note-text p:last-child{margin-bottom:0}
 .nora-launcher{width:100%;margin:0 0 16px;padding:14px 15px;display:flex;align-items:center;gap:12px;text-align:left;background:linear-gradient(135deg,#171A1D,#1B2023);border:1px solid rgba(var(--accent-rgb),.2);border-radius:18px;color:var(--text);cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,.22)}
 .nora-launcher:active{transform:scale(.985)}
 .nora-orb{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:12px;background:rgba(var(--accent-rgb),.1);color:var(--cyan);font-weight:800;font-size:16px}
@@ -670,12 +670,12 @@ async function replaceResourceFile(id){
   const file=input?.files?.[0];
   if(!file){if(msg){msg.className='admin-message error';msg.textContent='Choose a replacement file first.';}return}
 
-  const {data:old,error:readError}=await supabaseClient.from('resources')
-    .select('id,title,file_path')
+  const {data:r,error:readError}=await supabaseClient.from('resources')
+    .select('id,title,file_name,file_path,course,topic,content_type,status,description')
     .eq('id',id).maybeSingle();
-  if(readError||!old){if(msg){msg.className='admin-message error';msg.textContent=readError?.message||'Resource not found.';}return}
+  if(readError||!r){if(msg){msg.className='admin-message error';msg.textContent=readError?.message||'Resource not found.';}return}
 
-  if(msg){msg.className='admin-message';msg.textContent='Reading replacement and preparing fresh Hopper processing…';}
+  if(msg){msg.className='admin-message';msg.textContent='Reading and validating the replacement…';}
 
   let text='',analysis;
   try{
@@ -687,77 +687,91 @@ async function replaceResourceFile(id){
     return;
   }
 
-  // Upload the new source first. The old resource remains intact until the
-  // replacement file has passed extraction/analysis.
+  // Upload the replacement under a new path first. The old source remains
+  // untouched until the new file and its indexed content are safely stored.
   const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-  const newPath=`${currentAdmin.id}/${Date.now()}_${safeName}`;
+  const newPath=`${currentAdmin.id}/${Date.now()}_replacement_${safeName}`;
   const {error:uploadError}=await supabaseClient.storage.from('nurse-resources').upload(newPath,file,{upsert:false});
   if(uploadError){if(msg){msg.className='admin-message error';msg.textContent=uploadError.message;}return}
 
+  let insertedContent=false, insertedChunks=false;
   try{
-    // True replacement semantics: remove every database/indexing record
-    // associated with the old resource. No old objective links survive.
-    const cleanupTables=[
-      ['resource_chunk_objective_links','resource_id'],
-      ['resource_objective_links','resource_id'],
-      ['resource_chunks','resource_id'],
-      ['resource_content','resource_id']
-    ];
-    for(const [table,column] of cleanupTables){
-      const {error}=await supabaseClient.from(table).delete().eq(column,id);
-      if(error)throw error;
+    // Capture existing objective connections before changing indexed content.
+    const {data:oldLinks,error:oldLinksError}=await supabaseClient.from('resource_objective_links')
+      .select('resource_id,objective_key,course,topic,objective_number')
+      .eq('resource_id',id);
+    if(oldLinksError)throw oldLinksError;
+
+    const {error:contentError}=await supabaseClient.from('resource_content').upsert({
+      resource_id:id,
+      extracted_text:text,
+      processing_status:'ready',
+      processed_at:new Date().toISOString()
+    },{onConflict:'resource_id'});
+    if(contentError)throw contentError;
+    insertedContent=true;
+
+    const {error:deleteChunksError}=await supabaseClient.from('resource_chunks').delete().eq('resource_id',id);
+    if(deleteChunksError)throw deleteChunksError;
+
+    const rows=analysis.chunks.map((content,i)=>({
+      resource_id:id,
+      chunk_index:i,
+      heading:(content.split('\n')[0]||'').slice(0,160),
+      content
+    }));
+    if(rows.length){
+      const {error:chunkError}=await supabaseClient.from('resource_chunks').insert(rows);
+      if(chunkError)throw chunkError;
+      insertedChunks=true;
     }
 
-    const {error:resourceDeleteError}=await supabaseClient.from('resources').delete().eq('id',id);
-    if(resourceDeleteError)throw resourceDeleteError;
-
-    if(old.file_path){
-      const {error:oldStorageError}=await supabaseClient.storage.from('nurse-resources').remove([old.file_path]);
-      if(oldStorageError)console.warn('Old source cleanup failed:',oldStorageError);
+    // Rebuild chunk→objective mappings using the new analysis while preserving
+    // the existing resource-level objective links.
+    await supabaseClient.from('resource_chunk_objective_links').delete().eq('resource_id',id);
+    const oldKeys=new Set((oldLinks||[]).map(x=>String(x.objective_key)));
+    const rebuilt=[];
+    for(const suggestion of (analysis.suggestions||[])){
+      if(!oldKeys.has(String(suggestion.key)))continue;
+      if(!Number.isInteger(suggestion.chunk))continue;
+      const old=oldLinks.find(x=>String(x.objective_key)===String(suggestion.key));
+      rebuilt.push({
+        resource_id:id,
+        chunk_index:suggestion.chunk,
+        objective_key:suggestion.key,
+        course:old?.course||'NUR 2129',
+        topic:old?.topic||suggestion.topic,
+        objective_number:String(old?.objective_number||suggestion.objective)
+      });
+    }
+    if(rebuilt.length){
+      const {error:mapError}=await supabaseClient.from('resource_chunk_objective_links')
+        .upsert(rebuilt,{onConflict:'resource_id,chunk_index,objective_key'});
+      if(mapError&&!/relation .* does not exist/i.test(mapError.message||''))throw mapError;
     }
 
-    // Create a completely new Hopper resource, then send it through the same
-    // processing/review pipeline as a normal upload.
-    const resourceId=crypto.randomUUID();
-    const title=file.name.replace(/\.[^/.]+$/,'').replace(/[_-]+/g,' ').trim()||file.name;
-    const {error:newResourceError}=await supabaseClient.from('resources').insert({
-      id:resourceId,
-      uploaded_by:currentAdmin.id,
-      title,
+    const {error:updateError}=await supabaseClient.from('resources').update({
       file_name:file.name,
       file_path:newPath,
-      course:'',
-      topic:'',
-      content_type:file.type||'application/octet-stream',
-      status:'pending',
-      description:'',
-      source_type:'upload',
       updated_at:new Date().toISOString()
-    });
-    if(newResourceError)throw newResourceError;
+    }).eq('id',id);
+    if(updateError)throw updateError;
 
-    await saveResourceProcessing(resourceId,text,analysis);
+    // Only after the database now points to the replacement do we remove the
+    // previous storage object.
+    if(r.file_path){
+      const {error:oldFileError}=await supabaseClient.storage.from('nurse-resources').remove([r.file_path]);
+      if(oldFileError)console.warn('Replacement succeeded, but old file cleanup failed:',oldFileError);
+    }
 
-    window.pendingReviewSuggestions=analysis.suggestions||[];
-    window.pendingReviewResourceId=resourceId;
-    window.pendingReviewAnalysis=analysis;
-
-    const links=(analysis.suggestions||[]).map((x,i)=>`<label class="processing-item"><input type="checkbox" data-review-link="${i}" checked><span><strong>${esc(x.topic)} · Objective ${esc(x.objective)}</strong><span class="resource-excerpt">${esc(x.text)}</span></span></label>`).join('');
-    const top=(analysis.topics||[]).map(x=>`<span class="tag">${esc(x.title)}</span>`).join('')||'<span class="source-note">No strong topic match detected.</span>';
-
-    setPage(`<div class="page-header"><div class="page-kicker">Hopper · Review Replacement</div><h2 class="page-title">${esc(title)}</h2><p class="page-subtitle">The old resource was removed and this file is now a brand-new Hopper resource. Review its fresh objective connections before publishing.</p></div>
-    <div class="settings-panel">
-      <div class="settings-card"><h3>Detected topics</h3><div>${top}</div></div>
-      <div class="settings-card"><h3>Suggested objective links</h3><p class="source-note">These are fresh automatic matches from the replacement file. The previous resource's links were deleted and are not carried over.</p><div class="processing-list">${links||'<div class="admin-message">No objective matches were strong enough to suggest.</div>'}</div>
-        <div class="review-actions"><button class="admin-primary" data-review-publish="${resourceId}">PUBLISH SELECTED LINKS</button><button class="admin-secondary" data-review-skip="${resourceId}">SKIP LINKS</button></div>
-        <div id="reviewMessage" class="admin-message"></div>
-      </div>
-    </div>`);
-    toastMsg('Old resource replaced. Review the new Hopper matches.');
+    await loadPublicResourceKnowledge().catch(()=>{});
+    nav=[{type:'settings'},{type:'resource-hopper'}];
+    setPage(renderResourceHopper());
+    await loadResources();
+    toastMsg('Resource replaced successfully.');
   }catch(err){
-    // If creation/processing failed after upload, remove the new object so it
-    // does not become an orphan. The old resource may already be deleted, so
-    // surface the failure clearly rather than pretending replacement succeeded.
+    // The old file/resource metadata remains in place if the swap failed before
+    // the final resource update. Remove only the newly uploaded object.
     await supabaseClient.storage.from('nurse-resources').remove([newPath]).catch(()=>{});
     if(msg){msg.className='admin-message error';msg.textContent='Replacement failed: '+(err.message||'Unknown error');}
     console.error('Resource replacement failed',err);
@@ -820,11 +834,24 @@ function getChunksForObjective(section,objective,resourceId){
   if(!chunks.length)return [];
   const key=objectiveKey(section,objective);
   const exactLinks=(window.nurseHubChunkObjectiveLinks||[]).filter(x=>String(x.resource_id)===String(resourceId)&&String(x.objective_key)===String(key));
+  const byIndex=new Map(chunks.map(c=>[String(c.chunk_index),c]));
   if(exactLinks.length){
-    const byIndex=new Map(chunks.map(c=>[String(c.chunk_index),c]));
     const exact=exactLinks.map(x=>byIndex.get(String(x.chunk_index))).filter(Boolean);
-    if(exact.length)return exact.slice(0,12);
+    if(exact.length)return exact.sort((a,b)=>Number(a.chunk_index)-Number(b.chunk_index));
   }
+
+  // Structured NORA-ready sources carry OBJECTIVE in every chunk heading.
+  // Use that explicit structure first so an objective gets its full source coverage,
+  // rather than the old top-score/first-8 behavior that could hide most of the material.
+  const objectiveNumber=String(objective.number).replace(/\.$/,'');
+  const structured=chunks.filter(c=>{
+    const h=String(c.heading||'');
+    return new RegExp(`\\bOBJECTIVE\\s+${objectiveNumber}\\b`,'i').test(h) ||
+      new RegExp(`\\bObjective\\s+${objectiveNumber}\\b`,'i').test(h);
+  });
+  if(structured.length)return structured.sort((a,b)=>Number(a.chunk_index)-Number(b.chunk_index));
+
+  // Legacy/unstructured resources still use relevance scoring as a fallback.
   const objectiveTerms=cleanWords([section.title,objective.text,...objective.subitems,objective.courseObjectives].join(' '));
   const exactTerms=[...new Set(objectiveTerms)].filter(w=>w.length>3);
   const scored=chunks.map(c=>{
@@ -836,8 +863,8 @@ function getChunksForObjective(section,objective,resourceId){
     return {chunk:c,score:base.score+exactHits+headingBoost+topicHits};
   });
   const strong=scored.filter(x=>x.score>=3).sort((a,b)=>b.score-a.score);
-  if(strong.length)return strong.slice(0,8).map(x=>x.chunk);
-  return scored.filter(x=>x.score>=1).sort((a,b)=>b.score-a.score).slice(0,4).map(x=>x.chunk);
+  if(strong.length)return strong.slice(0,20).map(x=>x.chunk).sort((a,b)=>Number(a.chunk_index)-Number(b.chunk_index));
+  return scored.filter(x=>x.score>=1).sort((a,b)=>b.score-a.score).slice(0,8).map(x=>x.chunk).sort((a,b)=>Number(a.chunk_index)-Number(b.chunk_index));
 }
 async function renderObjectiveResources(section,objective){
   const rs=await getResourcesForObjective(section,objective);
@@ -858,8 +885,26 @@ async function showObjectiveResourceNotes(section,objective,resourceId){
   const resource=(window.nurseHubResources||[]).find(x=>String(x.id)===String(resourceId));
   const chunks=getChunksForObjective(section,objective,resourceId);
   nav.push({type:'resource-notes',resourceId:Number(resourceId),section:section.title,objective:objective.number});
-  const noteBody=chunks.length?chunks.map((c,i)=>`<article class="objective-note"><div class="objective-note-kicker">${esc(c.heading||`Related section ${i+1}`)}</div><div class="objective-note-text">${esc(c.content).replace(/\n\n/g,'</p><p>').replace(/^/,'<p>').replace(/$/,'</p>')}</div></article>`).join(''):'<div class="admin-message">No specific extracted section was strong enough to display for this objective. The original source remains available in Resource Library.</div>';
-  setPage(`<div class="page-header"><div class="page-kicker">${esc(section.title)} · Objective ${esc(objective.number)}</div><h2 class="page-title">Objective-Specific Notes</h2><p class="page-subtitle">${esc(resource.title)} · ${esc(resource.file_name)}</p></div><div class="settings-panel"><div class="settings-card"><div class="objective-note-source"><span class="meta-label">Source</span><strong>${esc(resource.title)}</strong><small>Only extracted sections matched to this objective are shown here.</small></div></div><div class="settings-card"><h3>Related Notes</h3><div class="objective-notes">${noteBody}</div></div></div>`);
+
+  const renderChunk=c=>`<article class="objective-note"><div class="objective-note-kicker">${esc(c.section||c.heading||'Related section')}</div><div class="objective-note-text">${esc(c.content).replace(/\n\n/g,'</p><p>').replace(/^/,'<p>').replace(/$/,'</p>')}</div></article>`;
+  const structuredGroups=new Map();
+  chunks.forEach((c,i)=>{
+    const h=String(c.heading||'');
+    const m=h.match(/^OBJECTIVE\s+\d+\s*[·|]\s*(\d+\.\d+\s+.+?)\s*[·|]\s*(.+)$/i);
+    if(m){
+      const topic=m[1].trim(), sectionName=m[2].trim();
+      if(!structuredGroups.has(topic))structuredGroups.set(topic,[]);
+      structuredGroups.get(topic).push({...c,section:sectionName});
+    }
+  });
+  let noteBody='';
+  if(structuredGroups.size){
+    noteBody=[...structuredGroups.entries()].map(([topic,items])=>`<section class="objective-topic-group"><div class="objective-topic-title">${esc(topic)}</div><div class="objective-topic-sections">${items.map(renderChunk).join('')}</div></section>`).join('');
+  }else{
+    noteBody=chunks.length?chunks.map((c,i)=>renderChunk({...c,section:c.heading||`Related section ${i+1}`})).join(''):'<div class="admin-message">No specific extracted section was strong enough to display for this objective. The original source remains available in Resource Library.</div>';
+  }
+  const coverage=structuredGroups.size?`<small>Showing ${chunks.length} source sections across ${structuredGroups.size} topics for this objective.</small>`:`<small>Showing ${chunks.length} source sections matched to this objective.</small>`;
+  setPage(`<div class="page-header"><div class="page-kicker">${esc(section.title)} · Objective ${esc(objective.number)}</div><h2 class="page-title">Objective-Specific Notes</h2><p class="page-subtitle">${esc(resource.title)} · ${esc(resource.file_name)}</p></div><div class="settings-panel"><div class="settings-card"><div class="objective-note-source"><span class="meta-label">Source</span><strong>${esc(resource.title)}</strong>${coverage}</div></div><div class="settings-card"><h3>Related Notes</h3><div class="objective-notes">${noteBody}</div></div></div>`);
 }
 async function renderResourceLinker(id){
 const r=(window.nurseHubResources||[]).find(x=>String(x.id)===String(id));if(!r)return;
@@ -920,15 +965,45 @@ async function extractResourceText(file){
 }
 function cleanWords(text){return String(text||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2&&!['the','and','for','with','from','that','this','are','was','were','into','their','they','have','has','will','can','may','not','than','then','when','what','which','your','you','patient','patients','nursing','nurse'].includes(w));}
 function splitResourceText(text){
-  const paras=String(text||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
+  const raw=String(text||'').replace(/\r\n?/g,'\n').trim();
+
+  // NORA-ready structured sources: split at SECTION boundaries while preserving
+  // COURSE / CLASS / OBJECTIVE / TOPIC context in the chunk heading.
+  const structured=/^OBJECTIVE\s+\d+\s*[—-]/mi.test(raw)&&/^[-]{3,}\s+\d+\.\d+\s+.+?\s+[-]{3,}$/mi.test(raw);
+  if(structured){
+    const lines=raw.split('\n');
+    const chunks=[]; let objective=null,topic=null,section=null,body=[];
+    const flush=(forceTopic=false)=>{
+      const content=body.join('\n').trim();
+      if(content&&objective&&topic&&(section||forceTopic)){
+        chunks.push({content,heading:`OBJECTIVE ${objective} · ${topic} · ${section||'TOPIC OVERVIEW'}`});
+      }
+      body=[];
+    };
+    lines.forEach(line=>{
+      const t=line.trim();
+      const om=t.match(/^OBJECTIVE\s+(\d+)\s*[—-]/i);
+      if(om){flush(true);objective=om[1];topic=null;section=null;return;}
+      const tm=t.match(/^-{3,}\s+(\d+\.\d+)\s+(.+?)\s+-{3,}$/);
+      if(tm){flush(true);topic=`${tm[1]} ${tm[2].trim()}`;section=null;return;}
+      const sm=t.match(/^(ORGANISM\s*\/\s*ETIOLOGY|CLINICAL MANIFESTATIONS|DIAGNOSIS(?:\s*\/\s*SCREENING)?|MEDICAL MANAGEMENT|MATERNAL-FETAL\s*\/\s*NEONATAL RISKS|NURSING CARE\s*\/\s*PATIENT EDUCATION|INSTRUCTOR-SOURCE NOTES):?$/i);
+      if(sm&&topic){flush();section=sm[1].toUpperCase().replace(/\s*\/\s*/g,' / ');return;}
+      if(topic)body.push(line);
+    });
+    flush(true);
+    if(chunks.length)return chunks;
+  }
+
+  // Fallback for ordinary PDF/DOCX/TXT uploads that do not use the NORA-ready structure.
+  const paras=raw.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
   const chunks=[]; let cur=[];
-  paras.forEach(p=>{cur.push(p); if(cur.length>=4){chunks.push(cur.join('\n\n'));cur=[];}});
-  if(cur.length)chunks.push(cur.join('\n\n'));
-  if(!chunks.length&&text.trim())chunks.push(text.trim());
-  return chunks.slice(0,250);
+  paras.forEach(p=>{cur.push(p); if(cur.length>=4){chunks.push({content:cur.join('\n\n'),heading:(cur[0]||'').slice(0,160)});cur=[];}});
+  if(cur.length)chunks.push({content:cur.join('\n\n'),heading:(cur[0]||'').slice(0,160)});
+  if(!chunks.length&&raw)chunks.push({content:raw,heading:raw.slice(0,160)});
+  return chunks.slice(0,500);
 }
 function scoreMatch(text, objective, topicTitle){
-  const words=new Set(cleanWords(text));
+  const words=new Set(cleanWords(typeof text==='object'&&text?.content?text.content:text));
   const target=cleanWords([topicTitle,objective.text,...objective.subitems,objective.courseObjectives].join(' '));
   const uniq=[...new Set(target)]; let score=0;
   uniq.forEach(w=>{if(words.has(w))score++;});
@@ -938,9 +1013,19 @@ function scoreMatch(text, objective, topicTitle){
 function analyzeResource(text){
   const chunks=splitResourceText(text); const suggestions=[];
   objectiveData.forEach((topic,si)=>topic.objectives.forEach((o,oi)=>{
-    let best={score:0,chunk:0}; chunks.forEach((c,ci)=>{const sc=scoreMatch(c,o,topic.title);if(sc.score>best.score)best={...sc,chunk:ci};});
+    const objectiveNumber=String(o.number).replace(/\.$/,'');
+    const structuredChunks=chunks.map((c,i)=>({c,i})).filter(x=>new RegExp(`\\bOBJECTIVE\\s+${objectiveNumber}\\b`,'i').test(String(x.c.heading||'')));
+    const pool=structuredChunks.length?structuredChunks:chunks.map((c,i)=>({c,i}));
+    let best={score:0,chunk:pool[0]?.i||0};
+    pool.forEach(x=>{const sc=scoreMatch(x.c.content,o,topic.title);if(sc.score>best.score)best={...sc,chunk:x.i};});
     const overall=scoreMatch(text,o,topic.title);
-    if(best.score>=2 || overall.score>=3){suggestions.push({si,oi,key:objectiveKey(topic,o),topic:topic.title,objective:o.number,text:o.text,score:Math.max(best.score,overall.score),chunk:best.chunk});}
+    if(structuredChunks.length || best.score>=2 || overall.score>=3){
+      suggestions.push({
+        si,oi,key:objectiveKey(topic,o),topic:topic.title,objective:o.number,text:o.text,
+        score:Math.max(best.score,overall.score),chunk:best.chunk,
+        chunks:structuredChunks.length?structuredChunks.map(x=>x.i):[best.chunk]
+      });
+    }
   }));
   suggestions.sort((a,b)=>b.score-a.score);
   const topicScores=objectiveData.map((t,si)=>{const sc=scoreMatch(text,{text:'',subitems:[],courseObjectives:''},t.title);return {si,title:t.title,score:sc.titleHits};}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,8);
@@ -949,7 +1034,7 @@ function analyzeResource(text){
 async function saveResourceProcessing(resourceId,text,analysis){
   const {error:ce}=await supabaseClient.from('resource_content').insert({resource_id:resourceId,extracted_text:text,processing_status:'ready',processed_at:new Date().toISOString()});
   if(ce)throw ce;
-  const rows=analysis.chunks.map((content,i)=>({resource_id:resourceId,chunk_index:i,heading:(content.split('\n')[0]||'').slice(0,160),content}));
+  const rows=analysis.chunks.map((chunk,i)=>({resource_id:resourceId,chunk_index:i,heading:String(chunk.heading||chunk.content||'').slice(0,160),content:String(chunk.content||chunk)}));
   if(rows.length){const {error}=await supabaseClient.from('resource_chunks').insert(rows);if(error)throw error;}
 }
 async function setResourceStatus(id,status,description){await supabaseClient.from('resources').update({status,description}).eq('id',id);}
@@ -985,14 +1070,15 @@ async function handleResourceUpload(e){
 function showResourceReview(resourceId,analysis,title){
  nav.push({type:'resource-review',id:resourceId});
  const top=analysis.topics.length?analysis.topics.map(t=>`<span class="match-pill">${esc(t.title)}</span>`).join(''):'<span class="resource-excerpt">No strong topic match found.</span>';
- const links=analysis.suggestions.map((x,i)=>`<label class="review-check"><input type="checkbox" data-review-link="${i}" checked><span><strong>${esc(x.topic)} · Objective ${esc(x.objective)}</strong><span class="resource-excerpt">${esc(x.text)}</span></span></label>`).join('');
+ const links=analysis.suggestions.map((x,i)=>`<label class="review-check"><input type="checkbox" data-review-link="${i}"><span><strong>${esc(x.topic)} · Objective ${esc(x.objective)}</strong><span class="resource-excerpt">${esc(x.text)}</span><span class="resource-excerpt">${x.chunks?.length||1} structured section${(x.chunks?.length||1)===1?'':'s'} will be linked</span></span></label>`).join('');
  window.pendingReviewSuggestions=analysis.suggestions;
- setPage(`<div class="page-header"><div class="page-kicker">Hopper · Review</div><h2 class="page-title">${esc(title)}</h2><p class="page-subtitle">Nurse Hub extracted ${analysis.chunks.length} searchable sections and found suggested connections.</p></div><div class="settings-panel"><div class="settings-card"><h3>Detected topics</h3><div>${top}</div></div><div class="settings-card"><h3>Suggested objective links</h3><p class="source-note">These are automatic keyword/structure matches, not AI judgments. Review them before publishing.</p><div class="processing-list">${links||'<div class="admin-message">No objective matches were strong enough to suggest.</div>'}</div><div class="review-actions"><button class="admin-primary" data-review-publish="${resourceId}">PUBLISH SELECTED LINKS</button><button class="admin-secondary" data-review-skip="${resourceId}">SKIP LINKS</button></div><div id="reviewMessage" class="admin-message"></div></div></div>`);
+ setPage(`<div class="page-header"><div class="page-kicker">Hopper · Review</div><h2 class="page-title">${esc(title)}</h2><p class="page-subtitle">Nurse Hub extracted ${analysis.chunks.length} searchable sections and found suggested connections.</p></div><div class="settings-panel"><div class="settings-card"><h3>Detected topics</h3><div>${top}</div></div><div class="settings-card"><h3>Suggested objective links</h3><p class="source-note">Nothing is selected by default. Select only the objective links you want this resource published to.</p><div class="review-select-actions"><button class="admin-secondary" type="button" data-review-select-all="${resourceId}">SELECT ALL</button><button class="admin-secondary" type="button" data-review-clear="${resourceId}">CLEAR ALL</button></div><div class="processing-list">${links||'<div class="admin-message">No objective matches were strong enough to suggest.</div>'}</div><div class="review-actions"><button class="admin-primary" data-review-publish="${resourceId}">PUBLISH SELECTED LINKS</button><button class="admin-secondary" data-review-skip="${resourceId}">SKIP LINKS</button></div><div id="reviewMessage" class="admin-message"></div></div></div>`);
 }
 async function publishReviewLinks(resourceId){
  const suggestions=window.pendingReviewSuggestions||[]; const selected=[...document.querySelectorAll('[data-review-link]:checked')].map(x=>Number(x.dataset.reviewLink)).map(i=>suggestions[i]).filter(Boolean);
- if(selected.length){const rows=selected.map(x=>({resource_id:resourceId,objective_key:x.key,course:'NUR 2129',topic:x.topic,objective_number:String(x.objective)}));const {error}=await supabaseClient.from('resource_objective_links').upsert(rows,{onConflict:'resource_id,objective_key'});if(error){const m=document.getElementById('reviewMessage');if(m){m.className='admin-message error';m.textContent=error.message;}return;}
-   const chunkRows=selected.filter(x=>Number.isInteger(x.chunk)).map(x=>({resource_id:resourceId,chunk_index:x.chunk,objective_key:x.key,course:'NUR 2129',topic:x.topic,objective_number:String(x.objective)}));
+ if(!selected.length){const m=document.getElementById('reviewMessage');if(m){m.className='admin-message error';m.textContent='Select at least one objective before publishing, or use SKIP LINKS.';}return;}
+ {const rows=selected.map(x=>({resource_id:resourceId,objective_key:x.key,course:'NUR 2129',topic:x.topic,objective_number:String(x.objective)}));const {error}=await supabaseClient.from('resource_objective_links').upsert(rows,{onConflict:'resource_id,objective_key'});if(error){const m=document.getElementById('reviewMessage');if(m){m.className='admin-message error';m.textContent=error.message;}return;}
+   const chunkRows=selected.flatMap(x=>(x.chunks||[x.chunk]).filter(Number.isInteger).map(ci=>({resource_id:resourceId,chunk_index:ci,objective_key:x.key,course:'NUR 2129',topic:x.topic,objective_number:String(x.objective)})));
    if(chunkRows.length){const cr=await supabaseClient.from('resource_chunk_objective_links').upsert(chunkRows,{onConflict:'resource_id,chunk_index,objective_key'});if(cr.error&&!/relation .* does not exist/i.test(cr.error.message||'')){toastMsg('Objective links saved, but chunk mapping could not be saved.');}}
    await setResourceStatus(resourceId,'published');
  }
@@ -1339,7 +1425,7 @@ const resourceDelete=e.target.closest('[data-resource-delete]');if(resourceDelet
 const resourceReplace=e.target.closest('[data-resource-replace]');if(resourceReplace){openResourceReplace(resourceReplace.dataset.resourceReplace);return}
 const resourceReplaceConfirm=e.target.closest('[data-resource-replace-confirm]');if(resourceReplaceConfirm){replaceResourceFile(resourceReplaceConfirm.dataset.resourceReplaceConfirm);return}
 const resourceReplaceCancel=e.target.closest('[data-resource-replace-cancel]');if(resourceReplaceCancel){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}
-const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const pub=e.target.closest('[data-review-publish]');if(pub){publishReviewLinks(pub.dataset.reviewPublish);return}const skip=e.target.closest('[data-review-skip]');if(skip){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const vm=e.target.closest('[data-vitals-mode]');if(vm&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode=vm.dataset.vitalsMode;nav[nav.length-1].vitalAge='infant';setPage(diagnosticHome('vitals',nav[nav.length-1].vitalMode,'infant'));return}const va=e.target.closest('[data-vitals-age]');if(va&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode='pediatric';nav[nav.length-1].vitalAge=va.dataset.vitalsAge;setPage(diagnosticHome('vitals','pediatric',va.dataset.vitalsAge));return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjective(Number(obj.dataset.objective));return}const startQuizBtn=e.target.closest('[data-start-quiz]');if(startQuizBtn){startQuiz();return}const act=e.target.closest('[data-action]');if(act){if(act.dataset.action==='quiz'){openQuizSetup('');return}if(act.dataset.action==='nora'){window.openNora?.();return}toastMsg('Study mode is coming next.');return}});
+const resourceLink=e.target.closest('[data-resource-link]');if(resourceLink){renderResourceLinker(resourceLink.dataset.resourceLink);return}const selectAll=e.target.closest('[data-review-select-all]');if(selectAll){document.querySelectorAll('[data-review-link]').forEach(x=>x.checked=true);return}const clearAll=e.target.closest('[data-review-clear]');if(clearAll){document.querySelectorAll('[data-review-link]').forEach(x=>x.checked=false);return}const pub=e.target.closest('[data-review-publish]');if(pub){publishReviewLinks(pub.dataset.reviewPublish);return}const skip=e.target.closest('[data-review-skip]');if(skip){nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();return}const topic=e.target.closest('[data-topic]');if(topic){openTopic(Number(topic.dataset.topic));return}const diagTab=e.target.closest('[data-diag-tab]');if(diagTab){openDiagnostics(diagTab.dataset.diagTab);return}const vm=e.target.closest('[data-vitals-mode]');if(vm&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode=vm.dataset.vitalsMode;nav[nav.length-1].vitalAge='infant';setPage(diagnosticHome('vitals',nav[nav.length-1].vitalMode,'infant'));return}const va=e.target.closest('[data-vitals-age]');if(va&&nav.length&&nav[nav.length-1].type==='diagnostics'){nav[nav.length-1].vitalMode='pediatric';nav[nav.length-1].vitalAge=va.dataset.vitalsAge;setPage(diagnosticHome('vitals','pediatric',va.dataset.vitalsAge));return}const lab=e.target.closest('[data-lab]');if(lab){nav.push({type:'lab',id:lab.dataset.lab,group:lab.dataset.labGroup});setPage(renderLabDetail(findLab(lab.dataset.lab,lab.dataset.labGroup)));return}const test=e.target.closest('[data-test]');if(test){nav.push({type:'test',id:test.dataset.test,group:test.dataset.testGroup});setPage(renderTestDetail(findTest(test.dataset.test,test.dataset.testGroup)));return}const med=e.target.closest('[data-med]');if(med){openMedication(med.dataset.med);return}const rmed=e.target.closest('[data-related-med]');if(rmed){openMedications();setTimeout(()=>openMedication(rmed.dataset.relatedMed),20);return}const rlab=e.target.closest('[data-related-lab]');if(rlab){openDiagnostics('labs');setTimeout(()=>{nav.push({type:'lab',id:rlab.dataset.relatedLab,group:rlab.dataset.relatedGroup});setPage(renderLabDetail(findLab(rlab.dataset.relatedLab,rlab.dataset.relatedGroup)));},20);return}const rtest=e.target.closest('[data-related-test]');if(rtest){openDiagnostics('tests');setTimeout(()=>{nav.push({type:'test',id:rtest.dataset.relatedTest,group:rtest.dataset.relatedGroup});setPage(renderTestDetail(findTest(rtest.dataset.relatedTest,rtest.dataset.relatedGroup)));},20);return}const robj=e.target.closest('[data-related-objective]');if(robj){openObjectives();setTimeout(()=>{openTopic(Number(robj.dataset.relatedObjective));setTimeout(()=>openObjectiveWithResources(Number(robj.dataset.relatedObjectiveIndex)),20)},20);return}const obj=e.target.closest('[data-objective]');if(obj){openObjective(Number(obj.dataset.objective));return}const startQuizBtn=e.target.closest('[data-start-quiz]');if(startQuizBtn){startQuiz();return}const act=e.target.closest('[data-action]');if(act){if(act.dataset.action==='quiz'){openQuizSetup('');return}if(act.dataset.action==='nora'){window.openNora?.();return}toastMsg('Study mode is coming next.');return}});
 back.addEventListener('click',goBack);
 document.addEventListener('input',e=>{if(e.target.id==='resourceSearch')renderResourceLibrary();});
 document.addEventListener('change',e=>{if(['resourceCourseFilter','resourceTopicFilter','resourceTypeFilter'].includes(e.target.id))renderResourceLibrary();});
