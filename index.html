@@ -311,6 +311,24 @@ input,select,textarea{font-size:16px!important}
 
 .today-panel{border-left:3px solid var(--accent)}.today-badge{color:var(--accent);font-size:11px;font-weight:800;letter-spacing:1px}.calendar-today{border:2px solid var(--accent)!important}.study-tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.study-tools button,.quiz-choice{padding:14px;border-radius:12px;background:var(--card);color:var(--text);border:1px solid var(--border);cursor:pointer}.study-tools button:focus-visible,.quiz-choice:focus-visible{outline:2px solid var(--accent)}.quiz-choice{display:block;width:100%;text-align:left;margin:10px 0}.quiz-choice[aria-pressed="true"]{border-color:var(--accent);background:rgba(var(--accent-rgb),.12)}.study-source-picker{display:block;max-height:220px;overflow:auto}.study-source-picker label{display:flex;gap:12px;padding:12px}.study-source-picker input{accent-color:var(--accent)}.study-progress{width:100%;accent-color:var(--accent);height:12px}.study-form select,.study-form input[type="text"]{width:100%;padding:12px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;margin:6px 0 14px}.study-feedback{padding:16px;border-left:3px solid var(--accent);margin:18px 0}.study-feedback p{line-height:1.65}#continueStudyDesktop{display:none}.study-form label{display:block}.source-quote{white-space:pre-wrap;line-height:1.7}.saved-study-row{margin:14px 0}.app-navigation #continueStudyDesktop button{padding:12px;display:block;font-size:12px;white-space:normal}.app-navigation #continueStudyDesktop small{display:block;line-height:1.5;margin-top:8px}.app-navigation #continueStudyDesktop .continue-icon,.app-navigation #continueStudyDesktop .chevron{display:none}
 @media(min-width:900px){#continueStudy{display:none}#continueStudyDesktop{display:block;margin-top:auto}}@media(prefers-reduced-motion:reduce){.study-progress{transition:none}}
+
+.calendar-nav-group{flex-shrink:0}.calendar-nav-group>[data-app-nav]{width:100%}.calendar-nav-dropdown{display:none}
+@media(min-width:900px){
+ .app-navigation{overflow-y:auto}.app-navigation>[data-app-nav]{flex-shrink:0}
+ .calendar-toolbar{display:none}
+ .calendar-nav-dropdown{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .3s ease,opacity .25s ease}
+ .calendar-nav-group.is-expanded .calendar-nav-dropdown{grid-template-rows:1fr;opacity:1}
+ .calendar-nav-filters{min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-left:9px;gap:3px}
+ .app-navigation .calendar-nav-filters button{flex-shrink:0;min-height:36px;padding:9px 12px;font-size:11px;justify-content:flex-start;text-align:left}
+ .calendar-nav-filters button[aria-pressed="true"]{color:var(--accent);background:rgba(var(--accent-rgb),.12)}
+}
+@media(max-width:899px){
+ .calendar-nav-group{flex:1;display:flex}.calendar-nav-group>[data-app-nav]{flex:1}
+ .calendar-toolbar{position:sticky;top:0;z-index:12;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 10px;margin-top:18px;border-bottom:1px solid var(--border);isolation:isolate}
+ .calendar-toolbar .calendar-filter{flex-shrink:0}
+ [data-calendar-date]{scroll-margin-top:calc(76px + env(safe-area-inset-top))}
+}
+@media(prefers-reduced-motion:reduce){.calendar-nav-dropdown{transition:none}}
 </style>
 <script>
 (function(){
@@ -344,7 +362,7 @@ input,select,textarea{font-size:16px!important}
 <button class="card" data-id="materials"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 5.5A2.5 2.5 0 0 1 7 3h11.5v17H7a2.5 2.5 0 0 0-2.5 2.5z"></path><path d="M4.5 5.5v15M8 7h7M8 10.5h7M8 14h5"></path></svg></span><span class="card-copy"><span class="card-title">Study</span><span class="card-description">Build &amp; save source-based guides</span></span></button>
 </section><section class="tomorrow-panel today-panel" id="todayPanel" aria-label="Today’s schedule"></section><section class="tomorrow-panel" id="tomorrowPanel" aria-label="Tomorrow’s schedule"></section></main>
 <section class="page" id="detailPage" aria-hidden="true"><div class="page-inner"><div class="page-nav"><button class="back-button" id="backButton" aria-label="Go back"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button><button class="dashboard-return" id="dashboardReturn" hidden type="button" aria-label="Return to dashboard"><span aria-hidden="true">⌂</span> Dashboard</button></div><div id="pageContent"></div></div></section>
-<nav class="app-navigation" aria-label="Main navigation"><button type="button" data-app-nav="home"><span aria-hidden="true">⌂</span>Home</button><button type="button" data-app-nav="objectives"><span aria-hidden="true">☷</span>Objectives</button><button type="button" data-app-nav="calendar"><span aria-hidden="true">▦</span>Calendar</button><button type="button" data-app-nav="nora"><span aria-hidden="true">N</span>NORA</button><div id="continueStudyDesktop"></div></nav>
+<nav class="app-navigation" aria-label="Main navigation"><button type="button" data-app-nav="home"><span aria-hidden="true">⌂</span>Home</button><button type="button" data-app-nav="objectives"><span aria-hidden="true">☷</span>Objectives</button><div class="calendar-nav-group"><button type="button" data-app-nav="calendar" aria-expanded="false" aria-controls="calendarNavFilters"><span aria-hidden="true">▦</span>Calendar</button><div class="calendar-nav-dropdown" id="calendarNavFilters" inert aria-hidden="true"><div class="calendar-nav-filters" role="group" aria-label="Calendar filters"><button type="button" data-calfilter="all" aria-pressed="false">All</button><button type="button" data-calfilter="class" aria-pressed="false">Class</button><button type="button" data-calfilter="test" aria-pressed="false">Tests</button><button type="button" data-calfilter="lab" aria-pressed="false">Lab / Sim</button><button type="button" data-calfilter="deadline" aria-pressed="false">Deadlines</button><button type="button" data-calfilter="clinical" aria-pressed="false">Clinical</button></div></div></div><button type="button" data-app-nav="nora"><span aria-hidden="true">N</span>NORA</button><div id="continueStudyDesktop"></div></nav>
 <div class="toast" id="toast"></div>
 <script>
 (function(){
@@ -734,7 +752,7 @@ function openMedications(){nav=[{type:'medications'}];setPage(renderMedicationLi
 function openMedication(id){nav.push({type:'medication',id});setPage(renderMedicationDetail(findMedication(id)));}
 function showPage(){page.classList.add('open');page.setAttribute('aria-hidden','false');document.body.classList.add('page-open');updateNavigation()}
 function closePage(){page.classList.remove('open');page.setAttribute('aria-hidden','true');document.body.classList.remove('page-open');nav=[];cards.forEach(c=>c.classList.remove('active'));updateNavigation()}
-function setPage(html){if(typeof clinicalChangeAuthorized!=='undefined')clinicalChangeAuthorized=false;document.getElementById('dashboardReturn').hidden=nav.length<3;content.innerHTML=html;content.classList.remove('page-content-enter');void content.offsetWidth;content.classList.add('page-content-enter');showPage();content.scrollIntoView({block:'start'});if(nav.at(-1)?.type==='calendar')requestAnimationFrame(()=>{const row=content.querySelector('[data-calendar-date="'+localDateKey()+'"]');row?.scrollIntoView({block:'start',behavior:'instant'});});}
+function setPage(html){if(typeof clinicalChangeAuthorized!=='undefined')clinicalChangeAuthorized=false;document.getElementById('dashboardReturn').hidden=nav.length<3;content.innerHTML=html;content.classList.remove('page-content-enter');void content.offsetWidth;content.classList.add('page-content-enter');showPage();content.scrollIntoView({block:'start'});if(nav.at(-1)?.type==='calendar')requestAnimationFrame(()=>{const row=content.querySelector('[data-calendar-date="'+localDateKey()+'"]');const toolbar=content.querySelector('.calendar-toolbar');if(row&&toolbar&&getComputedStyle(toolbar).display!=='none')row.style.scrollMarginTop=(toolbar.getBoundingClientRect().height+12)+'px';row?.scrollIntoView({block:'start',behavior:'instant'});});}
 function topicIcon(){return icons.objectives}
 function openObjectives(){nav=[{type:'root'}];setPage(renderTopics())}
 function renderTopics(){return `<div class="page-header"><div class="page-kicker">Objectives</div><h2 class="page-title">NUR 2129</h2><p class="page-subtitle">Maternal Child Nursing · ${objectiveData.length} class/topic sections</p></div><div class="list">${objectiveData.map((s,i)=>`<button class="list-card topic-card" data-topic="${i}"><span class="list-number">${String(i+1).padStart(2,'0')}</span><span class="list-copy"><span class="list-title">${esc(s.title)}</span><span class="list-meta">${s.objectives.length} objectives</span></span><span class="chevron">›</span></button>`).join('')}</div><p class="source-note">Content is based on the provided NUR 2129 objectives document. Formatting has been cleaned up for the app while retaining the source wording and references.</p>`}
@@ -955,6 +973,12 @@ document.addEventListener('click',e=>{
 function updateNavigation(){
   const type=nav[0]?.type;
   const active=!page.classList.contains('open')?'home':type==='calendar'?'calendar':type==='root'?'objectives':type==='nora'?'nora':'';
+  const calendarOpen=active==='calendar',group=document.querySelector('.calendar-nav-group'),menu=document.getElementById('calendarNavFilters');
+  group.classList.toggle('is-expanded',calendarOpen);
+  menu.inert=!calendarOpen;menu.setAttribute('aria-hidden',String(!calendarOpen));
+  document.querySelector('[data-app-nav="calendar"]').setAttribute('aria-expanded',String(calendarOpen));
+  const filter=nav.at(-1)?.type==='calendar'?(nav.at(-1).filter||'all'):'all';
+  menu.querySelectorAll('[data-calfilter]').forEach(button=>button.setAttribute('aria-pressed',String(calendarOpen&&button.dataset.calfilter===filter)));
   document.querySelectorAll('[data-app-nav]').forEach(button=>{
     if(button.dataset.appNav===active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
   });
