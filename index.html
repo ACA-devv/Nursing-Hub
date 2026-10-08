@@ -114,18 +114,18 @@ body{overflow-x:hidden}body.page-open{overflow:hidden}button,input{font:inherit}
 [data-theme="light-orange"]{--bg:#F4F5F6;--card:#FFFFFF;--surface:#E9ECEF;--text:#111417;--muted:#68737B;--accent:#C05621;--accent-rgb:192,86,33;--border:rgba(17,20,23,.10)}
 [data-theme="light-blue"]{--bg:#F4F5F6;--card:#FFFFFF;--surface:#E9ECEF;--text:#111417;--muted:#68737B;--accent:#2B6CB0;--accent-rgb:43,108,176;--border:rgba(17,20,23,.10)}
 [data-theme^="light-"] html,[data-theme^="light-"] body{background:var(--bg);color:var(--text)}
-[data-theme^="light-"] .page,[data-theme^="light-"] .search-button{background:var(--bg);color:var(--text)}
-[data-theme^="light-"] .card,[data-theme^="light-"] .list-card,[data-theme^="light-"] .meta-box,[data-theme^="light-"] .settings-card,[data-theme^="light-"] .resource-row,[data-theme^="light-"] .clinical-card,[data-theme^="light-"] .calendar-event,[data-theme^="light-"] .nora-card,[data-theme^="light-"] .nora-result,[data-theme^="light-"] .objective-note{background:var(--card);color:var(--text)}
-[data-theme^="light-"] .surface,[data-theme^="light-"] .search-results,[data-theme^="light-"] .list-card:active,[data-theme^="light-"] .nora-action,[data-theme^="light-"] .nora-quick{background:var(--surface)}
-[data-theme^="light-"] .search-button,[data-theme^="light-"] .nora-input,[data-theme^="light-"] .admin-field input,[data-theme^="light-"] .admin-field select,[data-theme^="light-"] .admin-field textarea,[data-theme^="light-"] .quiz-setup-card select,[data-theme^="light-"] .quiz-setup-card input{background:var(--card);color:var(--text)}
-[data-theme^="light-"] .search-dimmer{background:rgba(0,0,0,.28)}
-[data-theme^="light-"] .calendar-event-title,[data-theme^="light-"] .clinical-type,[data-theme^="light-"] .calendar-day,[data-theme^="light-"] .objective-note-text,[data-theme^="light-"] .nora-welcome p{color:var(--text)}
-[data-theme^="light-"] .objective-subitems,[data-theme^="light-"] .diagnostic-section,[data-theme^="light-"] .diagnostic-link,[data-theme^="light-"] .nora-result,[data-theme^="light-"] .nora-action,[data-theme^="light-"] .nora-quick{background:var(--surface);color:var(--text)}
-[data-theme^="light-"] .calendar-filter{background:var(--card);color:var(--muted);border-color:var(--border)}
-[data-theme^="light-"] .calendar-filter.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
-[data-theme^="light-"] .vitals-subtab,[data-theme^="light-"] .vitals-age-tab{background:var(--surface);color:var(--muted)}
-[data-theme^="light-"] .vitals-subtab.active,[data-theme^="light-"] .vitals-age-tab.active{background:rgba(var(--accent-rgb),.08);color:var(--text)}
-[data-theme^="light-"] .toast{background:var(--card);color:var(--text);border-color:var(--border)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .page,:is([data-theme^="light-"],[data-theme^="theme-"]) .search-button{background:var(--bg);color:var(--text)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .card,:is([data-theme^="light-"],[data-theme^="theme-"]) .list-card,:is([data-theme^="light-"],[data-theme^="theme-"]) .meta-box,:is([data-theme^="light-"],[data-theme^="theme-"]) .settings-card,:is([data-theme^="light-"],[data-theme^="theme-"]) .resource-row,:is([data-theme^="light-"],[data-theme^="theme-"]) .clinical-card,:is([data-theme^="light-"],[data-theme^="theme-"]) .calendar-event,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-card,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-result,:is([data-theme^="light-"],[data-theme^="theme-"]) .objective-note{background:var(--card);color:var(--text)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .surface,:is([data-theme^="light-"],[data-theme^="theme-"]) .search-results,:is([data-theme^="light-"],[data-theme^="theme-"]) .list-card:active,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-action,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-quick{background:var(--surface)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .search-button,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-input,:is([data-theme^="light-"],[data-theme^="theme-"]) .admin-field input,:is([data-theme^="light-"],[data-theme^="theme-"]) .admin-field select,:is([data-theme^="light-"],[data-theme^="theme-"]) .admin-field textarea,:is([data-theme^="light-"],[data-theme^="theme-"]) .quiz-setup-card select,:is([data-theme^="light-"],[data-theme^="theme-"]) .quiz-setup-card input{background:var(--card);color:var(--text)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .search-dimmer{background:rgba(0,0,0,.28)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .calendar-event-title,:is([data-theme^="light-"],[data-theme^="theme-"]) .clinical-type,:is([data-theme^="light-"],[data-theme^="theme-"]) .calendar-day,:is([data-theme^="light-"],[data-theme^="theme-"]) .objective-note-text,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-welcome p{color:var(--text)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .objective-subitems,:is([data-theme^="light-"],[data-theme^="theme-"]) .diagnostic-section,:is([data-theme^="light-"],[data-theme^="theme-"]) .diagnostic-link,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-result,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-action,:is([data-theme^="light-"],[data-theme^="theme-"]) .nora-quick{background:var(--surface);color:var(--text)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .calendar-filter{background:var(--card);color:var(--muted);border-color:var(--border)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .calendar-filter.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .vitals-subtab,:is([data-theme^="light-"],[data-theme^="theme-"]) .vitals-age-tab{background:var(--surface);color:var(--muted)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .vitals-subtab.active,:is([data-theme^="light-"],[data-theme^="theme-"]) .vitals-age-tab.active{background:rgba(var(--accent-rgb),.08);color:var(--text)}
+:is([data-theme^="light-"],[data-theme^="theme-"]) .toast{background:var(--card);color:var(--text);border-color:var(--border)}
 .settings-appearance{display:grid;gap:14px}
 .settings-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .settings-choice{min-height:48px;padding:11px 10px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.4px;text-align:center;cursor:pointer}
@@ -329,12 +329,67 @@ input,select,textarea{font-size:16px!important}
  [data-calendar-date]{scroll-margin-top:calc(76px + env(safe-area-inset-top))}
 }
 @media(prefers-reduced-motion:reduce){.calendar-nav-dropdown{transition:none}}
+
+/* Color-filled themes keep white text legible across every selected hue. */
+[data-theme="theme-default"]{--bg:#50545b;--intro-bg:#50545b;--card:#3e4247;--surface:#323438;--text:#fff;--muted:#e6e7e8;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-cyan"]{--bg:#0b6876;--intro-bg:#0b6876;--card:#09515c;--surface:#074049;--text:#fff;--muted:#ddeaec;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-pink"]{--bg:#9e2f68;--intro-bg:#9e2f68;--card:#7b2551;--surface:#621d40;--text:#fff;--muted:#f1e2ea;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-green"]{--bg:#246643;--intro-bg:#246643;--card:#1c5034;--surface:#163f2a;--text:#fff;--muted:#e0eae5;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-purple"]{--bg:#6636a0;--intro-bg:#6636a0;--card:#502a7d;--surface:#3f2163;--text:#fff;--muted:#eae3f2;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-orange"]{--bg:#85470c;--intro-bg:#85470c;--card:#683709;--surface:#522c07;--text:#fff;--muted:#eee5dd;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-blue"]{--bg:#245f98;--intro-bg:#245f98;--card:#1c4a77;--surface:#163b5e;--text:#fff;--muted:#e0e9f1;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-red"]{--bg:#a72c38;--intro-bg:#a72c38;--card:#82222c;--surface:#681b23;--text:#fff;--muted:#f3e1e3;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme="theme-yellow"]{--bg:#725f09;--intro-bg:#725f09;--card:#594a07;--surface:#473b06;--text:#fff;--muted:#ebe9dd;--accent:#fff;--accent-rgb:255,255,255;--border:rgba(255,255,255,.22)}
+[data-theme^="theme-"] .objective-subitems li{color:var(--text)}
+[data-theme^="theme-"] .meta-value{color:var(--text)}
+[data-theme^="theme-"] .reference-list{color:var(--text)}
+[data-theme^="theme-"] .source-note{color:var(--muted)}
+[data-theme^="theme-"] .diagnostic-section p{color:var(--text)}
+[data-theme^="theme-"] .diagnostic-section ul{color:var(--text)}
+[data-theme^="theme-"] .toast{background:var(--card)}
+[data-theme^="theme-"] .calendar-filter{background:var(--card);color:var(--muted)}
+[data-theme^="theme-"] .calendar-section-title{color:var(--muted)}
+[data-theme^="theme-"] .calendar-event{background:var(--card)}
+[data-theme^="theme-"] .calendar-day{color:var(--text)}
+[data-theme^="theme-"] .calendar-dow{color:var(--muted)}
+[data-theme^="theme-"] .no-class-event .calendar-event-title{color:var(--muted)}
+[data-theme^="theme-"] .calendar-event-title{color:var(--text)}
+[data-theme^="theme-"] .calendar-event-meta{color:var(--muted)}
+[data-theme^="theme-"] .clinical-card{background:var(--card)}
+[data-theme^="theme-"] .clinical-type{color:var(--text)}
+[data-theme^="theme-"] .clinical-place{color:var(--muted)}
+[data-theme^="theme-"] .clinical-detail{color:var(--text)}
+[data-theme^="theme-"] .clinical-detail span{color:var(--muted)}
+[data-theme^="theme-"] .calendar-note{color:var(--muted)}
+[data-theme^="theme-"] .settings-status{color:var(--text)}
+[data-theme^="theme-"] .status-dot{background:var(--card)}
+[data-theme^="theme-"] .resource-link-item{background:var(--card)}
+[data-theme^="theme-"] .objective-resource-card{background:var(--card)}
+[data-theme^="theme-"] .objective-resource-card small{color:var(--muted)}
+[data-theme^="theme-"] .hopper-step-num{background:var(--card)}
+[data-theme^="theme-"] .hopper-note{color:var(--muted)}
+[data-theme^="theme-"] .optional-label{color:var(--muted)}
+[data-theme^="theme-"] .hopper-processing-card{background:var(--card)}
+[data-theme^="theme-"] .processing-item{background:var(--card)}
+[data-theme^="theme-"] .match-pill{background:var(--card);color:var(--text)}
+[data-theme^="theme-"] .resource-excerpt{color:var(--muted)}
+[data-theme^="theme-"] .objective-note-text{color:var(--text)}
+[data-theme^="theme-"] .nora-card p{color:var(--text)}
+[data-theme^="theme-"] .nora-disclaimer{color:var(--muted)}
+[data-theme^="theme-"] .nora-status{color:var(--muted)}
+[data-theme^="theme-"] .nora-disclaimer{color:var(--muted)}
+[data-theme^="theme-"] .nora-focused-excerpt{color:var(--text)}
+[data-theme^="theme-"] .nora-source-label{color:var(--muted)}
+[data-theme^="theme-"] .nora-context-note{color:var(--muted)}
+[data-theme^="theme-"] .admin-primary,[data-theme^="theme-"] .nora-send{background:#fff;color:var(--bg)}
+[data-theme^="theme-"] .calendar-filter.active{background:#fff;color:var(--bg)}
+.settings-choice-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 </style>
 <script>
 (function(){
   try{
     var t=localStorage.getItem('nurseHubTheme')||'dark-default';
-    var allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow'];
+    var allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow','theme-default','theme-cyan','theme-pink','theme-green','theme-purple','theme-orange','theme-blue','theme-red','theme-yellow'];
     document.documentElement.dataset.theme=allowed.indexOf(t)>=0?t:'dark-default';
   }catch(e){document.documentElement.dataset.theme='dark-default';}
 })();
@@ -405,14 +460,14 @@ async function init(){
     catch(e){return 'dark-default';}
   }
   function applyLocalTheme(theme){
-    const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow'];
+    const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow','theme-default','theme-cyan','theme-pink','theme-green','theme-purple','theme-orange','theme-blue','theme-red','theme-yellow'];
     const next=allowed.includes(theme)?theme:'dark-default';
     document.documentElement.dataset.theme=next;
     try{localStorage.setItem('nurseHubTheme',next);}catch(e){}
     const meta=document.querySelector('meta[name="theme-color"]');
-    if(meta)meta.setAttribute('content',next.startsWith('light-')?'#FFFFFF':'#000000');
+    if(meta)meta.setAttribute('content',next.startsWith('theme-')?getComputedStyle(document.documentElement).getPropertyValue('--bg').trim():next.startsWith('light-')?'#FFFFFF':'#000000');
   }
-  function getThemeMode(){return getLocalTheme().startsWith('light-')?'light':'dark';}
+  function getThemeMode(){return getLocalTheme().startsWith('theme-')?'theme':getLocalTheme().startsWith('light-')?'light':'dark';}
   function getThemeAccent(){const theme=getLocalTheme();return theme.substring(theme.indexOf('-')+1);}
   try{applyLocalTheme(getLocalTheme());}catch(e){document.documentElement.dataset.theme='dark-default';}
   objectiveData=await decodeObjectiveData();
@@ -1009,15 +1064,15 @@ function getLocalTheme(){
   catch(e){return 'dark-default';}
 }
 function applyLocalTheme(theme){
-  const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow'];
+  const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow','theme-default','theme-cyan','theme-pink','theme-green','theme-purple','theme-orange','theme-blue','theme-red','theme-yellow'];
   const next=allowed.includes(theme)?theme:'dark-default';
   document.documentElement.dataset.theme=next;
   try{localStorage.setItem('nurseHubTheme',next);}catch(e){}
   const meta=document.querySelector('meta[name="theme-color"]');
-  if(meta)meta.setAttribute('content',next.startsWith('light-')?'#FFFFFF':'#000000');
+  if(meta)meta.setAttribute('content',next.startsWith('theme-')?getComputedStyle(document.documentElement).getPropertyValue('--bg').trim():next.startsWith('light-')?'#FFFFFF':'#000000');
 }
 function getThemeMode(){
-  return getLocalTheme().startsWith('light-')?'light':'dark';
+  return getLocalTheme().startsWith('theme-')?'theme':getLocalTheme().startsWith('light-')?'light':'dark';
 }
 function getThemeAccent(){
   const theme=getLocalTheme();
@@ -1039,8 +1094,9 @@ ${renderClinicalProfileSettings()}
 <div class="settings-card"><div class="settings-section-label">Mode</div><div class="settings-choice-grid" style="margin-top:8px">
 <button class="settings-choice ${mode==='dark'?'active':''}" data-theme-choice="dark">DARK MODE</button>
 <button class="settings-choice ${mode==='light'?'active':''}" data-theme-choice="light">LIGHT MODE</button>
+<button class="settings-choice ${mode==='theme'?'active':''}" data-theme-choice="theme">THEME MODE</button>
 </div></div>
-<div class="settings-card"><div class="settings-section-label">Accent</div><div class="settings-accent-grid" style="margin-top:8px">${accents.map(a=>`<button class="settings-accent ${accent===a[0]?'active':''}" data-theme-accent="${a[0]}"><span class="settings-accent-swatch" style="background:${a[2]}"></span>${a[1]}</button>`).join('')}</div></div>
+<div class="settings-card"><div class="settings-section-label">${mode==='theme'?'Theme color':'Accent'}</div>${mode==='theme'?'<p class="hopper-note">Your selected color fills the app and intro. Cards use a contrasting shade, with white and softly tinted text.</p>':''}<div class="settings-accent-grid" style="margin-top:8px">${accents.map(a=>`<button class="settings-accent ${accent===a[0]?'active':''}" data-theme-accent="${a[0]}"><span class="settings-accent-swatch" style="background:${a[2]}"></span>${a[1]}</button>`).join('')}</div></div>
 </div>`;
 }
 function renderAboutSettings(){
