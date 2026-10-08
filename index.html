@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nurse Hub">
 <meta name="theme-color" content="#0B0D0F">
 <title>Nurse Hub</title>
 <!-- Hopper objective-notes patch: objective pages display extracted matching sections; library OPEN remains original file. -->
@@ -228,12 +231,89 @@ body.intro-running .app{opacity:0;pointer-events:none}
 .inline-note-source{display:block;color:var(--muted);font-size:11px;margin:0 2px 8px}
 .inline-source-link{margin-top:10px}
 
+
+[data-theme="dark-red"]{--accent:#FF646D;--accent-rgb:255,100,109}
+[data-theme="dark-yellow"]{--accent:#F6D54A;--accent-rgb:246,213,74}
+[data-theme="light-red"]{--card:#FFFFFF;--surface:#E9ECEF;--text:#111417;--muted:#68737B;--border:rgba(17,20,23,.10);--accent:#C52E3D;--accent-rgb:197,46,61}
+[data-theme="light-yellow"]{--card:#FFFFFF;--surface:#E9ECEF;--text:#111417;--muted:#68737B;--border:rgba(17,20,23,.10);--accent:#927000;--accent-rgb:146,112,0}
+.dashboard-ekg{display:block;width:160px;height:34px;margin:0 auto 12px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(var(--accent-rgb),.4))}
+.app-navigation{position:fixed;z-index:80;display:flex;background:var(--card);border:1px solid var(--border)}
+.app-navigation button{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:var(--muted);cursor:pointer;font-size:12px;padding:13px;border-radius:12px}
+.app-navigation button span{font-size:21px}
+.app-navigation button[aria-current="page"]{color:var(--accent);background:rgba(var(--accent-rgb),.1)}
+.app-navigation button:focus-visible{outline:2px solid var(--accent)}
+.tomorrow-panel{margin-top:28px;padding:20px;border:1px solid var(--border);border-radius:21px;background:var(--card)}
+.tomorrow-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.tomorrow-heading h2{font-size:22px;margin:0}
+.tomorrow-heading p{color:var(--muted);font-size:12px;margin:6px 0 0}
+.tomorrow-heading button{width:auto;white-space:nowrap}
+.tomorrow-events{display:grid;gap:10px}
+.tomorrow-event{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:1px solid var(--border);border-radius:14px;text-align:left;background:var(--surface);color:var(--text)}
+.tomorrow-event strong,.tomorrow-event small{display:block}
+.tomorrow-event small{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+.tomorrow-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
+.tomorrow-empty{padding:20px 0;color:var(--text);font-size:15px}
+.tomorrow-empty span{display:block;margin-top:6px;color:var(--muted);font-size:12px}
+button,summary{touch-action:manipulation}
+input,select,textarea{font-size:16px!important}
+@media(max-width:899px){
+ .app-navigation{bottom:0;left:0;right:0;padding:6px 8px max(8px,env(safe-area-inset-bottom));border-radius:19px 19px 0 0;justify-content:space-around}
+ .app-navigation button{flex:1;flex-direction:column;gap:4px;min-height:54px;font-size:10px}
+ .app,.page-inner{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+ .toast{bottom:calc(94px + env(safe-area-inset-bottom))}
+ .nora-composer{bottom:calc(82px + env(safe-area-inset-bottom))}
+ html,.page,.search-results,.nora-chat-scroll{scrollbar-width:none}
+ html::-webkit-scrollbar,.page::-webkit-scrollbar,.search-results::-webkit-scrollbar,.nora-chat-scroll::-webkit-scrollbar{display:none}
+}
+@media(min-width:900px){
+ .app-navigation{top:28px;left:20px;bottom:28px;width:164px;flex-direction:column;gap:9px;padding:16px 10px;border-radius:21px}
+ .app-navigation button{justify-content:flex-start;padding:15px}
+ .app{max-width:1120px;padding-left:28px;padding-right:28px;margin-left:200px;margin-right:auto;width:calc(100% - 220px)}
+ .page{left:200px}
+ .page-inner{max-width:1100px;padding:28px 32px 48px}
+ .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+ .header{padding-top:20px;margin-bottom:32px}
+ .brand{font-size:42px}
+ .objective-subitems{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+ .objective-meta,.settings-appearance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+ .settings-appearance>.settings-card:first-child{grid-column:1/-1}
+ .tomorrow-events{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.searching .search-wrap{left:220px;right:28px;max-width:1000px}
+}
+
+
+.clinical-card-button{display:block;width:100%;color:var(--text);text-align:left;cursor:pointer}
+.clinical-name-form label input{display:block;margin-top:8px}
+.prep-checklist{display:grid;gap:12px;margin:16px 0}
+.prep-check{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:13px;background:var(--surface);cursor:pointer}
+.prep-check input{width:20px;height:20px;flex:none;accent-color:var(--accent);margin-top:2px}
+.prep-check strong,.prep-check small{display:block}
+.prep-check small{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.5}
+.prep-check:has(input:checked) strong{text-decoration:line-through;color:var(--muted)}
+.conversion-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.calculator-result{padding:16px;border-radius:12px;font-size:18px;line-height:1.5;overflow-wrap:anywhere}
+.calculator-result:empty{display:none}
+.calculator-result.success{border:1px solid rgba(var(--accent-rgb),.35);background:rgba(var(--accent-rgb),.07);color:var(--text)}
+.calculator-result.error{color:#ff646d}
+.walkthrough-overlay{position:fixed;inset:0;z-index:2500;isolation:isolate}
+.walkthrough-spotlight{position:fixed;border:2px solid var(--accent);border-radius:18px;box-shadow:0 0 0 200vmax rgba(0,0,0,.72);pointer-events:none}
+.walkthrough-spotlight[hidden]{display:block!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:0!important;background:rgba(0,0,0,.72)}
+.walkthrough-panel{position:fixed;z-index:1;right:20px;bottom:max(104px,calc(90px + env(safe-area-inset-bottom)));width:min(420px,calc(100vw - 40px));max-height:calc(100dvh - 150px);overflow:auto;padding:22px;border-radius:20px;background:var(--card);color:var(--text);border:1px solid rgba(var(--accent-rgb),.4);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.walkthrough-count{font-size:10px;color:var(--accent);font-weight:800;letter-spacing:.1em}
+.walkthrough-panel h2{font-size:23px;margin:10px 0}
+.walkthrough-panel p{color:var(--muted);font-size:14px;line-height:1.6}
+.walkthrough-panel>.settings-card{padding:0;border:0;margin:12px 0}
+.walkthrough-panel .settings-card h3{font-size:14px;line-height:1.5}
+.walkthrough-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.walkthrough-running{overflow:hidden}
+@media(min-width:900px){.walkthrough-panel{bottom:32px;right:32px}}
+
 </style>
 <script>
 (function(){
   try{
     var t=localStorage.getItem('nurseHubTheme')||'dark-default';
-    var allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue'];
+    var allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow'];
     document.documentElement.dataset.theme=allowed.indexOf(t)>=0?t:'dark-default';
   }catch(e){document.documentElement.dataset.theme='dark-default';}
 })();
@@ -244,7 +324,7 @@ body.intro-running .app{opacity:0;pointer-events:none}
 <div class="laser-stage"><svg viewBox="0 0 409 162" role="img" aria-label="Nurse Hub"><g transform="translate(32 0)"><path class="laser-letter" pathLength="1" style="--letter-delay:0.00s" d="M6.432 44.224H15.136000000000001L36.32 84.19200000000001V44.224H42.592V92.0H33.888L12.704 52.032V92.0H6.432Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.13s" d="M54.592 77.856V56.16H60.480000000000004V77.632Q60.480000000000004 82.72 62.464000000000006 85.264Q64.44800000000001 87.80799999999999 68.416 87.80799999999999Q73.184 87.80799999999999 75.952 84.768Q78.72 81.728 78.72 76.48V56.16H84.608V92.0H78.72V86.496Q76.576 89.76 73.744 91.344Q70.912 92.928 67.168 92.928Q60.992000000000004 92.928 57.792 89.088Q54.592 85.248 54.592 77.856Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.26s" d="M117.504 61.664Q116.512 61.088 115.344 60.816Q114.176 60.544 112.768 60.544Q107.77600000000001 60.544 105.10400000000001 63.791999999999994Q102.432 67.03999999999999 102.432 73.12V92.0H96.512V56.16H102.432V61.727999999999994Q104.288 58.464 107.26400000000001 56.879999999999995Q110.24000000000001 55.296 114.49600000000001 55.296Q115.104 55.296 115.84 55.376Q116.57600000000001 55.455999999999996 117.47200000000001 55.616Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.39s" d="M146.52800000000002 57.216V62.784Q144.032 61.504 141.344 60.864000000000004Q138.656 60.224000000000004 135.776 60.224000000000004Q131.392 60.224000000000004 129.2 61.568Q127.00800000000001 62.912 127.00800000000001 65.6Q127.00800000000001 67.648 128.57600000000002 68.816Q130.144 69.984 134.88 71.03999999999999L136.89600000000002 71.488Q143.168 72.832 145.808 75.28Q148.448 77.728 148.448 82.112Q148.448 87.104 144.496 90.01599999999999Q140.544 92.928 133.632 92.928Q130.752 92.928 127.632 92.368Q124.512 91.808 121.05600000000001 90.688V84.608Q124.32000000000001 86.304 127.488 87.152Q130.656 88.0 133.76 88.0Q137.92000000000002 88.0 140.16000000000003 86.576Q142.4 85.152 142.4 82.56Q142.4 80.16 140.784 78.88Q139.168 77.6 133.696 76.416L131.648 75.936Q126.176 74.78399999999999 123.744 72.39999999999999Q121.31200000000001 70.01599999999999 121.31200000000001 65.856Q121.31200000000001 60.8 124.89600000000002 58.048Q128.48000000000002 55.296 135.072 55.296Q138.336 55.296 141.216 55.775999999999996Q144.096 56.256 146.52800000000002 57.216Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.52s" d="M188.48 72.608V75.488H161.408Q161.792 81.568 165.072 84.75200000000001Q168.352 87.936 174.208 87.936Q177.6 87.936 180.784 87.10400000000001Q183.968 86.272 187.10399999999998 84.608V90.176Q183.936 91.52 180.608 92.22399999999999Q177.28 92.928 173.856 92.928Q165.28 92.928 160.272 87.936Q155.264 82.944 155.264 74.432Q155.264 65.632 160.01600000000002 60.464Q164.768 55.296 172.832 55.296Q180.064 55.296 184.272 59.952Q188.48 64.608 188.48 72.608ZM182.59199999999998 70.88Q182.528 66.048 179.88799999999998 63.168Q177.248 60.288 172.896 60.288Q167.968 60.288 165.00799999999998 63.071999999999996Q162.048 65.856 161.6 70.912Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.65s" d="M219.23199999999997 44.224H225.69599999999997V63.808H249.18399999999997V44.224H255.64799999999997V92.0H249.18399999999997V69.248H225.69599999999997V92.0H219.23199999999997Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.78s" d="M267.64799999999997 77.856V56.16H273.536V77.632Q273.536 82.72 275.52 85.264Q277.50399999999996 87.80799999999999 281.472 87.80799999999999Q286.24 87.80799999999999 289.00800000000004 84.768Q291.776 81.728 291.776 76.48V56.16H297.664V92.0H291.776V86.496Q289.632 89.76 286.79999999999995 91.344Q283.96799999999996 92.928 280.224 92.928Q274.048 92.928 270.84799999999996 89.088Q267.64799999999997 85.248 267.64799999999997 77.856Z"/><path class="laser-letter" pathLength="1" style="--letter-delay:0.91s" d="M335.52 74.112Q335.52 67.616 332.84799999999996 63.92Q330.176 60.224000000000004 325.50399999999996 60.224000000000004Q320.832 60.224000000000004 318.15999999999997 63.92Q315.488 67.616 315.488 74.112Q315.488 80.608 318.15999999999997 84.304Q320.832 88.0 325.50399999999996 88.0Q330.176 88.0 332.84799999999996 84.304Q335.52 80.608 335.52 74.112ZM315.488 61.599999999999994Q317.344 58.4 320.176 56.848Q323.008 55.296 326.94399999999996 55.296Q333.472 55.296 337.552 60.480000000000004Q341.632 65.664 341.632 74.112Q341.632 82.56 337.552 87.744Q333.472 92.928 326.94399999999996 92.928Q323.008 92.928 320.176 91.376Q317.344 89.824 315.488 86.624V92.0H309.568V42.208H315.488Z"/></g><path class="laser-frame" pathLength="1" d="M165 136H29Q6 136 6 113V37Q6 14 29 14H380Q403 14 403 37V113Q403 136 380 136H249"/><path class="laser-ekg" pathLength="1" d="M165 136H177L182 131L187 136H194L200 145L207 110L215 151L222 136H229L235 130L241 136H249"/></svg></div>
 </div>
 <main class="app">
-<header class="header" style="position:relative"><button class="settings-button" id="settingsButton" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path><path d="M19.2 13.1a7.5 7.5 0 0 0 0-2.2l1.6-1.2-1.7-3-1.9.7a7.8 7.8 0 0 0-1.9-1.1L15 4.2h-3.5l-.3 2.1c-.7.3-1.3.6-1.9 1.1l-1.9-.7-1.7 3 1.6 1.2a7.5 7.5 0 0 0 0 2.2l-1.6 1.2 1.7 3 1.9-.7c.6.5 1.2.9 1.9 1.1l.3 2.1H15l.3-2.1c.7-.3 1.3-.6 1.9-1.1l1.9.7 1.7-3-1.6-1.2Z"></path></svg></button><h1 class="brand">Nurse Hub</h1><p class="subtitle" id="dashboardGreeting"></p><p class="dashboard-date" id="dashboardDate"></p></header>
+<header class="header" style="position:relative"><button class="settings-button" id="settingsButton" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path><path d="M19.2 13.1a7.5 7.5 0 0 0 0-2.2l1.6-1.2-1.7-3-1.9.7a7.8 7.8 0 0 0-1.9-1.1L15 4.2h-3.5l-.3 2.1c-.7.3-1.3.6-1.9 1.1l-1.9-.7-1.7 3 1.6 1.2a7.5 7.5 0 0 0 0 2.2l-1.6 1.2 1.7 3 1.9-.7c.6.5 1.2.9 1.9 1.1l.3 2.1H15l.3-2.1c.7-.3 1.3-.6 1.9-1.1l1.9.7 1.7-3-1.6-1.2Z"></path></svg></button><svg class="dashboard-ekg" viewBox="0 0 240 44" aria-hidden="true"><path d="M2 25H65L74 19L82 25H95L103 35L113 4L124 41L133 25H147L158 17L169 25H238"/></svg><h1 class="brand">Nurse Hub</h1><p class="subtitle" id="dashboardGreeting"></p><p class="dashboard-date" id="dashboardDate"></p></header>
 <div class="search-dimmer" id="searchDimmer"></div>
 <div id="continueStudy"></div>
 <section class="search-wrap">
@@ -253,14 +333,15 @@ body.intro-running .app{opacity:0;pointer-events:none}
 </section>
 <button class="nora-launcher" id="noraLauncher" type="button"><span class="nora-orb">N</span><span><strong>NORA</strong><small>Ask about Nurse Hub, objectives, or your uploaded resources</small></span><span class="nora-arrow">›</span></button>
 <section class="grid" id="dashboardGrid">
-<button class="card" data-id="calendar"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"></rect><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17"></path><path d="M8 13h2M14 13h2M8 17h2M14 17h2"></path></svg></span><span class="card-copy"><span class="card-title">Calendar</span><span class="card-description">Class schedule &amp; clinicals</span></span></button>
-<button class="card" data-id="objectives"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="2.5"></rect><path d="M8 8h8M8 12h8M8 16h4"></path><path d="M5.8 8.1l.9.9 1.5-1.7"></path></svg></span><span class="card-copy"><span class="card-title">Objectives</span><span class="card-description">Course content</span></span></button>
+<button class="card" data-id="clinical-prep"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"></rect><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17"></path><path d="M8 13h2M14 13h2M8 17h2M14 17h2"></path></svg></span><span class="card-copy"><span class="card-title">Clinical Prep</span><span class="card-description">Your next rotation &amp; paperwork</span></span></button>
+<button class="card" data-id="calculators"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="2.5"></rect><path d="M8 8h8M8 12h8M8 16h4"></path><path d="M5.8 8.1l.9.9 1.5-1.7"></path></svg></span><span class="card-copy"><span class="card-title">Calculators</span><span class="card-description">Nursing calculations &amp; conversions</span></span></button>
 <button class="card" data-id="diagnostics"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3.5h8"></path><path d="M10 3.5v7.1l-4.7 7.1A2 2 0 0 0 7 21h10a2 2 0 0 0 1.7-3.3L14 10.6V3.5"></path><path d="M8.2 15h7.6"></path></svg></span><span class="card-copy"><span class="card-title">Diagnostics</span><span class="card-description">Labs, tests &amp; clinical reference</span></span></button>
 <button class="card" data-id="medications"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="17" height="10" rx="5"></rect><path d="M12 7v10"></path></svg></span><span class="card-copy"><span class="card-title">Medications</span><span class="card-description">Drug information &amp; notes</span></span></button>
 <button class="card" data-id="quiz"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.2 4.2A7.5 7.5 0 0 1 19.5 10c1.3 5.1-2.9 9.8-8.1 9.8-4.6 0-8.4-3.7-8.4-8.4 0-3.2 1.8-6 4.5-7.5"></path><path d="M8.8 9a3.1 3.1 0 0 1 3.1-2.4c1.7 0 3 .9 3 2.4 0 1.8-1.5 2.3-2.5 3.1-.7.5-1 1-.9 1.8"></path><path d="M11.6 17h.01"></path></svg></span><span class="card-copy"><span class="card-title">Quiz Me</span><span class="card-description">Practice active recall</span></span></button>
 <button class="card" data-id="materials"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 5.5A2.5 2.5 0 0 1 7 3h11.5v17H7a2.5 2.5 0 0 0-2.5 2.5z"></path><path d="M4.5 5.5v15M8 7h7M8 10.5h7M8 14h5"></path></svg></span><span class="card-copy"><span class="card-title">Study Materials</span><span class="card-description">Notes, guides &amp; resources</span></span></button>
-</section></main>
+</section><section class="tomorrow-panel" id="tomorrowPanel" aria-label="Tomorrow’s schedule"></section></main>
 <section class="page" id="detailPage" aria-hidden="true"><div class="page-inner"><div class="page-nav"><button class="back-button" id="backButton" aria-label="Go back"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button><button class="dashboard-return" id="dashboardReturn" hidden type="button" aria-label="Return to dashboard"><span aria-hidden="true">⌂</span> Dashboard</button></div><div id="pageContent"></div></div></section>
+<nav class="app-navigation" aria-label="Main navigation"><button type="button" data-app-nav="home"><span aria-hidden="true">⌂</span>Home</button><button type="button" data-app-nav="objectives"><span aria-hidden="true">☷</span>Objectives</button><button type="button" data-app-nav="calendar"><span aria-hidden="true">▦</span>Calendar</button><button type="button" data-app-nav="nora"><span aria-hidden="true">N</span>NORA</button></nav>
 <div class="toast" id="toast"></div>
 <script>
 (function(){
@@ -273,7 +354,7 @@ body.intro-running .app{opacity:0;pointer-events:none}
     if(done)return;done=true;
     intro.style.opacity='0';
     document.body.classList.remove('intro-running');app.inert=false;
-    setTimeout(()=>intro.remove(),460);
+    setTimeout(()=>{intro.remove();document.dispatchEvent(new Event('nursehub-intro-finished'));},460);
   }
   intro.addEventListener('click',finish);
   intro.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '||e.key==='Escape'){e.preventDefault();finish();}});
@@ -287,7 +368,7 @@ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_GozHgHVMU6YLI0wODiD1jQ_PfFlePtL";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let currentAdmin=null;
 
-const sections={settings:{title:"Settings",description:"App & admin controls"},calendar:{title:"Calendar",description:"Class schedule & clinicals"},objectives:{title:"Objectives",description:"Course content"},diagnostics:{title:"Diagnostics",description:"Labs, tests & clinical reference"},medications:{title:"Medications",description:"Drug information & notes"},quiz:{title:"Quiz Me",description:"Practice active recall"},materials:{title:"Study Materials",description:"Notes, guides & resources"}};
+const sections={'clinical-prep':{title:'Clinical Prep',description:'Your next rotation and paperwork'},calculators:{title:'Calculators',description:'Nursing calculations and conversions'},settings:{title:"Settings",description:"App & admin controls"},calendar:{title:"Calendar",description:"Class schedule & clinicals"},objectives:{title:"Objectives",description:"Course content"},diagnostics:{title:"Diagnostics",description:"Labs, tests & clinical reference"},medications:{title:"Medications",description:"Drug information & notes"},quiz:{title:"Quiz Me",description:"Practice active recall"},materials:{title:"Study Materials",description:"Notes, guides & resources"}};
 let objectiveData=[];
 const objectiveDataCompressed="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";
 async function decodeObjectiveData(){
@@ -303,7 +384,7 @@ async function init(){
     catch(e){return 'dark-default';}
   }
   function applyLocalTheme(theme){
-    const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue'];
+    const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow'];
     const next=allowed.includes(theme)?theme:'dark-default';
     document.documentElement.dataset.theme=next;
     try{localStorage.setItem('nurseHubTheme',next);}catch(e){}
@@ -352,11 +433,12 @@ const calendarEvents=[
 ["2026-11-20","8:30–11:30 AM","Unit Test #6","test"],["2026-11-20","8:30–11:30 AM","Final Exam Review","event"],["2026-11-20","11:59 PM","Final Clinical Self-evaluation due","deadline"],
 ["2026-11-23","All day","Thanksgiving Break (11/23–11/27)","break"],["2026-11-30","8:30 AM","Make-up Test Day","test"],["2026-12-01","All day","Clinical Make-up Day","clinical"],["2026-12-07","8:30 AM","Final Exam","test"],["2026-12-07","8:30 AM","Final Clinical Evaluations","event"]
 ];
-const clinicalEvents=[["2026-09-09","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-09-16","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-09-30","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-10-14","Peds","Laurel Pediatrics","8:00 AM\u20135:00 PM","Patient paper due Sunday after"],["2026-10-15","SN3","North Jones Elementary","7:15 AM\u20133:00 PM","Written assignment due Sunday after"],["2026-10-20","L&D","SCRMC Labor and Delivery","7:00 AM\u20137:00 PM","Preclinical due Sunday before"],["2026-10-21","NUR","Nursery Rotation","7:00 AM\u20137:00 PM","Preclinical due Sunday before"],["2026-10-29","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-11-05","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-11-12","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"],["2026-11-19","PP","Postpartum & Pediatrics","7:00 AM\u20134:00 PM","Patient paper due Sunday after"]];
+let clinicalEvents=profileClinicalEvents();
 function fmtDate(ds){const d=new Date(ds+'T12:00:00');return {month:d.toLocaleDateString('en-US',{month:'short'}),day:d.getDate(),full:d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}),dow:d.toLocaleDateString('en-US',{weekday:'short'})}}
 function renderCalendar(filter='all'){
  let filtered=filter==='clinical'?[]:calendarEvents.filter(e=>filter==='all'||e[3]===filter);
  if(filter==='all'){
+  filtered.push(...clinicalEvents.map(e=>[e[0],e[3],clinicalRule(e[1]).title+' · '+e[2],'clinical']));
   const dates=calendarEvents.map(e=>e[0]).sort();
   if(dates.length){
    const start=new Date(dates[0]+'T12:00:00'), end=new Date(dates[dates.length-1]+'T12:00:00');
@@ -386,9 +468,129 @@ function renderCalendar(filter='all'){
  const grouped={};
  filtered.forEach(e=>{const m=e[0].slice(0,7);(grouped[m]??=[]).push(e)});
  const sections=Object.keys(grouped).map(m=>`<section class="calendar-section"><h3 class="calendar-section-title">${new Date(m+'-15T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})}</h3>${grouped[m].map(e=>{const d=fmtDate(e[0]);return `<div class="calendar-event ${e[3]==='noclass'?'no-class-event':''} ${e[3]==='nothing'?'nothing-event':''}"><div class="calendar-date"><div class="calendar-dow">${d.dow}</div><div class="calendar-month">${d.month}</div><div class="calendar-day">${d.day}</div></div><div class="calendar-info"><div class="calendar-event-title">${esc(e[2])}</div>${e[1]?`<div class="calendar-event-meta">${esc(e[1])}</div>`:''}${!['noclass','nothing'].includes(e[3])?`<div class="calendar-badge">${esc(e[3])}</div>`:''}</div></div>`}).join('')}</section>`).join('');
- return `<div class="page-header"><div class="page-kicker">School Calendar</div><h2 class="page-title">Fall 2026</h2><p class="page-subtitle">NUR 2129 class schedule, major assessments, and your clinical rotation.</p></div><div class="calendar-toolbar"><button class="calendar-filter ${filter==='all'?'active':''}" data-calfilter="all">ALL</button><button class="calendar-filter ${filter==='class'?'active':''}" data-calfilter="class">CLASS</button><button class="calendar-filter ${filter==='test'?'active':''}" data-calfilter="test">TESTS</button><button class="calendar-filter ${filter==='lab'?'active':''}" data-calfilter="lab">LAB / SIM</button><button class="calendar-filter ${filter==='deadline'?'active':''}" data-calfilter="deadline">DEADLINES</button><button class="calendar-filter ${filter==='clinical'?'active':''}" data-calfilter="clinical">CLINICAL</button></div>${filter==='clinical'?renderClinical():sections}<p class="calendar-note">Class events and dates are transcribed from the provided NUR 2129 Fall 2026 calendar. Clinical entries use only the Austin Ashley row from the provided clinical schedule, with clinical-specific hours and assignment deadlines supplied by you.</p>`;
+ return `<div class="page-header"><div class="page-kicker">School Calendar</div><h2 class="page-title">Fall 2026</h2><p class="page-subtitle">NUR 2129 class schedule, major assessments, and your clinical rotation.</p></div><div class="calendar-toolbar"><button class="calendar-filter ${filter==='all'?'active':''}" data-calfilter="all">ALL</button><button class="calendar-filter ${filter==='class'?'active':''}" data-calfilter="class">CLASS</button><button class="calendar-filter ${filter==='test'?'active':''}" data-calfilter="test">TESTS</button><button class="calendar-filter ${filter==='lab'?'active':''}" data-calfilter="lab">LAB / SIM</button><button class="calendar-filter ${filter==='deadline'?'active':''}" data-calfilter="deadline">DEADLINES</button><button class="calendar-filter ${filter==='clinical'?'active':''}" data-calfilter="clinical">CLINICAL</button></div>${filter==='clinical'?renderClinical():sections}<p class="calendar-note">Class events and dates are transcribed from the provided NUR 2129 Fall 2026 calendar. Clinical dates are added only after you opt in with your full name. Rotation hours come from the course’s clinical schedule.</p>`;
 }
-function renderClinical(){return `<section class="calendar-section"><h3 class="calendar-section-title">Austin Ashley · Clinical Rotation</h3>${clinicalEvents.map(e=>`<div class="clinical-card"><div class="clinical-top"><div><div class="clinical-type">${esc(e[1])}</div><div class="clinical-place">${esc(e[2])}</div></div><div class="clinical-date">${esc(fmtDate(e[0]).dow)} · ${esc(fmtDate(e[0]).full)}</div></div><div class="clinical-detail"><strong>${esc(e[3])}</strong><br><span>${esc(e[4])}</span></div></div>`).join('')}</section>`}
+function renderClinical(){
+  const profile=readClinicalProfile();
+  if(!profile)return clinicalNameForm();
+  return `<section class="calendar-section"><h3 class="calendar-section-title">${esc(profile.student_name)} · Clinical Rotation</h3>${clinicalEvents.map(e=>`<button type="button" class="clinical-card clinical-card-button" data-clinical-prep-date="${e[0]}"><div class="clinical-top"><div><div class="clinical-type">${esc(clinicalRule(e[1]).title)}</div><div class="clinical-place">${esc(e[2])}</div></div><div class="clinical-date">${esc(fmtDate(e[0]).dow)} · ${esc(fmtDate(e[0]).full)}</div></div><div class="clinical-detail"><strong>${esc(e[3])}</strong><br><span>${esc(e[4])}</span><br><small>View preparation checklist ›</small></div></button>`).join('')}</section>`;
+}
+function localDateKey(date=new Date()){
+  return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+}
+function readClinicalProfile(){
+  try{
+    const p=JSON.parse(localStorage.getItem('nurseHubClinicalProfile')||'null');
+    return p&&p.term==='2026-Fall-NUR2129'&&typeof p.student_name==='string'&&typeof p.student_id==='string'&&Array.isArray(p.events)&&p.events.every(e=>/^2026-\d{2}-\d{2}$/.test(e.date)&&/^(PP2?|Peds|NUR|L&D|SN[1-6])$/.test(e.code))?p:null;
+  }catch(err){return null;}
+}
+function clinicalRule(code){
+  const schools={SN1:'Glade Elementary',SN2:'Moselle Elementary',SN3:'North Jones Elementary',SN4:'East Jones Elementary',SN5:'South Jones Elementary',SN6:'West Jones Elementary'};
+  if(schools[code])return {title:'School nurse · '+code,location:schools[code],time:'7:15 AM–3:00 PM',paper:'Written assignment due Sunday after'};
+  const rules={
+    PP:{title:'Postpartum & Pediatrics',location:'Postpartum & Pediatrics',time:'7:00 AM–4:00 PM',paper:'Patient paper due Sunday after'},
+    PP2:{title:'Postpartum & Pediatrics',location:'Postpartum & Pediatrics',time:'7:00 AM–4:00 PM',paper:'Patient paper due Sunday after'},
+    Peds:{title:'Pediatric clinic',location:'Laurel Pediatrics',time:'8:00 AM–5:00 PM',paper:'Patient paper due Sunday after'},
+    NUR:{title:'Nursery',location:'Nursery Rotation',time:'7:00 AM–7:00 PM',paper:'Preclinical due Sunday before'},
+    'L&D':{title:'Labor & Delivery',location:'SCRMC Labor and Delivery',time:'7:00 AM–7:00 PM',paper:'Preclinical due Sunday before'}
+  };
+  return rules[code];
+}
+function profileClinicalEvents(profile=readClinicalProfile()){
+  return profile?(profile.events||[]).map(e=>{
+    const rule=clinicalRule(e.code);
+    return [e.date,e.code,rule.location,rule.time,rule.paper];
+  }).sort((a,b)=>a[0].localeCompare(b[0])):[];
+}
+function offsetClinicalDate(ds,days){
+  const date=new Date(ds+'T12:00:00');date.setDate(date.getDate()+days);return localDateKey(date);
+}
+function clinicalTasks(event){
+  const [date,code]=event,dow=new Date(date+'T12:00:00').getDay();
+  const sundayBefore=offsetClinicalDate(date,-(dow||7)),sundayAfter=offsetClinicalDate(date,7-dow);
+  if(code==='NUR'||code==='L&D')return [{id:'preclinical',label:'Complete preclinical paperwork',due:sundayBefore,when:'Before clinical'}];
+  if(/^SN/.test(code))return [{id:'school-paper',label:'Complete school nurse written assignment',due:sundayAfter,when:'After clinical'}];
+  const tasks=[];
+  if(/^PP/.test(code)){
+    tasks.push({id:'patient-info',label:'Obtain postpartum patient information',due:offsetClinicalDate(date,-1),when:'Before clinical · 4:00–5:00 PM'});
+    tasks.push({id:'pp-careplan',label:'Complete postpartum plan of care',due:date,when:'By clinical'});
+  }
+  tasks.push({id:'careplan-copy',label:'Bring at least one copy of each required plan of care',due:date,when:'By clinical'});
+  tasks.push({id:'patient-paper',label:'Complete patient paperwork',due:sundayAfter,when:'After clinical'});
+  return tasks;
+}
+function clinicalNameForm(mode='initial'){
+  return `<div class="settings-card"><h3>Enter first and last name to add clinical information</h3><form class="clinical-name-form admin-login-form" data-clinical-mode="${mode}"><div class="admin-field"><label>First and last name<input name="clinicalName" maxlength="100" autocomplete="name" required placeholder="First Last"></label></div><button class="admin-primary" type="submit">ADD CLINICAL SCHEDULE</button><div class="admin-message clinical-name-message" role="status"></div></form></div>`;
+}
+function clinicalChecklistState(){
+  try{return JSON.parse(localStorage.getItem('nurseHubClinicalChecks')||'{}')||{};}catch(err){return {};}
+}
+function renderClinicalPrep(selectedDate=''){
+  const profile=readClinicalProfile();
+  const header='<div class="page-header"><div class="page-kicker">Your rotation</div><h2 class="page-title">Clinical Prep</h2></div>';
+  if(!profile)return header+clinicalNameForm();
+  const events=profileClinicalEvents(profile),today=localDateKey();
+  const upcoming=events.find(e=>e[0]>=today);
+  const event=events.find(e=>e[0]===selectedDate)||upcoming||events[events.length-1];
+  if(!event)return header+'<div class="settings-card">No rotations were found for this student.</div>';
+  const key=profile.term+'|'+profile.student_id+'|'+event[0]+'|'+event[1],checks=clinicalChecklistState(),tasks=clinicalTasks(event),rule=clinicalRule(event[1]);
+  return header+`<div class="settings-panel"><div class="settings-card"><span class="meta-label">${upcoming&&event===upcoming?'Next scheduled clinical':'Selected clinical'} · ${esc(profile.student_name)}</span><h3>${esc(rule.title)}</h3><p>${esc(fmtDate(event[0]).full)} · ${esc(event[3])}</p><p>${esc(event[2])}</p>${!upcoming?'<p class="hopper-note">No upcoming rotations remain in this schedule. You can review prior paperwork below.</p>':''}<div class="admin-field" style="margin-top:16px"><label for="prepRotation">Rotation</label><select id="prepRotation">${events.map(e=>`<option value="${e[0]}" ${e===event?'selected':''}>${esc(fmtDate(e[0]).full)} · ${esc(clinicalRule(e[1]).title)}</option>`).join('')}</select></div></div><div class="settings-card"><h3>Paperwork & preparation</h3><div class="prep-checklist">${tasks.map(task=>`<label class="prep-check"><input type="checkbox" data-prep-check="${esc(key+'|'+task.id)}" ${checks[key+'|'+task.id]?'checked':''}><span><strong>${esc(task.label)}</strong><small>${esc(task.when)} · Due ${esc(fmtDate(task.due).full)}</small></span></label>`).join('')}</div><p class="hopper-note">Checklist requirements use the rotation instructions provided for this course. Check your instructor’s latest directions for changes.</p></div><div class="settings-card"><p>Clinical schedule: ${esc(profile.student_name)}. To change the associated student, open Settings → Personalize.</p></div></div>`;
+}
+function openClinicalPrep(date=''){
+  nav=[{type:'clinical-prep',date}];setPage(renderClinicalPrep(date));
+}
+function renderClinicalProfileSettings(){
+  const p=readClinicalProfile();
+  return p?`<div class="settings-card"><h3>Clinical schedule</h3><p>Associated student: <strong>${esc(p.student_name)}</strong></p><button class="settings-action" type="button" data-change-clinical-name>CHANGE CLINICAL SCHEDULE NAME</button><div id="clinicalChangeSlot"></div></div>`:clinicalNameForm();
+}
+let clinicalChangeAuthorized=false;
+document.addEventListener('click',e=>{
+  const prep=e.target.closest('[data-clinical-prep-date]');if(prep){openClinicalPrep(prep.dataset.clinicalPrepDate);return;}
+  if(e.target.closest('[data-change-clinical-name]')){
+    if(!confirm('Change the clinical schedule associated with this browser? Your current schedule stays in place until a new student name is successfully matched.'))return;
+    clinicalChangeAuthorized=true;
+    document.getElementById('clinicalChangeSlot').innerHTML=clinicalNameForm('change');
+  }
+});
+document.addEventListener('submit',async e=>{
+  if(!e.target.matches('.clinical-name-form'))return;
+  e.preventDefault();
+  const form=e.target,msg=form.querySelector('.clinical-name-message'),button=form.querySelector('button'),mode=form.dataset.clinicalMode;
+  if(readClinicalProfile()&&(mode!=='change'||!clinicalChangeAuthorized)){msg.textContent='Change the associated name in Settings → Personalize.';return;}
+  const name=String(new FormData(form).get('clinicalName')||'').trim().replace(/\s+/g,' ');
+  if(name.split(' ').length<2){msg.className='admin-message error clinical-name-message';msg.textContent='Enter both your first and last name.';return;}
+  button.disabled=true;msg.className='admin-message clinical-name-message';msg.textContent='Finding your clinical schedule…';
+  try{
+    const {data,error}=await supabaseClient.rpc('nurse_hub_find_clinical_schedule',{full_name:name});
+    if(error)throw new Error('Clinical lookup is unavailable. Ask the app administrator to check the clinical schedule setup, then try again.');
+    if(data?.status!=='matched'){
+      if(data?.status==='ambiguous')throw new Error('More than one student matched. Ask the app administrator to verify the roster.');
+      throw new Error('No exact match found. Check your full name as it appears on the clinical roster.');
+    }
+    if(!Array.isArray(data.events)||!data.events.length)throw new Error('This student has no clinical dates listed.');
+    const previous=localStorage.getItem('nurseHubClinicalProfile');
+    localStorage.setItem('nurseHubClinicalProfile',JSON.stringify(data));
+    if(!readClinicalProfile()){if(previous)localStorage.setItem('nurseHubClinicalProfile',previous);else localStorage.removeItem('nurseHubClinicalProfile');throw new Error('The clinical schedule format could not be read.');}
+    clinicalEvents=profileClinicalEvents();clinicalChangeAuthorized=false;
+    updateDashboard();
+    if(form.closest('#walkthroughPanel')){msg.className='admin-message success clinical-name-message';msg.textContent='Added '+data.student_name+'’s clinical schedule.';button.hidden=true;form.querySelector('input').readOnly=true;}
+    else if(mode==='change'){setSettingsSubpage(renderAppearanceSettings());toastMsg('Clinical schedule updated.');}
+    else if(nav[nav.length-1]?.type==='calendar')setPage(renderCalendar('clinical'));
+    else if(nav[nav.length-1]?.type==='settings'){setSettingsSubpage(renderAppearanceSettings());toastMsg('Clinical schedule added.');}
+    else openClinicalPrep();
+  }catch(err){if(form.isConnected){msg.className='admin-message error clinical-name-message';msg.textContent=err.message||'Unable to save this schedule.';}}
+  finally{if(button.isConnected)button.disabled=false;}
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='prepRotation'){const current=nav[nav.length-1];if(current?.type==='clinical-prep')current.date=e.target.value;setPage(renderClinicalPrep(e.target.value));return;}
+  if(e.target.matches('[data-prep-check]')){
+    try{
+      const state=clinicalChecklistState();state[e.target.dataset.prepCheck]=e.target.checked;
+      localStorage.setItem('nurseHubClinicalChecks',JSON.stringify(state));
+    }catch(err){e.target.checked=!e.target.checked;toastMsg('This browser could not save the checklist.');}
+  }
+});
+
 
 function openCalendar(){nav=[{type:'calendar',filter:'all'}];setPage(renderCalendar('all'));}
 
@@ -523,9 +725,9 @@ function renderTestDetail(t){return `<div class="page-header"><div class="page-k
 function openDiagnostics(tab='labs',vitalMode='adult',vitalAge='infant'){nav=[{type:'diagnostics',tab,vitalMode,vitalAge}];setPage(diagnosticHome(tab,vitalMode,vitalAge));}
 function openMedications(){nav=[{type:'medications'}];setPage(renderMedicationList());}
 function openMedication(id){nav.push({type:'medication',id});setPage(renderMedicationDetail(findMedication(id)));}
-function showPage(){page.classList.add('open');page.setAttribute('aria-hidden','false');document.body.classList.add('page-open')}
-function closePage(){page.classList.remove('open');page.setAttribute('aria-hidden','true');document.body.classList.remove('page-open');nav=[];cards.forEach(c=>c.classList.remove('active'))}
-function setPage(html){document.getElementById('dashboardReturn').hidden=nav.length<3;content.innerHTML=html;content.classList.remove('page-content-enter');void content.offsetWidth;content.classList.add('page-content-enter');showPage();content.scrollIntoView({block:'start'});}
+function showPage(){page.classList.add('open');page.setAttribute('aria-hidden','false');document.body.classList.add('page-open');updateNavigation()}
+function closePage(){page.classList.remove('open');page.setAttribute('aria-hidden','true');document.body.classList.remove('page-open');nav=[];cards.forEach(c=>c.classList.remove('active'));updateNavigation()}
+function setPage(html){if(typeof clinicalChangeAuthorized!=='undefined')clinicalChangeAuthorized=false;document.getElementById('dashboardReturn').hidden=nav.length<3;content.innerHTML=html;content.classList.remove('page-content-enter');void content.offsetWidth;content.classList.add('page-content-enter');showPage();content.scrollIntoView({block:'start'});}
 function topicIcon(){return icons.objectives}
 function openObjectives(){nav=[{type:'root'}];setPage(renderTopics())}
 function renderTopics(){return `<div class="page-header"><div class="page-kicker">Objectives</div><h2 class="page-title">NUR 2129</h2><p class="page-subtitle">Maternal Child Nursing · ${objectiveData.length} class/topic sections</p></div><div class="list">${objectiveData.map((s,i)=>`<button class="list-card topic-card" data-topic="${i}"><span class="list-number">${String(i+1).padStart(2,'0')}</span><span class="list-copy"><span class="list-title">${esc(s.title)}</span><span class="list-meta">${s.objectives.length} objectives</span></span><span class="chevron">›</span></button>`).join('')}</div><p class="source-note">Content is based on the provided NUR 2129 objectives document. Formatting has been cleaned up for the app while retaining the source wording and references.</p>`}
@@ -543,10 +745,165 @@ function showObjectivePage(section,objective){
     if(box.isConnected)box.innerHTML='<div class="admin-message error">Unable to load study resources right now.</div>';
   });
 }
+const nursingCalculatorDefinitions={
+ dosage:{name:'Dose / quantity',fields:[['ordered','Ordered dose'],['available','Available dose'],['quantity','Available quantity (mL or tablets)']],formula:'Ordered dose ÷ available dose × available quantity. Dose units must match.'},
+ weight:{name:'Weight-based dose',fields:[['weight','Weight (kg)'],['dose','Ordered dose (mg/kg/dose)']],formula:'Weight × prescribed mg/kg/dose. Enter a per-dose order, not a daily total.'},
+ iv:{name:'IV pump rate',fields:[['volume','Volume (mL)'],['hours','Time (hours)']],formula:'Volume ÷ hours = mL/hr.'},
+ drip:{name:'Gravity IV rate',fields:[['volume','Volume (mL)'],['minutes','Time (minutes)'],['factor','Tubing drop factor (gtt/mL)']],formula:'Volume × drop factor ÷ minutes = gtt/min. Check your tubing’s actual drop factor.'},
+ maintenance:{name:'Pediatric maintenance fluids',fields:[['weight','Weight (kg)']],formula:'Daily Holliday–Segar: 100/50/20 mL/kg/day. Hourly 4–2–1: 4/2/1 mL/kg/hr. These are separate estimates.'}
+};
+function calculateNursing(type,values){
+  const def=nursingCalculatorDefinitions[type];if(!def)throw new Error('Choose a calculator.');
+  for(const [key] of def.fields)if(!Number.isFinite(values[key])||values[key]<=0)throw new Error('Enter a positive number in every field.');
+  let value,unit;
+  if(type==='dosage'){value=values.ordered/values.available*values.quantity;unit='mL or tablets (as entered)';}
+  if(type==='weight'){value=values.weight*values.dose;unit='mg per dose';}
+  if(type==='iv'){value=values.volume/values.hours;unit='mL/hr';}
+  if(type==='drip'){value=Math.round(values.volume*values.factor/values.minutes);unit='gtt/min (rounded to a whole drop)';}
+  if(type==='maintenance'){
+    const w=values.weight;
+    const daily=100*Math.min(w,10)+50*Math.min(Math.max(w-10,0),10)+20*Math.max(w-20,0);
+    const hourly=4*Math.min(w,10)+2*Math.min(Math.max(w-10,0),10)+Math.max(w-20,0);
+    if(!Number.isFinite(daily)||!Number.isFinite(hourly))throw new Error('The input value is too large to calculate.');
+    return {text:daily.toLocaleString(undefined,{maximumFractionDigits:3})+' mL/day · '+hourly.toLocaleString(undefined,{maximumFractionDigits:3})+' mL/hr (4–2–1)',formula:def.formula};
+  }
+  if(!Number.isFinite(value))throw new Error('The input values are too large to calculate.');
+  return {text:value.toLocaleString(undefined,{maximumFractionDigits:4})+' '+unit,formula:def.formula};
+}
+const conversionUnits={
+ mass:{name:'Weight / mass',units:{kg:['kg',1000],g:['g',1],mg:['mg',.001],mcg:['mcg',.000001],lb:['lb',453.59237],oz:['oz',28.349523125]}},
+ volume:{name:'Volume',units:{L:['L',1000],mL:['mL / cc',1],uL:['µL',.001],tsp:['US tsp',4.92892159375],tbsp:['US tbsp',14.78676478125],floz:['US fl oz',29.5735295625],cup:['US cup',236.5882365]}},
+ length:{name:'Length',units:{m:['m',100],cm:['cm',1],mm:['mm',.1],in:['inches',2.54],ft:['feet',30.48]}},
+ time:{name:'Time',units:{hr:['hours',3600],min:['minutes',60],sec:['seconds',1]}},
+ temperature:{name:'Temperature',units:{C:['°C',1],F:['°F',1]}}
+};
+function calculateConversion(group,from,to,value){
+  const units=conversionUnits[group]?.units;
+  if(!units?.[from]||!units?.[to]||!Number.isFinite(value))throw new Error('Enter a number and valid units.');
+  if(group!=='temperature'&&value<0)throw new Error('Enter a nonnegative value.');
+  const result=group==='temperature'?(from===to?value:from==='C'?value*9/5+32:(value-32)*5/9):value*units[from][1]/units[to][1];
+  if(!Number.isFinite(result))throw new Error('The input value is too large to convert.');
+  return result;
+}
+function calculatorFields(type){
+  const def=nursingCalculatorDefinitions[type];
+  return `${def.fields.map(([key,label])=>`<div class="admin-field"><label for="calc-${key}">${esc(label)}</label><input id="calc-${key}" name="${key}" type="number" min="0" step="any" inputmode="decimal" required></div>`).join('')}<p class="hopper-note">${esc(def.formula)}</p><button type="submit" class="admin-primary">CALCULATE</button><div class="calculator-result" role="status"></div>`;
+}
+function conversionFields(group){
+  const units=conversionUnits[group].units,options=Object.entries(units).map(([key,[label]])=>`<option value="${key}">${esc(label)}</option>`).join('');
+  return `<div class="admin-field"><label for="conversionValue">Value</label><input id="conversionValue" name="value" type="number" step="any" inputmode="decimal" required></div><div class="conversion-pair"><div class="admin-field"><label for="conversionFrom">From</label><select id="conversionFrom" name="from">${options}</select></div><div class="admin-field"><label for="conversionTo">To</label><select id="conversionTo" name="to">${options}</select></div></div><button type="submit" class="admin-primary">CONVERT</button><div class="calculator-result" role="status"></div><p class="hopper-note">Volume uses exact US customary measures. Some nursing courses use rounded equivalents such as 5 mL/tsp and 30 mL/fl oz. Follow the assigned convention. Medication units and mEq require substance-specific information and are not generic mass conversions.</p>`;
+}
+function renderCalculators(tab='nursing'){
+  return `<div class="page-header"><div class="page-kicker">Nurse Hub tools</div><h2 class="page-title">Calculators</h2><p class="page-subtitle">Calculate from your inputs and see the formula used.</p></div><div class="diagnostic-tabs"><button class="diagnostic-tab ${tab==='nursing'?'active':''}" data-calculator-tab="nursing">NURSING CALCULATORS</button><button class="diagnostic-tab ${tab==='conversions'?'active':''}" data-calculator-tab="conversions">CONVERSIONS</button></div><div class="settings-panel"><div class="settings-card">${tab==='nursing'?`<div class="admin-field"><label for="nursingCalculatorType">Calculator</label><select id="nursingCalculatorType">${Object.entries(nursingCalculatorDefinitions).map(([key,def])=>`<option value="${key}">${esc(def.name)}</option>`).join('')}</select></div><form id="nursingCalculatorForm" class="admin-login-form" style="margin-top:16px">${calculatorFields('dosage')}</form>`:`<div class="admin-field"><label for="conversionGroup">Measurement</label><select id="conversionGroup">${Object.entries(conversionUnits).map(([key,def])=>`<option value="${key}">${esc(def.name)}</option>`).join('')}</select></div><form id="conversionForm" class="admin-login-form" style="margin-top:16px">${conversionFields('mass')}</form>`}</div><div class="settings-card"><p>Educational calculation aid. Verify the order, units, patient-specific limits, and required rounding before clinical use. Maintenance estimates are not fluid prescriptions or neonatal guidance.</p><p class="hopper-note"><a href="https://medconnection.ucsfbenioffchildrens.org/maintenance-iv-fluid/1000" target="_blank" rel="noopener noreferrer">Maintenance fluid formula reference · UCSF Pediatrics</a></p></div></div>`;
+}
+function openCalculators(){nav=[{type:'calculators',tab:'nursing'}];setPage(renderCalculators());}
+document.addEventListener('click',e=>{
+  const button=e.target.closest('[data-calculator-tab]');if(!button)return;
+  const tab=button.dataset.calculatorTab;nav[nav.length-1].tab=tab;setPage(renderCalculators(tab));
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='nursingCalculatorType')document.getElementById('nursingCalculatorForm').innerHTML=calculatorFields(e.target.value);
+  if(e.target.id==='conversionGroup')document.getElementById('conversionForm').innerHTML=conversionFields(e.target.value);
+});
+document.addEventListener('submit',e=>{
+  if(!['nursingCalculatorForm','conversionForm'].includes(e.target.id))return;
+  e.preventDefault();
+  const form=e.target,data=new FormData(form),box=form.querySelector('.calculator-result');
+  try{
+    if(form.id==='nursingCalculatorForm'){
+      const values={};for(const [key,value] of data)values[key]=value.trim()===''?NaN:Number(value);
+      const result=calculateNursing(document.getElementById('nursingCalculatorType').value,values);box.textContent=result.text;
+    }else{
+      const group=document.getElementById('conversionGroup').value,from=data.get('from'),to=data.get('to'),value=String(data.get('value')||'');
+      const result=calculateConversion(group,from,to,value.trim()===''?NaN:Number(value));
+      box.textContent=result.toLocaleString(undefined,{maximumSignificantDigits:10})+' '+conversionUnits[group].units[to][0];
+    }
+    box.className='calculator-result success';
+  }catch(err){box.className='calculator-result error';box.textContent=err.message;}
+});
+let walkthroughStep=0,walkthroughPreviousFocus=null;
+const walkthroughSteps=[
+  {target:'#dashboardGrid',title:'Your nursing dashboard',text:'Open Calculators, Clinical Prep, Diagnostics, Medications, Quiz Me, or Study Materials. Tomorrow previews the next day’s events.'},
+  {target:'.app-navigation',title:'Move around Nurse Hub',text:'Use Home, Objectives, Calendar, and NORA here. Navigation moves to the side on wider screens.'},
+  {target:'#settingsButton',title:'Make it yours',text:'Open Settings → Personalize to set your name, theme, and accent color. Your choices stay on this browser.'},
+  {target:'#noraLauncher',title:'Meet NORA',text:'Ask NORA to find or organize published Nurse Hub resources. It uses indexed app content and does not add outside medical facts.'},
+  {target:null,title:'Add your clinical schedule—optional',text:'Enter your first and last name as listed on the course roster. You can skip this and add it later in Clinical Prep or Calendar → Clinical.'}
+];
+function updateWalkthroughSpotlight(){
+  const overlay=document.getElementById('walkthroughOverlay');if(!overlay)return;
+  const step=walkthroughSteps[walkthroughStep],spot=overlay.querySelector('.walkthrough-spotlight');
+  const target=step.target?document.querySelector(step.target):null;
+  if(!target){spot.hidden=true;return;}
+  const rect=target.getBoundingClientRect();spot.hidden=false;
+  Object.assign(spot.style,{left:Math.max(4,rect.left-5)+'px',top:Math.max(4,rect.top-5)+'px',width:Math.min(innerWidth-8,rect.width+10)+'px',height:Math.min(innerHeight-8,rect.height+10)+'px'});
+}
+function renderWalkthroughStep(){
+  const overlay=document.getElementById('walkthroughOverlay'),step=walkthroughSteps[walkthroughStep],panel=overlay.querySelector('#walkthroughPanel');
+  const profile=readClinicalProfile();
+  panel.innerHTML=`<div class="walkthrough-count">QUICK TOUR · ${walkthroughStep+1} / ${walkthroughSteps.length}</div><h2 id="walkthroughTitle">${esc(step.title)}</h2><p>${esc(step.text)}</p>${walkthroughStep===4?(profile?`<div class="admin-message success">Clinical schedule already added for ${esc(profile.student_name)}.</div>`:clinicalNameForm('tutorial')):''}<div class="walkthrough-actions"><button type="button" class="admin-secondary" data-walkthrough-skip>Skip tour</button><button type="button" class="admin-primary" data-walkthrough-next>${walkthroughStep===4?'Finish':'Next'}</button></div>`;
+  if(step.target)document.querySelector(step.target)?.scrollIntoView({block:'center',behavior:'instant'});
+  updateWalkthroughSpotlight();panel.querySelector('[data-walkthrough-next]').focus();
+}
+function startWalkthrough(replay=false){
+  if(document.getElementById('walkthroughOverlay'))return;
+  if(!replay){try{if(localStorage.getItem('nurseHubWalkthroughSeen')==='1')return;}catch(err){}}
+  try{localStorage.setItem('nurseHubWalkthroughSeen','1');}catch(err){}
+  closeSearch();closePage();window.scrollTo(0,0);
+  walkthroughStep=0;walkthroughPreviousFocus=document.activeElement;
+  const overlay=document.createElement('div');overlay.id='walkthroughOverlay';overlay.className='walkthrough-overlay';
+  overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','walkthroughTitle');
+  overlay.innerHTML='<div class="walkthrough-spotlight" aria-hidden="true"></div><div id="walkthroughPanel" class="walkthrough-panel"></div>';
+  document.body.append(overlay);
+  document.querySelector('.app').inert=true;document.querySelector('.app-navigation').inert=true;page.inert=true;
+  document.body.classList.add('walkthrough-running');renderWalkthroughStep();
+}
+function finishWalkthrough(){
+  document.getElementById('walkthroughOverlay')?.remove();
+  document.querySelector('.app').inert=false;document.querySelector('.app-navigation').inert=false;page.inert=false;
+  document.body.classList.remove('walkthrough-running');window.scrollTo(0,0);
+  if(walkthroughPreviousFocus?.isConnected&&walkthroughPreviousFocus!==document.body)walkthroughPreviousFocus.focus();else document.getElementById('settingsButton').focus({preventScroll:true});
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-walkthrough-skip]')){finishWalkthrough();return;}
+  if(e.target.closest('[data-walkthrough-next]')){
+    if(walkthroughStep===walkthroughSteps.length-1)finishWalkthrough();
+    else{walkthroughStep++;renderWalkthroughStep();}return;
+  }
+  if(e.target.closest('[data-walkthrough-replay]'))startWalkthrough(true);
+});
+document.addEventListener('keydown',e=>{
+  const overlay=document.getElementById('walkthroughOverlay');if(!overlay)return;
+  if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();finishWalkthrough();return;}
+  if(e.key==='Tab'){
+    const items=[...overlay.querySelectorAll('button:not([disabled]):not([hidden]),input:not([disabled]):not([readonly])')];
+    const first=items[0],last=items[items.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
+  }
+},true);
+window.addEventListener('resize',updateWalkthroughSpotlight);
+window.addEventListener('scroll',updateWalkthroughSpotlight,{passive:true});
+function maybeStartWalkthrough(){
+  if(document.getElementById('welcomeIntro'))document.addEventListener('nursehub-intro-finished',()=>startWalkthrough(),{once:true});
+  else startWalkthrough();
+}
 function getUserName(){
   try{return (localStorage.getItem('nurseHubUserName')||'').trim().slice(0,60);}catch(e){return '';}
 }
+function tomorrowSchedule(now=new Date()){
+  const next=new Date(now);next.setDate(next.getDate()+1);
+  const key=next.getFullYear()+'-'+String(next.getMonth()+1).padStart(2,'0')+'-'+String(next.getDate()).padStart(2,'0');
+  const events=calendarEvents.filter(e=>e[0]===key).map(e=>({title:e[2],time:e[1],detail:e[3]}));
+  for(const e of clinicalEvents.filter(e=>e[0]===key))events.push({title:e[1]+' clinical',time:e[3],detail:e[2]});
+  const unique=events.filter((e,i)=>events.findIndex(x=>x.title===e.title&&x.time===e.time&&x.detail===e.detail)===i);
+  return {date:next,events:unique};
+}
+function renderTomorrow(){
+  const {date,events}=tomorrowSchedule();
+  return `<div class="tomorrow-heading"><div><span class="meta-label">A look ahead</span><h2>Tomorrow</h2><p>${esc(date.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}))}</p></div><button type="button" class="admin-secondary" data-open-calendar>View calendar</button></div>${events.length?`<div class="tomorrow-events">${events.map(e=>`<button type="button" class="tomorrow-event" data-open-calendar><span class="tomorrow-dot" aria-hidden="true"></span><span><strong>${esc(e.title)}</strong><small>${esc(e.time||'Time not listed')} · ${esc(e.detail)}</small></span><span class="chevron" aria-hidden="true">›</span></button>`).join('')}</div>`:'<div class="tomorrow-empty">No events tomorrow<span>Nothing scheduled in Nurse Hub’s calendar.</span></div>'}`;
+}
 function updateDashboard(){
+  document.getElementById('tomorrowPanel').innerHTML=renderTomorrow();
   const hour=new Date().getHours(),period=hour<12?'morning':hour<18?'afternoon':'evening';
   document.getElementById('dashboardGreeting').textContent='Good '+period+', '+(getUserName()||'future nurse');
   document.getElementById('dashboardDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
@@ -561,9 +918,7 @@ function rememberStudy(section,objective){
   try{localStorage.setItem('nurseHubLastStudy',JSON.stringify({section:section.title,objective:objective.number}));}catch(e){}
   updateDashboard();
 }
-function renderProfileSettings(){
-  return `<div class="page-header"><div class="page-kicker">Settings · Personalization</div><h2 class="page-title">Make it yours</h2><p class="page-subtitle">Add a name for your dashboard and NORA greetings. This preference stays on this device.</p></div><div class="settings-card"><form id="profileForm" class="admin-login-form"><div class="admin-field"><label for="profileName">Your name</label><input id="profileName" maxlength="60" autocomplete="given-name" placeholder="Future nurse" value="${esc(getUserName())}"></div><button class="admin-primary" type="submit">SAVE NAME</button><p class="hopper-note">Leave it blank to use “future nurse.”</p><div class="admin-message" id="profileMessage"></div></form></div>`;
-}
+
 updateDashboard();
 setInterval(updateDashboard,60000);
 document.addEventListener('submit',e=>{
@@ -576,7 +931,26 @@ document.addEventListener('submit',e=>{
   }catch(err){document.getElementById('profileMessage').textContent='Your browser could not save this preference.';}
 });
 document.addEventListener('click',e=>{
-  if(e.target.closest('[data-settings-profile]')){setSettingsSubpage(renderProfileSettings());return;}
+  const item=e.target.closest('[data-app-nav]');
+  if(e.target.closest('[data-open-calendar]')){openCalendar();return;}
+  if(!item)return;
+  closeSearch();
+  const target=item.dataset.appNav;
+  if(target==='home'){closePage();updateDashboard();}
+  else if(target==='objectives')openObjectives();
+  else if(target==='calendar')openCalendar();
+  else if(target==='nora'){nav=[];openNora();}
+});
+function updateNavigation(){
+  const type=nav[0]?.type;
+  const active=!page.classList.contains('open')?'home':type==='calendar'?'calendar':type==='root'?'objectives':type==='nora'?'nora':'';
+  document.querySelectorAll('[data-app-nav]').forEach(button=>{
+    if(button.dataset.appNav===active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+  });
+}
+updateNavigation();
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-settings-profile]')){setSettingsSubpage(renderAppearanceSettings());return;}
   if(e.target.closest('[data-continue-study]')){
     let saved;try{saved=JSON.parse(localStorage.getItem('nurseHubLastStudy')||'null');}catch(err){return;}
     const si=objectiveData.findIndex(s=>s.title===saved?.section);
@@ -600,7 +974,7 @@ function getLocalTheme(){
   catch(e){return 'dark-default';}
 }
 function applyLocalTheme(theme){
-  const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue'];
+  const allowed=['dark-default','dark-cyan','dark-pink','dark-green','dark-purple','dark-orange','dark-blue','dark-red','dark-yellow','light-default','light-cyan','light-pink','light-green','light-purple','light-orange','light-blue','light-red','light-yellow'];
   const next=allowed.includes(theme)?theme:'dark-default';
   document.documentElement.dataset.theme=next;
   try{localStorage.setItem('nurseHubTheme',next);}catch(e){}
@@ -621,10 +995,12 @@ function renderAppearanceSettings(){
   const mode=getThemeMode(),accent=getThemeAccent();
   const accents=[
     ['default','Default','#F2F4F5'],['cyan','Cyan','#39D5E8'],['pink','Pink','#F47BB8'],
-    ['green','Green','#68D391'],['purple','Purple','#B794F4'],['orange','Orange','#F6AD55'],['blue','Blue','#63B3ED']
+    ['green','Green','#68D391'],['purple','Purple','#B794F4'],['orange','Orange','#F6AD55'],['blue','Blue','#63B3ED'],['red','Red','#FF646D'],['yellow','Yellow','#F6D54A']
   ];
-  return `<div class="page-header"><div class="page-kicker">Settings · Appearance</div><h2 class="page-title">Appearance</h2><p class="page-subtitle">Choose a personal look for this device. Your selection is saved locally and does not affect other users.</p></div>
+  return `<div class="page-header"><div class="page-kicker">Settings · Personalize</div><h2 class="page-title">Personalize</h2><p class="page-subtitle">Choose a personal look for this device. Your selection is saved locally and does not affect other users.</p></div>
 <div class="settings-appearance">
+${renderClinicalProfileSettings()}
+<div class="settings-card"><h3>Your name</h3><form id="profileForm" class="admin-login-form"><div class="admin-field"><label for="profileName">Name</label><input id="profileName" maxlength="60" autocomplete="given-name" placeholder="Future nurse" value="${esc(getUserName())}"></div><button class="admin-primary" type="submit">SAVE NAME</button><p class="hopper-note">Leave blank to use “future nurse.” Saved on this device.</p><div id="profileMessage" class="admin-message"></div></form></div>
 <div class="settings-card"><div class="settings-section-label">Mode</div><div class="settings-choice-grid" style="margin-top:8px">
 <button class="settings-choice ${mode==='dark'?'active':''}" data-theme-choice="dark">DARK MODE</button>
 <button class="settings-choice ${mode==='light'?'active':''}" data-theme-choice="light">LIGHT MODE</button>
@@ -636,7 +1012,7 @@ function renderAboutSettings(){
   return `<div class="page-header"><div class="page-kicker">Settings · About</div><h2 class="page-title">About Nurse Hub</h2><p class="page-subtitle">A personal nursing school dashboard built to keep your coursework, clinical reference, and study tools together.</p></div>
 <div class="settings-panel">
 <div class="settings-card"><h3>Version</h3><div class="about-version">
-<div class="about-row"><span>Current version</span><span>1.1</span></div>
+<div class="about-row"><span>Current version</span><span>1.2</span></div>
 <div class="about-row"><span>Latest update</span><span>October 2026</span></div>
 <div class="about-row"><span>Developer</span><span>Austin Ashley</span></div>
 </div></div>
@@ -659,8 +1035,8 @@ function renderSettings(){
 const signedIn=!!currentAdmin;
 return `<div class="page-header"><div class="page-kicker">Nurse Hub</div><h2 class="page-title">Settings</h2><p class="page-subtitle">Personalize the app, learn about Nurse Hub, or manage private resources.</p></div>
 <div class="settings-panel">
-<div class="settings-card"><h3>Your name</h3><p>Personalize dashboard and NORA greetings on this device.</p><button class="settings-action" data-settings-profile>PERSONALIZE</button></div>
-<div class="settings-card"><h3>Appearance</h3><p>Choose dark or light mode and your personal accent color.</p><button class="settings-action" data-settings-appearance>OPEN APPEARANCE</button></div>
+<div class="settings-card"><h3>Personalize</h3><p>Your name, theme, and accent color—all in one place.</p><button class="settings-action" data-settings-appearance>PERSONALIZE</button></div>
+<div class="settings-card"><h3>Quick tour</h3><p>A concise walkthrough of Nurse Hub.</p><button class="settings-action" data-walkthrough-replay>REPLAY WALKTHROUGH</button></div>
 <div class="settings-card"><h3>About</h3><p>Version information, recent updates, and developer details.</p><button class="settings-action" data-settings-about>ABOUT NURSE HUB</button></div>
 <div class="settings-card"><h3>NORA</h3><p>Learn what NORA means and what the Nurse Hub assistant is designed to do.</p><button class="settings-action" data-settings-nora>ABOUT NORA</button></div>
 <div class="settings-card"><div class="admin-top"><div><h3>Resource Hopper</h3><p>Upload, organize, link, and review your private course resources.</p></div></div>
@@ -1291,7 +1667,7 @@ async function publishReviewLinks(resourceId){
  toastMsg(`${selected.length} objective link${selected.length===1?'':'s'} published`);await loadPublicResourceKnowledge().catch(err=>console.warn('Published resource refresh failed',err));nav=[{type:'settings'},{type:'resource-hopper'}];setPage(renderResourceHopper());loadResources();
 }
 
-function openPlaceholder(id,source){closeSearch();if(id==='settings'){setTimeout(openSettings,80);return}if(id==='calendar'){if(source)source.classList.add('active');setTimeout(()=>openCalendar(),120);return}if(source)source.classList.add('active');setTimeout(()=>{setPage(`<div class="detail-content"><div class="detail-icon">${icons[id]||icons.objectives}</div><h2 class="detail-title">${esc(sections[id].title)}</h2><p class="coming-soon">Coming Soon</p></div>`)},120)}
+function openPlaceholder(id,source){closeSearch();if(id==='calculators'){openCalculators();return}if(id==='clinical-prep'){openClinicalPrep();return}if(id==='settings'){setTimeout(openSettings,80);return}if(id==='calendar'){if(source)source.classList.add('active');setTimeout(()=>openCalendar(),120);return}if(source)source.classList.add('active');setTimeout(()=>{setPage(`<div class="detail-content"><div class="detail-icon">${icons[id]||icons.objectives}</div><h2 class="detail-title">${esc(sections[id].title)}</h2><p class="coming-soon">Coming Soon</p></div>`)},120)}
 // NORA Consolidation 1 — deterministic Nurse Hub intelligence layer.
 // No external LLM/API is used here. NORA classifies requests, retrieves indexed app knowledge,
 // prioritizes instructor-linked material, preserves source boundaries, and performs navigation.
@@ -1600,6 +1976,8 @@ function goBack(){
     else if(last.type==='resource-detail')showResourceDetail(last.id);
     else if(last.type==='resource-linker')renderResourceLinker(last.id);
     else if(last.type==='nora')setPage(renderNora());
+    else if(last.type==='clinical-prep')setPage(renderClinicalPrep(last.date||''));
+    else if(last.type==='calculators')setPage(renderCalculators(last.tab||'nursing'));
     else if(last.type==='quiz-setup')setPage(renderQuizSetup(last.prefill||''));
     else if(last.type==='resource-notes'){
       const t=nav.find(x=>x.type==='topic'), s=t?objectiveData[t.i]:objectiveData.find(x=>x.title===last.section);
@@ -1619,7 +1997,7 @@ const settingsNora=e.target.closest('[data-settings-nora]');if(settingsNora){set
 const settingsHome=e.target.closest('[data-settings-home]');if(settingsHome){openSettings();return}
 const themeChoice=e.target.closest('[data-theme-choice]');if(themeChoice){const mode=themeChoice.dataset.themeChoice;const accent=getThemeAccent();applyLocalTheme(`${mode}-${accent}`);setSettingsSubpage(renderAppearanceSettings());return}
 const themeAccent=e.target.closest('[data-theme-accent]');if(themeAccent){const mode=getThemeMode();applyLocalTheme(`${mode}-${themeAccent.dataset.themeAccent}`);setSettingsSubpage(renderAppearanceSettings());return}
-if(e.target.closest('[data-admin-resource]')){openAdminArea();return}if(e.target.closest('[data-admin-signout]')){handleAdminSignout();return}if(e.target.closest('[data-settings-back]')){openSettings();return}const card=e.target.closest('.card');if(card){if(card.dataset.id==='objectives')openObjectives();else if(card.dataset.id==='calendar')openCalendar();else if(card.dataset.id==='diagnostics')openDiagnostics();else if(card.dataset.id==='medications')openMedications();else openPlaceholder(card.dataset.id,card);return}const resourceNotes=e.target.closest('[data-resource-notes]');if(resourceNotes){
+if(e.target.closest('[data-admin-resource]')){openAdminArea();return}if(e.target.closest('[data-admin-signout]')){handleAdminSignout();return}if(e.target.closest('[data-settings-back]')){openSettings();return}const card=e.target.closest('.card');if(card){if(card.dataset.id==='clinical-prep')openClinicalPrep();else if(card.dataset.id==='calculators')openCalculators();else if(card.dataset.id==='objectives')openObjectives();else if(card.dataset.id==='calendar')openCalendar();else if(card.dataset.id==='diagnostics')openDiagnostics();else if(card.dataset.id==='medications')openMedications();else openPlaceholder(card.dataset.id,card);return}const resourceNotes=e.target.closest('[data-resource-notes]');if(resourceNotes){
   const topic=resourceNotes.dataset.objectiveTopic,number=resourceNotes.dataset.objectiveNumber;
   const section=objectiveData.find(s=>s.title===topic);
   const objective=section?.objectives.find(o=>String(o.number)===String(number));
@@ -1655,6 +2033,7 @@ if(e.target.id==='replaceResourceFile'){const f=e.target.files[0];const el=docum
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(page.classList.contains('open'))goBack();else if(document.body.classList.contains('searching'))closeSearch()}});
 // Native-feeling edge swipe back on touch devices
 let swipeStartX=0,swipeStartY=0,swipeTracking=false;page.addEventListener('touchstart',e=>{if(!page.classList.contains('open'))return;const t=e.changedTouches[0];if(t.clientX<=32){swipeStartX=t.clientX;swipeStartY=t.clientY;swipeTracking=true}}, {passive:true});page.addEventListener('touchend',e=>{if(!swipeTracking)return;swipeTracking=false;const t=e.changedTouches[0],dx=t.clientX-swipeStartX,dy=Math.abs(t.clientY-swipeStartY);if(dx>80&&dy<90)goBack()}, {passive:true});
+maybeStartWalkthrough();
 }
 
 // NORA listeners are additive and run in capture phase so they do not alter existing Nurse Hub handlers.
