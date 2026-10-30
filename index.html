@@ -392,6 +392,8 @@ input,select,textarea{font-size:16px!important}
 [data-theme^="theme-"] #dashboardBackdrop[data-background="photo"]::after{background:var(--bg);opacity:.9}
 .exam-countdown{margin-top:24px;padding:20px;border-radius:20px;border:1px solid rgba(var(--accent-rgb),.28);background:var(--card);display:flex;align-items:center;gap:18px;flex-wrap:wrap}.exam-heading strong{font-size:24px;color:var(--accent)}.exam-countdown h2{font-size:16px;margin:0}.exam-countdown p{font-size:12px;color:var(--muted);line-height:1.5}.exam-countdown>.admin-secondary{margin-left:auto}
 .planner-row{padding:18px 0;border-bottom:1px solid var(--border)}.planner-notes{white-space:pre-wrap;line-height:1.6}.study-form input[type="date"],.study-form input[type="time"],.study-form textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;color:var(--text);background:var(--surface);margin:6px 0 14px}.background-upload{display:block;margin:18px 0;color:var(--muted)}.background-upload input{display:block;width:100%;margin-top:9px}.background-preview{display:block;width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin:14px 0}.study-feedback h4{font-size:14px;margin:16px 0 6px}.study-feedback h4:first-child{margin-top:4px}
+
+.whats-new-panel{padding:20px;margin:0 0 24px;background:var(--card);border:1px solid rgba(var(--accent-rgb),.3);border-radius:20px}.whats-new-panel[hidden]{display:none}.whats-new-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.whats-new-heading h2{font-size:20px;margin:0}.release-list{padding-left:20px;line-height:1.65;color:var(--muted)}.release-list li{margin:10px 0}.release-list li::marker{color:var(--accent)}.release-list strong{color:var(--text)}.calendar-event[type="button"]{cursor:pointer;font:inherit}.calendar-event[type="button"]:hover{border-color:rgba(var(--accent-rgb),.4)}.calendar-event[type="button"]:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.calendar-event[type="button"]:active{background:var(--surface)}
 </style>
 <script>
 (function(){
@@ -410,6 +412,7 @@ input,select,textarea{font-size:16px!important}
 <div id="dashboardBackdrop" aria-hidden="true" hidden></div>
 <main class="app">
 <header class="header" style="position:relative"><button class="settings-button" id="settingsButton" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"></path><path d="M19.2 13.1a7.5 7.5 0 0 0 0-2.2l1.6-1.2-1.7-3-1.9.7a7.8 7.8 0 0 0-1.9-1.1L15 4.2h-3.5l-.3 2.1c-.7.3-1.3.6-1.9 1.1l-1.9-.7-1.7 3 1.6 1.2a7.5 7.5 0 0 0 0 2.2l-1.6 1.2 1.7 3 1.9-.7c.6.5 1.2.9 1.9 1.1l.3 2.1H15l.3-2.1c.7-.3 1.3-.6 1.9-1.1l1.9.7 1.7-3-1.6-1.2Z"></path></svg></button><svg class="dashboard-ekg" viewBox="0 0 240 44" aria-hidden="true"><path d="M2 25H65L74 19L82 25H95L103 35L113 4L124 41L133 25H147L158 17L169 25H238"/></svg><h1 class="brand">Nurse Hub</h1><p class="subtitle" id="dashboardGreeting"></p><p class="dashboard-date" id="dashboardDate"></p></header>
+<section class="whats-new-panel" id="whatsNewPanel" aria-label="What’s new in Nurse Hub" hidden></section>
 <div class="search-dimmer" id="searchDimmer"></div>
 <section class="search-wrap">
 <button class="search-button" id="searchButton" aria-label="Search Nurse Hub"><svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg><span class="search-placeholder">Search Nurse Hub</span><input id="searchInput" class="search-input" type="search" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Search Nurse Hub"><span class="search-cancel" id="searchCancel"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"></path></svg></span></button>
@@ -487,36 +490,498 @@ ensureAdmin().then(ok=>{if(ok)loadResourceChunks();});
 const icons={calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2.5"></rect><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17M8 13h2M14 13h2M8 17h2M14 17h2"></path></svg>',objectives:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3.5" width="16" height="17" rx="2.5"></rect><path d="M8 8h8M8 12h8M8 16h4M5.8 8.1l.9.9 1.5-1.7"></path></svg>',diagnostics:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3.5v6.2L4.5 18a2 2 0 0 0 1.8 2.8h11.4a2 2 0 0 0 1.8-2.8L15 9.7V3.5M8 3.5h8M7 15h10"></path></svg>',medications:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7" width="17" height="10" rx="5"></rect><path d="M12 7v10"></path></svg>',quiz:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.2 4.2A7.5 7.5 0 0 1 19.5 10c1.3 5.1-2.9 9.8-8.1 9.8-4.6 0-8.4-3.7-8.4-8.4 0-3.2 1.8-6 4.5-7.5"></path><path d="M8.8 9a3.1 3.1 0 0 1 3.1-2.4c1.7 0 3 .9 3 2.4 0 1.8-1.5 2.3-2.5 3.1-.7.5-1 1-.9 1.8M11.6 17h.01"></path></svg>',materials:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4.5 5.5A2.5 2.5 0 0 1 7 3h11.5v17H7a2.5 2.5 0 0 0-2.5 2.5zM4.5 5.5v15M8 7h7M8 10.5h7M8 14h5"></path></svg>'};
 
 const calendarEvents=[
-["2026-08-17","8:30 AM–12:30 PM","Orientation","class"],["2026-08-17","","Class 1: Antepartum Assessment","class"],
-["2026-08-18","8:30–11:30 AM","Maternal Child Calculation #1","class"],
-["2026-08-19","8:30 AM–3:00 PM","Calculation Class #2 & Lab","lab"],
-["2026-08-20","8:30–11:30 AM","Class 2: Newborn Assessment","class"],
-["2026-08-21","8:30–11:30 AM","Calculation Test #1","test"],["2026-08-21","8:30–11:30 AM","Class 3: Peds Assessment","class"],
-["2026-08-24","8:30–11:30 AM","Daily Test #1","test"],["2026-08-24","8:30–11:30 AM","Class 4: Postpartum Assessment","class"],
-["2026-08-25","8:30 AM–3:00 PM","Global Skills Practice","lab"],["2026-08-26","8:30 AM–3:00 PM","Assessment Lab","lab"],["2026-08-27","8:30 AM–12:00 PM","Global Skills Checkoff","lab"],["2026-08-28","8:30 AM–12:00 PM","Assessment Lab","lab"],
-["2026-08-31","8:30–11:30 AM","Unit Test #1","test"],["2026-08-31","8:30–11:30 AM","Class 5: NB Nutrition","class"],
-["2026-09-02","8:30 AM–3:00 PM","Class 6: Fetal Surveillance","class"],["2026-09-02","8:30 AM–3:00 PM","Clinical Posters","event"],
-["2026-09-03","9:00 AM–3:30 PM","Clinical Orientation","clinical"],
-["2026-09-04","8:30–11:30 AM","Class 7: Intrapartum #1","class"],["2026-09-04","8:30–11:30 AM","Math Test #2","test"],
-["2026-09-11","8:30–11:30 AM","Daily Test #2","test"],["2026-09-11","8:30–11:30 AM","Class 8: Intrapartum #2","class"],["2026-09-11","8:30–11:30 AM","Global Skill Check #2","skill"],["2026-09-11","11:59 PM","ATI Nutrition Practice A & B remediation due","deadline"],
-["2026-09-14","8:30 AM–12:00 PM","Unit Test #2","test"],["2026-09-14","8:30 AM–12:00 PM","ATI Nutrition Proctored","test"],["2026-09-14","8:30 AM–12:00 PM","Health Fair Presentation to Faculty","event"],["2026-09-14","11:59 PM","ATI Nutrition Proctored remediation due 9/21","deadline"],
-["2026-09-18","8:30–11:30 AM","Class 9: High Risk OB","class"],["2026-09-21","8:30–11:30 AM","Class 10: High Risk NB #2","class"],["2026-09-22","8:00 AM–12:00 PM","Health Fair Presentation","event"],
-["2026-09-23","8:30–11:30 AM","Daily Test #3","test"],["2026-09-23","8:30–11:30 AM","Class 11: High Risk NB #1","class"],["2026-09-23","8:30–11:30 AM","Math Test #3","test"],
-["2026-09-25","11:59 PM","Midterm Clinical Self-evaluations due","deadline"],["2026-09-28","8:30–11:30 AM","Unit Test #3","test"],["2026-09-28","8:30–11:30 AM","Midterm Review","event"],
-["2026-10-02","8:30 AM","Midterm Exam","test"],["2026-10-02","8:30 AM","Midterm Clinical Evaluations","event"],["2026-10-03","11:59 PM","Clinical post-paperwork due","deadline"],
-["2026-10-05","8:30 AM–3:00 PM","SIM","lab"],
-["2026-10-06","8:30–11:30 AM","Class 12: STI/Contraception","class"],
-["2026-10-07","8:30–11:30 AM","Class 13: PTL & Pre-eclampsia","class"],["2026-10-07","8:30–11:30 AM","Global Skills Check #3","skill"],
-["2026-10-12","8:30–11:30 AM","Class 14: OB Emergencies","class"],["2026-10-12","8:30–11:30 AM","Math Test #4","test"],
-["2026-10-16","8:30–11:30 AM","Daily Test #4","test"],["2026-10-16","8:30–11:30 AM","Class 15: Women’s Health","class"],["2026-10-16","11:59 PM","ATI Maternal NB Practice A & B remediation due","deadline"],
-["2026-10-19","8:30–11:30 AM","Unit Test #4","test"],["2026-10-19","8:30–11:30 AM","ATI Maternal NB Proctored","test"],["2026-10-19","8:30–11:30 AM","Global Skills Check #4","skill"],["2026-10-19","11:59 PM","ATI Maternal NB remediation due 10/26","deadline"],
-["2026-10-23","8:30–11:30 AM","Class 16: Peds Growth and Development","class"],["2026-10-30","8:30–11:30 AM","Class 17: Peds Integ","class"],["2026-10-30","8:30–11:30 AM","Class 18: Peds Respiratory","class"],
-["2026-11-02","8:30–11:30 AM","Daily Test #5","test"],["2026-11-02","8:30–11:30 AM","Class 19: Peds GI","class"],
-["2026-11-06","8:30–11:30 AM","Unit Test #5","test"],["2026-11-06","8:30–11:30 AM","Class 20: Peds Cardiac #1","class"],["2026-11-09","8:30–11:30 AM","Class 21: Peds Cardiac #2","class"],
-["2026-11-13","8:30–11:30 AM","Class 22: Peds Musculoskeletal/Cancer","class"],["2026-11-13","8:30–11:30 AM","ATI Pediatric Nursing Practice A & B due","deadline"],
-["2026-11-16","8:30–11:30 AM","Daily Test #6","test"],["2026-11-16","8:30–11:30 AM","Class 23: Peds Neuro","class"],["2026-11-16","8:30–11:30 AM","ATI Pediatric Nursing Proctored","test"],
-["2026-11-20","8:30–11:30 AM","Unit Test #6","test"],["2026-11-20","8:30–11:30 AM","Final Exam Review","event"],["2026-11-20","11:59 PM","Final Clinical Self-evaluation due","deadline"],
-["2026-11-23","All day","Thanksgiving Break (11/23–11/27)","break"],["2026-11-30","8:30 AM","Make-up Test Day","test"],["2026-12-01","All day","Clinical Make-up Day","clinical"],["2026-12-07","8:30 AM","Final Exam","test"],["2026-12-07","8:30 AM","Final Clinical Evaluations","event"]
+ [
+  "2026-08-17",
+  "8:30 AM–12:30 PM",
+  "Orientation",
+  "class"
+ ],
+ [
+  "2026-08-17",
+  "8:30 AM–12:30 PM",
+  "Class 1: Antepartum Assessment",
+  "class"
+ ],
+ [
+  "2026-08-18",
+  "8:30–11:30 AM",
+  "Maternal Child Calculation #1",
+  "class"
+ ],
+ [
+  "2026-08-19",
+  "8:30 AM–3:00 PM",
+  "Calculation Class #2 & Lab",
+  "lab"
+ ],
+ [
+  "2026-08-20",
+  "8:30–11:30 AM",
+  "Class 2: Newborn Assessment",
+  "class"
+ ],
+ [
+  "2026-08-21",
+  "8:30–11:30 AM",
+  "Calculation Test #1",
+  "test"
+ ],
+ [
+  "2026-08-21",
+  "8:30–11:30 AM",
+  "Class 3: Peds Assessment",
+  "class"
+ ],
+ [
+  "2026-08-24",
+  "8:30–11:30 AM",
+  "Daily Test #1",
+  "test"
+ ],
+ [
+  "2026-08-24",
+  "8:30–11:30 AM",
+  "Class 4: Postpartum Assessment",
+  "class"
+ ],
+ [
+  "2026-08-25",
+  "8:30 AM–3:00 PM",
+  "Global Skills Practice",
+  "lab"
+ ],
+ [
+  "2026-08-26",
+  "8:30 AM–3:00 PM",
+  "Assessment Lab",
+  "lab"
+ ],
+ [
+  "2026-08-27",
+  "8:30 AM–12:00 PM",
+  "Global Skills Checkoff",
+  "lab"
+ ],
+ [
+  "2026-08-28",
+  "8:30 AM–12:00 PM",
+  "Assessment Lab",
+  "lab"
+ ],
+ [
+  "2026-08-31",
+  "8:30–11:30 AM",
+  "Unit Test #1",
+  "test"
+ ],
+ [
+  "2026-08-31",
+  "8:30–11:30 AM",
+  "Class 5: NB Nutrition",
+  "class"
+ ],
+ [
+  "2026-09-02",
+  "8:30 AM–3:00 PM",
+  "Class 6: Fetal Surveillance",
+  "class"
+ ],
+ [
+  "2026-09-02",
+  "8:30 AM–3:00 PM",
+  "Clinical Posters",
+  "event"
+ ],
+ [
+  "2026-09-03",
+  "9:00 AM–3:30 PM",
+  "Clinical Orientation",
+  "clinical"
+ ],
+ [
+  "2026-09-04",
+  "8:30–11:30 AM",
+  "Class 7: Intrapartum #1",
+  "class"
+ ],
+ [
+  "2026-09-04",
+  "8:30–11:30 AM",
+  "Math Test #2",
+  "test"
+ ],
+ [
+  "2026-09-11",
+  "8:30–11:30 AM",
+  "Daily Test #2",
+  "test"
+ ],
+ [
+  "2026-09-11",
+  "8:30–11:30 AM",
+  "Class 8: Intrapartum #2",
+  "class"
+ ],
+ [
+  "2026-09-11",
+  "8:30–11:30 AM",
+  "Global Skill Check #2",
+  "skill"
+ ],
+ [
+  "2026-09-11",
+  "11:59 PM",
+  "ATI Nutrition Practice A & B + remediation due",
+  "deadline"
+ ],
+ [
+  "2026-09-14",
+  "8:30 AM–12:00 PM",
+  "Unit Test #2",
+  "test"
+ ],
+ [
+  "2026-09-14",
+  "8:30 AM–12:00 PM",
+  "ATI Nutrition Proctored",
+  "test"
+ ],
+ [
+  "2026-09-14",
+  "8:30 AM–12:00 PM",
+  "Health Fair Presentation to Faculty",
+  "event"
+ ],
+ [
+  "2026-09-18",
+  "8:30–11:30 AM",
+  "Class 9: High Risk OB",
+  "class"
+ ],
+ [
+  "2026-09-21",
+  "",
+  "ATI Nutrition Proctored remediation due",
+  "deadline"
+ ],
+ [
+  "2026-09-21",
+  "8:30–11:30 AM",
+  "Class 10: High Risk NB #2",
+  "class"
+ ],
+ [
+  "2026-09-22",
+  "8:00 AM–12:00 PM",
+  "Health Fair Presentation",
+  "event"
+ ],
+ [
+  "2026-09-23",
+  "8:30–11:30 AM",
+  "Daily Test #3",
+  "test"
+ ],
+ [
+  "2026-09-23",
+  "8:30–11:30 AM",
+  "Class 11: High Risk NB #1",
+  "class"
+ ],
+ [
+  "2026-09-23",
+  "8:30–11:30 AM",
+  "Math Test #3",
+  "test"
+ ],
+ [
+  "2026-09-25",
+  "11:59 PM",
+  "Midterm Clinical Self-evaluations due",
+  "deadline"
+ ],
+ [
+  "2026-09-28",
+  "8:30–11:30 AM",
+  "Unit Test #3",
+  "test"
+ ],
+ [
+  "2026-09-28",
+  "8:30–11:30 AM",
+  "Midterm Review",
+  "event"
+ ],
+ [
+  "2026-10-02",
+  "8:30 AM",
+  "Midterm Exam",
+  "test"
+ ],
+ [
+  "2026-10-02",
+  "8:30 AM",
+  "Midterm Clinical Evaluations",
+  "event"
+ ],
+ [
+  "2026-10-03",
+  "",
+  "Clinical post-paperwork due",
+  "deadline"
+ ],
+ [
+  "2026-10-05",
+  "8:30 AM–3:00 PM",
+  "SIM",
+  "lab"
+ ],
+ [
+  "2026-10-06",
+  "8:30–11:30 AM",
+  "Class 12: STI/Contraception",
+  "class"
+ ],
+ [
+  "2026-10-07",
+  "8:30–11:30 AM",
+  "Class 13: PTL & Pre-eclampsia",
+  "class"
+ ],
+ [
+  "2026-10-07",
+  "8:30–11:30 AM",
+  "Global Skills Check #3",
+  "skill"
+ ],
+ [
+  "2026-10-08",
+  "All day",
+  "Fall Break",
+  "break"
+ ],
+ [
+  "2026-10-09",
+  "All day",
+  "Fall Break",
+  "break"
+ ],
+ [
+  "2026-10-12",
+  "8:30–11:30 AM",
+  "Class 14: OB Emergencies",
+  "class"
+ ],
+ [
+  "2026-10-12",
+  "8:30–11:30 AM",
+  "Math Test #4",
+  "test"
+ ],
+ [
+  "2026-10-16",
+  "8:30–11:30 AM",
+  "Daily Test #4",
+  "test"
+ ],
+ [
+  "2026-10-16",
+  "8:30–11:30 AM",
+  "Class 15: Women’s Health",
+  "class"
+ ],
+ [
+  "2026-10-16",
+  "11:59 PM",
+  "ATI Maternal NB Practice A & B + remediation due",
+  "deadline"
+ ],
+ [
+  "2026-10-19",
+  "8:30–11:30 AM",
+  "Unit Test #4",
+  "test"
+ ],
+ [
+  "2026-10-19",
+  "8:30–11:30 AM",
+  "ATI Maternal NB Proctored",
+  "test"
+ ],
+ [
+  "2026-10-19",
+  "8:30–11:30 AM",
+  "Global Skills Check #4",
+  "skill"
+ ],
+ [
+  "2026-10-23",
+  "8:30–11:30 AM",
+  "Class 16: Peds Growth and Development",
+  "class"
+ ],
+ [
+  "2026-10-26",
+  "",
+  "ATI Maternal NB Proctored remediation due",
+  "deadline"
+ ],
+ [
+  "2026-10-26",
+  "8:30–11:30 AM",
+  "Class 17: Peds Integ",
+  "class"
+ ],
+ [
+  "2026-10-30",
+  "8:30–11:30 AM",
+  "Class 18: Peds Respiratory",
+  "class"
+ ],
+ [
+  "2026-11-02",
+  "8:30–11:30 AM",
+  "Daily Test #5",
+  "test"
+ ],
+ [
+  "2026-11-02",
+  "8:30–11:30 AM",
+  "Class 19: Peds GI",
+  "class"
+ ],
+ [
+  "2026-11-06",
+  "8:30–11:30 AM",
+  "Unit Test #5",
+  "test"
+ ],
+ [
+  "2026-11-06",
+  "8:30–11:30 AM",
+  "Class 20: Peds Cardiac #1",
+  "class"
+ ],
+ [
+  "2026-11-07",
+  "",
+  "Clinical paperwork due",
+  "deadline"
+ ],
+ [
+  "2026-11-09",
+  "8:30–11:30 AM",
+  "Class 21: Peds Cardiac #2",
+  "class"
+ ],
+ [
+  "2026-11-13",
+  "8:30–11:30 AM",
+  "Class 22: Peds Musculoskeletal/Cancer",
+  "class"
+ ],
+ [
+  "2026-11-13",
+  "11:59 PM",
+  "ATI Pediatric Nursing Practice A & B due",
+  "deadline"
+ ],
+ [
+  "2026-11-16",
+  "8:30–11:30 AM",
+  "Daily Test #6",
+  "test"
+ ],
+ [
+  "2026-11-16",
+  "8:30–11:30 AM",
+  "Class 23: Peds Neuro",
+  "class"
+ ],
+ [
+  "2026-11-16",
+  "8:30–11:30 AM",
+  "ATI Pediatric Nursing Proctored",
+  "test"
+ ],
+ [
+  "2026-11-20",
+  "8:30–11:30 AM",
+  "Unit Test #6",
+  "test"
+ ],
+ [
+  "2026-11-20",
+  "8:30–11:30 AM",
+  "Final Exam Review",
+  "event"
+ ],
+ [
+  "2026-11-20",
+  "11:59 PM",
+  "Final Clinical Self-evaluation due",
+  "deadline"
+ ],
+ [
+  "2026-11-23",
+  "All day",
+  "Thanksgiving Break",
+  "break"
+ ],
+ [
+  "2026-11-23",
+  "11:59 PM",
+  "ATI Pediatric Nursing Proctored remediation due",
+  "deadline"
+ ],
+ [
+  "2026-11-24",
+  "All day",
+  "Thanksgiving Break",
+  "break"
+ ],
+ [
+  "2026-11-25",
+  "All day",
+  "Thanksgiving Break",
+  "break"
+ ],
+ [
+  "2026-11-26",
+  "All day",
+  "Thanksgiving Break",
+  "break"
+ ],
+ [
+  "2026-11-27",
+  "All day",
+  "Thanksgiving Break",
+  "break"
+ ],
+ [
+  "2026-11-30",
+  "8:30 AM",
+  "Make-up Test Day",
+  "test"
+ ],
+ [
+  "2026-12-01",
+  "",
+  "Clinical Make-up Day",
+  "clinical"
+ ],
+ [
+  "2026-12-07",
+  "8:30 AM",
+  "Final Exam",
+  "test"
+ ],
+ [
+  "2026-12-07",
+  "8:30 AM",
+  "Final Clinical Evaluations",
+  "event"
+ ]
 ];
 let clinicalEvents=profileClinicalEvents();
 function fmtDate(ds){const d=new Date(ds+'T12:00:00');return {month:d.toLocaleDateString('en-US',{month:'short'}),day:d.getDate(),full:d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}),dow:d.toLocaleDateString('en-US',{weekday:'short'})}}
@@ -534,7 +999,7 @@ function nextExam(now=new Date()){
  const date=events[0][0],days=Math.round((Date.UTC(...date.split('-').map((x,i)=>Number(x)-(i===1?1:0)))-Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/86400000);
  return {date,days,events:events.filter(e=>e[0]===date)};
 }
-function renderExamCountdown(){const exam=nextExam();return `<div class="exam-heading"><span class="meta-label">Next scheduled test</span><strong>${exam?exam.days===0?'Today':exam.days===1?'Tomorrow':'In '+exam.days+' days':'No upcoming tests'}</strong></div>${exam?`<div><h2>${exam.events.map(e=>esc(e[2])).join(' · ')}</h2><p>${esc(fmtDate(exam.date).full)} · ${esc(exam.events.map(e=>e[1]).filter(Boolean).join(' / '))}</p></div><button class="admin-secondary" data-exam-calendar>View tests</button>`:'<p>No future tests are listed in the current course calendar.</p>'}`;}
+function renderExamCountdown(){const exam=nextExam();return `<div class="exam-heading"><span class="meta-label">Next scheduled test</span><strong>${exam?exam.days===0?'Today':exam.days===1?'Tomorrow':'In '+exam.days+' days':'No upcoming tests'}</strong></div>${exam?`<div><h2>${exam.events.map(e=>esc(e[2])).join(' · ')}</h2><p>${esc(fmtDate(exam.date).full)} · ${esc(exam.events.map(e=>e[1]).filter(Boolean).join(' / '))}</p></div><button class="admin-secondary" data-schedule-event="${calendarEvents.indexOf(exam.events[0])}">View test coverage</button>`:'<p>No future tests are listed in the current course calendar.</p>'}`;}
 function dashboardBackgroundPreference(){try{const p=JSON.parse(localStorage.getItem('nurseHubDashboardBackground')||'{}');return {kind:['standard','gradient','photo'].includes(p.kind)?p.kind:'standard',photo:typeof p.photo==='string'&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(p.photo)?p.photo:''};}catch{return {kind:'standard',photo:''};}}
 function applyDashboardBackground(){
  const p=dashboardBackgroundPreference(),layer=document.getElementById('dashboardBackdrop');if(!layer)return;
@@ -575,8 +1040,47 @@ document.addEventListener('change',async e=>{
  try{const photo=await prepareDashboardPhoto(input.files[0]);if(saveDashboardBackground({kind:'photo',photo})){if(msg.isConnected)setSettingsSubpage(renderAppearanceSettings());toastMsg('Dashboard photo saved.');}else msg.textContent='Photo was not saved. Your previous background is unchanged.';}catch(err){msg.textContent=err.message;}finally{input.disabled=false;input.value='';}
 });
 
+function scheduleClassCatalog(){
+ const ids=['antepartum-assessment','newborn-assessment','pediatric-assessment','postpartum-assessment','newborn-nutrition','fetal-surveillance','intrapartum-1','intrapartum-2','high-risk-obstetrics','high-risk-newborn-2','high-risk-newborn-1','sti-and-contraception','preeclampsia-preterm-labor','ob-emergencies','women-s-reproductive-health-disorders','pediatric-growth-and-development','pediatric-integumentary-disorders','pediatric-respiratory','peds-gastrointestinal-disorders','pediatric-cardiovascular-disorders-1','pediatric-cardiovascular-disorders-2','pediatric-musculoskeletal-oncology','pediatric-neurology'];
+ return ids.map((id,index)=>{const section=objectiveData.find(s=>s.id===id),event=calendarEvents.find(e=>new RegExp('^Class '+(index+1)+':').test(e[2]));return {id,number:index+1,section,date:event?.[0]||'',time:event?.[1]||''};});
+}
+function orderedObjectiveSections(){const catalog=scheduleClassCatalog(),known=new Set(catalog.map(c=>c.id));return [...catalog.filter(c=>c.section).map(c=>({section:c.section,index:objectiveData.indexOf(c.section),number:c.number})),...objectiveData.filter(s=>!known.has(s.id)).map(s=>({section:s,index:objectiveData.indexOf(s),number:null}))];}
+function scheduleClassNumber(section){return scheduleClassCatalog().find(c=>c.id===section.id)?.number;}
+function testCoverage(event){
+ const title=event[2],catalog=scheduleClassCatalog();let numbers=[],description='';
+ const unit=title.match(/^Unit Test #(\d+)$/),daily=title.match(/^Daily Test #(\d+)$/);
+ if(unit||daily){const n=Number((unit||daily)[1]),groups=[[1,2,3,4],[5,6,7,8],[9,10,11],[12,13,14,15],[16,17,18,19],[20,21,22,23]],group=groups[n-1];if(!group)return null;numbers=daily?group.slice(0,3):group;description=daily?'The first three classes in Unit '+n+'’s group.':'All listed classes in Unit '+n+'’s group.';}
+ else if(title==='Midterm Exam'){numbers=catalog.filter(c=>c.date&&c.date<event[0]).map(c=>c.number);description='All classes scheduled before the midterm date.';}
+ else if(title==='Final Exam'){numbers=catalog.map(c=>c.number);description='All classes in the course.';}
+ else return null;
+ return {classes:catalog.filter(c=>numbers.includes(c.number)),description};
+}
+function scheduleRowAction(event){const index=calendarEvents.indexOf(event);if(index>=0)return `data-schedule-event="${index}"`;if(event[3]==='clinical')return `data-clinical-prep-date="${esc(event[0])}"`;return '';}
+function dashboardScheduleAction(event){if(Number.isInteger(event.eventIndex))return `data-schedule-event="${event.eventIndex}"`;if(event.clinicalDate)return `data-clinical-prep-date="${esc(event.clinicalDate)}"`;if(event.personalId)return `data-planner-edit="${esc(event.personalId)}"`;return 'data-open-calendar';}
+function scheduleClassCard(record){const s=record.section;return `<button type="button" class="list-card" data-schedule-class="${esc(record.id)}" ${!s?'disabled':''}><span class="list-number">${String(record.number).padStart(2,'0')}</span><span class="list-copy"><span class="list-title">${esc(s?.title||'Class '+record.number)}</span><span class="list-meta">${record.date?esc(fmtDate(record.date).full)+' · ':''}${s?s.objectives.length+' objectives · Open objectives':'Objectives unavailable'}</span></span><span class="chevron" aria-hidden="true">›</span></button>`;}
+function renderScheduleEvent(index){
+ const e=calendarEvents[index];if(!e)return '<div class="empty">This event is unavailable.</div>';
+ const coverage=testCoverage(e),classMatch=e[2].match(/^Class (\d+):/),record=classMatch?scheduleClassCatalog().find(c=>c.number===Number(classMatch[1])):null;
+ let body=coverage?`<div class="settings-card"><h3>Classes covered</h3><p>${esc(coverage.description)}</p><p class="hopper-note">Select a class to open its objectives.</p></div><div class="list">${coverage.classes.map(scheduleClassCard).join('')}</div>`:record?`<div class="list">${scheduleClassCard(record)}</div>`:`<div class="settings-card"><h3>Event details</h3><p>${esc(e[2])}</p>${e[3]==='test'?'<p class="hopper-note">A class list has not been defined for this assessment. Unit tests, daily tests, the midterm, and the final have linked class coverage.</p>':''}${e[3]==='clinical'?'<button class="admin-secondary" data-clinical-prep-date="">Open my clinical prep</button>':''}</div>`;
+ return `<div class="page-header"><div class="page-kicker">Calendar · ${esc(e[3])}</div><h2 class="page-title">${esc(e[2])}</h2><p class="page-subtitle">${esc(fmtDate(e[0]).full)} · ${esc(e[1]||'Time not listed')}</p></div>${body}`;
+}
+function openScheduleEvent(index){if(!calendarEvents[index])return;nav.push({type:'schedule-event',index});setPage(renderScheduleEvent(index));}
+function currentRelease(){return {id:'2026-10-30-schedule-links',version:'1.3',date:'October 30, 2026'};}
+function releaseNotesBody(){return `<ul class="release-list"><li><strong>Tap your schedule.</strong> Open classes, test coverage, clinical prep, and personal events from Today and Tomorrow.</li><li><strong>See what’s on each test.</strong> Unit tests and daily tests show their class groups. The midterm covers preceding classes; the final covers every class.</li><li><strong>Follow a class to its objectives.</strong> Full class titles and objective links stay connected.</li><li><strong>Calendar corrections.</strong> Corrected class dates, remediation deadlines, missing breaks, and skills filtering.</li></ul>`;}
+function releaseIsDismissed(){try{return localStorage.getItem('nurseHubWhatsNewSeen')===currentRelease().id||window.nurseHubWhatsNewDismissed===currentRelease().id;}catch{return window.nurseHubWhatsNewDismissed===currentRelease().id;}}
+function renderWhatsNewPanel(){if(releaseIsDismissed())return '';return `<div class="whats-new-heading"><div><span class="meta-label">New in Nurse Hub · ${currentRelease().version}</span><h2>What’s new</h2></div><button class="admin-secondary" type="button" data-dismiss-whats-new aria-label="Dismiss What’s New">Got it</button></div>${releaseNotesBody()}<button class="settings-action" type="button" data-show-whats-new>VIEW UPDATE DETAILS</button>`;}
+function renderReleaseNotes(){return `<div class="page-header"><div class="page-kicker">Nurse Hub ${currentRelease().version} · ${currentRelease().date}</div><h2 class="page-title">What’s New</h2><p class="page-subtitle">Recent improvements to your Nurse Hub.</p></div><div class="settings-card">${releaseNotesBody()}</div>`;}
+function updateWhatsNewPanel(){const panel=document.getElementById('whatsNewPanel');if(!panel)return;panel.hidden=releaseIsDismissed();panel.innerHTML=panel.hidden?'':renderWhatsNewPanel();}
+document.addEventListener('click',e=>{
+ const button=e.target.closest('button');if(!button||button.disabled)return;const d=button.dataset;
+ if('scheduleEvent'in d){openScheduleEvent(Number(d.scheduleEvent));return;}
+ if(d.scheduleClass){const i=objectiveData.findIndex(s=>s.id===d.scheduleClass);if(i>=0)openTopic(i);return;}
+ if('dismissWhatsNew'in d){window.nurseHubWhatsNewDismissed=currentRelease().id;try{localStorage.setItem('nurseHubWhatsNewSeen',currentRelease().id);}catch{}updateWhatsNewPanel();return;}
+ if('showWhatsNew'in d){nav.push({type:'release-notes'});setPage(renderReleaseNotes());return;}
+});
+
 function renderCalendar(filter='all'){
- let filtered=['clinical','personal'].includes(filter)?[]:calendarEvents.filter(e=>filter==='all'||e[3]===filter);
+ let filtered=['clinical','personal'].includes(filter)?[]:calendarEvents.filter(e=>filter==='all'||e[3]===filter||(filter==='lab'&&e[3]==='skill'));
  if(filter==='all'||filter==='personal')filtered.push(...personalEvents().map(e=>[e.date,plannerTime(e.time),e.title,'personal',e]));
  if(filter==='all'){
   filtered.push(...clinicalEvents.map(e=>[e[0],e[3],clinicalRule(e[1]).title+' · '+e[2],'clinical']));
@@ -611,7 +1115,7 @@ function renderCalendar(filter='all'){
  filtered.sort((a,b)=>a[0].localeCompare(b[0]));
  const grouped={};
  filtered.forEach(e=>{const m=e[0].slice(0,7);(grouped[m]??=[]).push(e)});
- const sections=Object.keys(grouped).map(m=>`<section class="calendar-section"><h3 class="calendar-section-title">${new Date(m+'-15T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})}</h3>${grouped[m].map(e=>{const d=fmtDate(e[0]);return `<div data-calendar-date="${e[0]}" class="calendar-event ${e[0]===today?'calendar-today':''} ${e[3]==='noclass'?'no-class-event':''} ${e[3]==='nothing'?'nothing-event':''}"><div class="calendar-date"><div class="calendar-dow">${d.dow}</div><div class="calendar-month">${d.month}</div><div class="calendar-day">${d.day}</div></div><div class="calendar-info"><div class="calendar-event-title">${e[0]===today?'<span class="today-badge">TODAY · </span>':''}${esc(e[2])}</div>${e[1]?`<div class="calendar-event-meta">${esc(e[1])}</div>`:''}${e[3]==='personal'?`<div class="calendar-event-meta">${esc(e[4].kind||'Personal')}${e[4].notes?' · '+esc(e[4].notes):''}</div><button class="admin-secondary" data-planner-edit="${esc(e[4].id)}">Edit event</button>`:''}${!['noclass','nothing'].includes(e[3])?`<div class="calendar-badge">${esc(e[3])}</div>`:''}</div></div>`}).join('')}</section>`).join('');
+ const sections=Object.keys(grouped).map(m=>`<section class="calendar-section"><h3 class="calendar-section-title">${new Date(m+'-15T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})}</h3>${grouped[m].map(e=>{const d=fmtDate(e[0]);const action=e[3]!=='personal'?scheduleRowAction(e):'',tag=action?'button':'div';return `<${tag} ${action?'type="button" '+action:''} data-calendar-date="${e[0]}" class="calendar-event ${e[0]===today?'calendar-today':''} ${e[3]==='noclass'?'no-class-event':''} ${e[3]==='nothing'?'nothing-event':''}"><div class="calendar-date"><div class="calendar-dow">${d.dow}</div><div class="calendar-month">${d.month}</div><div class="calendar-day">${d.day}</div></div><div class="calendar-info"><div class="calendar-event-title">${e[0]===today?'<span class="today-badge">TODAY · </span>':''}${esc(e[2])}</div>${e[1]?`<div class="calendar-event-meta">${esc(e[1])}</div>`:''}${e[3]==='personal'?`<div class="calendar-event-meta">${esc(e[4].kind||'Personal')}${e[4].notes?' · '+esc(e[4].notes):''}</div><button class="admin-secondary" data-planner-edit="${esc(e[4].id)}">Edit event</button>`:''}${!['noclass','nothing'].includes(e[3])?`<div class="calendar-badge">${esc(e[3])}</div>`:''}</div></${tag}>`}).join('')}</section>`).join('');
  return `<div class="page-header"><div class="page-kicker">School Calendar</div><h2 class="page-title">Fall 2026</h2><p class="page-subtitle">NUR 2129 class schedule, major assessments, and your clinical rotation, and personal plans.</p><button class="admin-secondary" data-open-planner>Personal planner · Add / edit events</button></div><div class="calendar-toolbar"><button class="calendar-filter ${filter==='all'?'active':''}" data-calfilter="all">ALL</button><button class="calendar-filter ${filter==='class'?'active':''}" data-calfilter="class">CLASS</button><button class="calendar-filter ${filter==='test'?'active':''}" data-calfilter="test">TESTS</button><button class="calendar-filter ${filter==='lab'?'active':''}" data-calfilter="lab">LAB / SIM</button><button class="calendar-filter ${filter==='deadline'?'active':''}" data-calfilter="deadline">DEADLINES</button><button class="calendar-filter ${filter==='clinical'?'active':''}" data-calfilter="clinical">CLINICAL</button><button class="calendar-filter ${filter==='personal'?'active':''}" data-calfilter="personal">PERSONAL</button></div>${filter==='clinical'?renderClinical():sections}<p class="calendar-note">Class events and dates are transcribed from the provided NUR 2129 Fall 2026 calendar. Clinical dates are added only after you opt in with your full name. Rotation hours come from the course’s clinical schedule.</p>`;
 }
 function renderClinical(){
@@ -875,9 +1379,9 @@ function closePage(){page.classList.remove('open');page.setAttribute('aria-hidde
 function setPage(html){if(typeof clinicalChangeAuthorized!=='undefined')clinicalChangeAuthorized=false;document.getElementById('dashboardReturn').hidden=nav.length<3;content.innerHTML=html;content.classList.remove('page-content-enter');void content.offsetWidth;content.classList.add('page-content-enter');showPage();content.scrollIntoView({block:'start'});if(nav.at(-1)?.type==='calendar')requestAnimationFrame(()=>{const row=content.querySelector('[data-calendar-date="'+localDateKey()+'"]');const toolbar=content.querySelector('.calendar-toolbar');if(row&&toolbar&&getComputedStyle(toolbar).display!=='none')row.style.scrollMarginTop=(toolbar.getBoundingClientRect().height+12)+'px';row?.scrollIntoView({block:'start',behavior:'instant'});});}
 function topicIcon(){return icons.objectives}
 function openObjectives(){nav=[{type:'root'}];setPage(renderTopics())}
-function renderTopics(){return `<div class="page-header"><div class="page-kicker">Objectives</div><h2 class="page-title">NUR 2129</h2><p class="page-subtitle">Maternal Child Nursing · ${objectiveData.length} class/topic sections</p></div><div class="list">${objectiveData.map((s,i)=>`<button class="list-card topic-card" data-topic="${i}"><span class="list-number">${String(i+1).padStart(2,'0')}</span><span class="list-copy"><span class="list-title">${esc(s.title)}</span><span class="list-meta">${s.objectives.length} objectives</span></span><span class="chevron">›</span></button>`).join('')}</div><p class="source-note">Content is based on the provided NUR 2129 objectives document. Formatting has been cleaned up for the app while retaining the source wording and references.</p>`}
+function renderTopics(){return `<div class="page-header"><div class="page-kicker">Objectives</div><h2 class="page-title">NUR 2129</h2><p class="page-subtitle">Maternal Child Nursing · ${objectiveData.length} class/topic sections</p></div><div class="list">${orderedObjectiveSections().map(({section:s,index:i,number})=>`<button class="list-card topic-card" data-topic="${i}"><span class="list-number">${number?String(number).padStart(2,'0'):'•'}</span><span class="list-copy"><span class="list-title">${esc(s.title)}</span><span class="list-meta">${s.objectives.length} objectives</span></span><span class="chevron">›</span></button>`).join('')}</div><p class="source-note">Content is based on the provided NUR 2129 objectives document. Formatting has been cleaned up for the app while retaining the source wording and references.</p>`}
 function openTopic(i){nav.push({type:'topic',i});setPage(renderTopic(objectiveData[i],i))}
-function renderTopic(s,i){return `<div class="page-header"><div class="page-kicker">NUR 2129 · ${i<14?'Class':'Topic'} ${i+1}</div><h2 class="page-title">${esc(s.title)}</h2><p class="page-subtitle">Select an objective to view its details, course-objective mapping, references, and future study tools.</p></div><div class="list">${s.objectives.map((o,j)=>`<button class="list-card" data-objective="${j}"><span class="list-number">${o.number}</span><span class="list-copy"><span class="list-title">${esc(o.text)}</span><span class="list-meta">${o.courseObjectives?'Course objective '+esc(o.courseObjectives):'Objective'}</span></span><span class="chevron">›</span></button>`).join('')}</div>`}
+function renderTopic(s,i){return `<div class="page-header"><div class="page-kicker">NUR 2129 · ${scheduleClassNumber(s)?'Class '+scheduleClassNumber(s):'Topic'}</div><h2 class="page-title">${esc(s.title)}</h2><p class="page-subtitle">Select an objective to view its details, course-objective mapping, references, and future study tools.</p></div><div class="list">${s.objectives.map((o,j)=>`<button class="list-card" data-objective="${j}"><span class="list-number">${o.number}</span><span class="list-copy"><span class="list-title">${esc(o.text)}</span><span class="list-meta">${o.courseObjectives?'Course objective '+esc(o.courseObjectives):'Objective'}</span></span><span class="chevron">›</span></button>`).join('')}</div>`}
 function showObjectivePage(section,objective){
   rememberStudy(section,objective);
   setPage(renderObjective(objective,section));
@@ -1038,19 +1542,20 @@ function getUserName(){
 function daySchedule(now=new Date(),offset=1){
   const next=new Date(now);next.setDate(next.getDate()+offset);
   const key=next.getFullYear()+'-'+String(next.getMonth()+1).padStart(2,'0')+'-'+String(next.getDate()).padStart(2,'0');
-  const events=calendarEvents.filter(e=>e[0]===key).map(e=>({title:e[2],time:e[1],detail:e[3]}));
-  for(const e of clinicalEvents.filter(e=>e[0]===key))events.push({title:e[1]+' clinical',time:e[3],detail:e[2]});
-  for(const e of personalEvents().filter(e=>e.date===key))events.push({title:e.title,time:plannerTime(e.time),detail:(e.kind||'Personal')+(e.notes?' · '+e.notes:'')});
+  const events=calendarEvents.filter(e=>e[0]===key).map(e=>({title:e[2],time:e[1],detail:e[3],eventIndex:calendarEvents.indexOf(e)}));
+  for(const e of clinicalEvents.filter(e=>e[0]===key))events.push({title:e[1]+' clinical',time:e[3],detail:e[2],clinicalDate:e[0]});
+  for(const e of personalEvents().filter(e=>e.date===key))events.push({title:e.title,time:plannerTime(e.time),detail:(e.kind||'Personal')+(e.notes?' · '+e.notes:''),personalId:e.id});
   const unique=events.filter((e,i)=>events.findIndex(x=>x.title===e.title&&x.time===e.time&&x.detail===e.detail)===i);
   return {date:next,events:unique};
 }
 function tomorrowSchedule(now=new Date()){return daySchedule(now,1);}
-function renderToday(){const {date,events}=daySchedule(new Date(),0);return `<div class="tomorrow-heading"><div><span class="today-badge">TODAY</span><h2>A look at today</h2><p>${esc(fmtDate(localDateKey(date)).full)}</p></div><button class="admin-secondary" data-open-calendar>View calendar</button></div>${events.length?events.map(e=>`<button class="tomorrow-event" data-open-calendar><span class="tomorrow-dot"></span><span><strong>${esc(e.title)}</strong><small>${esc(e.time)} · ${esc(e.detail)}</small></span><span>›</span></button>`).join(''):'<div class="tomorrow-empty">No events today<span>Nothing scheduled in Nurse Hub’s calendar.</span></div>'}`;}
+function renderToday(){const {date,events}=daySchedule(new Date(),0);return `<div class="tomorrow-heading"><div><span class="today-badge">TODAY</span><h2>A look at today</h2><p>${esc(fmtDate(localDateKey(date)).full)}</p></div><button class="admin-secondary" data-open-calendar>View calendar</button></div>${events.length?events.map(e=>`<button class="tomorrow-event" ${dashboardScheduleAction(e)}><span class="tomorrow-dot"></span><span><strong>${esc(e.title)}</strong><small>${esc(e.time)} · ${esc(e.detail)}</small></span><span>›</span></button>`).join(''):'<div class="tomorrow-empty">No events today<span>Nothing scheduled in Nurse Hub’s calendar.</span></div>'}`;}
 function renderTomorrow(){
   const {date,events}=daySchedule();
-  return `<div class="tomorrow-heading"><div><span class="meta-label">A look ahead</span><h2>Tomorrow</h2><p>${esc(date.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}))}</p></div><button type="button" class="admin-secondary" data-open-calendar>View calendar</button></div>${events.length?`<div class="tomorrow-events">${events.map(e=>`<button type="button" class="tomorrow-event" data-open-calendar><span class="tomorrow-dot" aria-hidden="true"></span><span><strong>${esc(e.title)}</strong><small>${esc(e.time||'Time not listed')} · ${esc(e.detail)}</small></span><span class="chevron" aria-hidden="true">›</span></button>`).join('')}</div>`:'<div class="tomorrow-empty">No events tomorrow<span>Nothing scheduled in Nurse Hub’s calendar.</span></div>'}`;
+  return `<div class="tomorrow-heading"><div><span class="meta-label">A look ahead</span><h2>Tomorrow</h2><p>${esc(date.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}))}</p></div><button type="button" class="admin-secondary" data-open-calendar>View calendar</button></div>${events.length?`<div class="tomorrow-events">${events.map(e=>`<button type="button" class="tomorrow-event" ${dashboardScheduleAction(e)}><span class="tomorrow-dot" aria-hidden="true"></span><span><strong>${esc(e.title)}</strong><small>${esc(e.time||'Time not listed')} · ${esc(e.detail)}</small></span><span class="chevron" aria-hidden="true">›</span></button>`).join('')}</div>`:'<div class="tomorrow-empty">No events tomorrow<span>Nothing scheduled in Nurse Hub’s calendar.</span></div>'}`;
 }
 function updateDashboard(){
+  updateWhatsNewPanel();
   document.getElementById('examCountdown').innerHTML=renderExamCountdown();
   document.getElementById('todayPanel').innerHTML=renderToday();
   document.getElementById('tomorrowPanel').innerHTML=renderTomorrow();
@@ -1099,7 +1604,7 @@ function updateNavigation(){
   group.classList.toggle('is-expanded',calendarOpen);
   menu.inert=!calendarOpen;menu.setAttribute('aria-hidden',String(!calendarOpen));
   document.querySelector('[data-app-nav="calendar"]').setAttribute('aria-expanded',String(calendarOpen));
-  const filter=nav.at(-1)?.type==='calendar'?(nav.at(-1).filter||'all'):'all';
+  const filter=nav.find(entry=>entry.type==='calendar')?.filter||'all';
   menu.querySelectorAll('[data-calfilter]').forEach(button=>button.setAttribute('aria-pressed',String(calendarOpen&&button.dataset.calfilter===filter)));
   document.querySelectorAll('[data-app-nav]').forEach(button=>{
     if(button.dataset.appNav===active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
@@ -1171,7 +1676,7 @@ function renderAboutSettings(){
   return `<div class="page-header"><div class="page-kicker">Settings · About</div><h2 class="page-title">About Nurse Hub</h2><p class="page-subtitle">A personal nursing school dashboard built to keep your coursework, clinical reference, and study tools together.</p></div>
 <div class="settings-panel">
 <div class="settings-card"><h3>Version</h3><div class="about-version">
-<div class="about-row"><span>Current version</span><span>1.2</span></div>
+<div class="about-row"><span>Current version</span><span>${currentRelease().version}</span></div>
 <div class="about-row"><span>Latest update</span><span>October 2026</span></div>
 <div class="about-row"><span>Developer</span><span>Austin Ashley</span></div>
 </div></div>
@@ -1196,6 +1701,7 @@ return `<div class="page-header"><div class="page-kicker">Nurse Hub</div><h2 cla
 <div class="settings-panel">
 <div class="settings-card"><h3>Personalize</h3><p>Your name, theme, and accent color—all in one place.</p><button class="settings-action" data-settings-appearance>PERSONALIZE</button></div>
 <div class="settings-card"><h3>Quick tour</h3><p>A concise walkthrough of Nurse Hub.</p><button class="settings-action" data-walkthrough-replay>REPLAY WALKTHROUGH</button></div>
+<div class="settings-card"><h3>What’s New</h3><p>Review the latest Nurse Hub improvements.</p><button class="settings-action" data-show-whats-new>VIEW WHAT’S NEW</button></div>
 <div class="settings-card"><h3>About</h3><p>Version information, recent updates, and developer details.</p><button class="settings-action" data-settings-about>ABOUT NURSE HUB</button></div>
 <div class="settings-card"><h3>NORA</h3><p>Learn what NORA means and what the Nurse Hub assistant is designed to do.</p><button class="settings-action" data-settings-nora>ABOUT NORA</button></div>
 <div class="settings-card"><div class="admin-top"><div><h3>Resource Hopper</h3><p>Upload, organize, link, and review your private course resources.</p></div></div>
@@ -2256,6 +2762,8 @@ function goBack(){
     else if(last.type==='resource-detail')showResourceDetail(last.id);
     else if(last.type==='resource-linker')renderResourceLinker(last.id);
     else if(last.type==='nora')setPage(renderNora());
+    else if(last.type==='schedule-event')setPage(renderScheduleEvent(last.index));
+    else if(last.type==='release-notes')setPage(renderReleaseNotes());
     else if(last.type==='calendar')setPage(renderCalendar(last.filter||'all'));
     else if(last.type==='quiz-review')reviewAttempt(last.id,false);
     else if(last.type==='planner')setPage(renderPlanner(last.editId||''));
